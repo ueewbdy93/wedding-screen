@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import AppBar from 'react-toolbox/lib/app_bar/AppBar';
-import Navigation from 'react-toolbox/lib/navigation/Navigation';
-import Link from 'react-toolbox/lib/link/Link';
 import Drawer from 'react-toolbox/lib/drawer/Drawer';
+import {
+  Route,
+  Link as RouterLink,
+  Switch,
+} from 'react-router-dom';
 import logo from './logo.svg';
 import './App.css';
 
@@ -27,20 +30,26 @@ class App extends Component {
         <Drawer active={this.state.active} onOverlayClick={this.handleToggle}>
           <h5>This is your Drawer.</h5>
           <p>You can embed any content you want, for example a Menu.</p>
+          <RouterLink to="/" onClick={this.handleToggle}>/</RouterLink><br />
+          <RouterLink to="/haha" onClick={this.handleToggle}>haha</RouterLink>
         </Drawer>
-        <AppBar title="React Toolbox" leftIcon="menu" onLeftIconClick={this.handleToggle} rightIcon={<GithubIcon />}>
-          <Navigation type="horizontal">
-            {/* <Link href="http://" label="Inbox" icon="inbox" />
-        <Link href="http://" active label="Profile" icon="person" /> */}
-          </Navigation>
-        </AppBar>
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+        <AppBar title="React Toolbox" leftIcon="menu" onLeftIconClick={this.handleToggle} rightIcon={<GithubIcon />} />
+        <Switch>
+          <Route exact path="/">
+            <div>
+              <header className="App-header">
+                <img src={logo} className="App-logo" alt="logo" />
+                <h1 className="App-title">Welcome to React</h1>
+              </header>
+              <p className="App-intro">
+                To get started, edit <code>src/App.js</code> and save to reload.
+              </p>
+            </div>
+          </Route>
+          <Route exact path="/haha">
+            <h1>haha</h1>
+          </Route>
+        </Switch>
       </div>
     );
   }
