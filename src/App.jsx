@@ -14,11 +14,11 @@ const GithubIcon = () => (
 
 class App extends Component {
   state = {
-    active: false
+    active: false,
   };
 
   handleToggle = () => {
-    this.setState({active: !this.state.active});
+    this.setState({ active: !this.state.active });
   };
 
   render() {
