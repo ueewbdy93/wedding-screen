@@ -6,8 +6,10 @@ import {
   Link as RouterLink,
   Switch,
 } from 'react-router-dom';
+import Slider from 'react-slick';
 import logo from './logo.svg';
 import './App.css';
+import WebSlide from './components/WebSlide';
 
 const GithubIcon = () => (
   <svg viewBox="0 0 284 277">
@@ -15,16 +17,90 @@ const GithubIcon = () => (
   </svg>
 );
 
+const images = [
+  'https://s3.amazonaws.com/static.neostack.com/img/react-slick/abstract01.jpg',
+  'https://s3.amazonaws.com/static.neostack.com/img/react-slick/abstract02.jpg',
+  'https://s3.amazonaws.com/static.neostack.com/img/react-slick/abstract03.jpg',
+  'https://s3.amazonaws.com/static.neostack.com/img/react-slick/abstract04.jpg',
+];
+
 class App extends Component {
   state = {
     active: false,
+    imageIndex: 0,
+    bulletComments: [
+      {
+        user: 'shirley', comment: '哈哈哈', x: 1903, y: 100,
+      },
+      {
+        user: 'shirley', comment: '哈哈哈', x: 1903, y: 200,
+      },
+      {
+        user: 'shirley', comment: '哈哈哈嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿abcccc   dfwoe == = =', x: 1903, y: 300,
+      },
+      {
+        user: 'shirley', comment: '哈哈哈', x: 1903, y: 400,
+      },
+      {
+        user: 'shirley', comment: '哈哈哈', x: 1903, y: 500,
+      },
+      {
+        user: 'shirley', comment: '哈哈哈', x: 1903, y: 600,
+      },
+      {
+        user: 'shirley', comment: '哈哈哈', x: 1903, y: 700,
+      },
+      {
+        user: 'shirley', comment: '哈哈哈', x: 1903, y: 800,
+      },
+      {
+        user: 'shirley', comment: '哈哈哈', x: 1903, y: 900,
+      },
+    ],
   };
+
+  componentDidMount() {
+    // this.handler = setInterval(() => {
+    //   this.setState(preState => ({
+    //     imageIndex: (preState.imageIndex + 1) % 4,
+    //   }));
+    // }, 2000);
+    this.handler2 = setInterval(() => {
+      this.setState(preState => ({
+        bulletComments: preState.bulletComments.map(entry => Object.assign({}, entry, {
+          x: (entry.x - 5 + window.innerWidth) % window.innerWidth,
+        })),
+      }));
+    }, 10);
+  }
+
+  componentWillUnmount() {
+    // clearInterval(this.handler);
+    clearInterval(this.handler2);
+  }
 
   handleToggle = () => {
     this.setState({ active: !this.state.active });
   };
 
   render() {
+    const settings = {
+      dots: true,
+      infinite: true,
+      speed: 500,
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      // accessibility: false,
+      // arrows: true,
+      // dots: false,
+      // draggable: false,
+      // fade: true,
+      // pauseOnHover: false,
+      // infinite: true,
+      // speed: 500,
+      // slidesToShow: 1,
+      // slidesToScroll: 1,
+    };
     return (
       <div className="App">
         <Drawer active={this.state.active} onOverlayClick={this.handleToggle}>
@@ -47,7 +123,7 @@ class App extends Component {
             </div>
           </Route>
           <Route exact path="/haha">
-            <h1>haha</h1>
+            <WebSlide images={images} imageIndex={this.state.imageIndex} bulletComments={this.state.bulletComments} />
           </Route>
         </Switch>
       </div>
