@@ -1,6 +1,5 @@
 const { List, Map } = require('immutable');
 const Actions = require('./actions');
-const socketManager = require('./socketmanager');
 const config = require('../config');
 
 class CoreReducer {
@@ -36,18 +35,25 @@ class CoreReducer {
     return state.set('currentRoundStartTime', new Date())
       .set('currentRoundComment', state.get('nextRoundComment').concat(state.get('currentRoundComment')))
       .set('nextRoundComment', List())
-      .set('currentComment', null);
+      .set('currentComment', null)
+      .set('currentPicIndex', 0);
+  }
+
+  static nextPicture(state) {
+    return state.update('currentPicIndex', 0, val => (val + 1) % state.get('picCount'));
   }
 }
 
 
 const InitState = Map({
-  commentOffsetMaxMs: (config.pic.srcs.length * config.pic.interval) - 1000,
+  commentOffsetMaxMs: ((config.pic.srcs.length * config.pic.interval) / 2) - 1000,
   currentRoundStartTime: new Date(),
   currentRoundComment: List(),
   nextRoundComment: List(),
   currentComment: null,
-  socketManager
+
+  picCount: config.pic.srcs.length / 2,
+  currentPicIndex: 0
 });
 
 function reducer(state = InitState, action) {
@@ -58,6 +64,8 @@ function reducer(state = InitState, action) {
       return CoreReducer.printComment(state);
     case Actions.RESET:
       return CoreReducer.reset(state);
+    case Actions.NEXT_PICTURE:
+      return CoreReducer.nextPicture(state);
     default:
       return state;
   }

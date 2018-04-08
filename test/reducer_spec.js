@@ -20,7 +20,8 @@ describe('reducer', function () {
         currentRoundStartTime: new Date(),
         currentRoundComment: List([]),
         nextRoundComment: List([Map(testComment1)]),
-        currentComment: Map(testComment1)
+        currentComment: Map(testComment1),
+        currentPicIndex: 2
       });
       this.clock.tick(1000);
       const nextState = reducer(state, { type: Actions.RESET });
@@ -28,7 +29,8 @@ describe('reducer', function () {
         currentRoundStartTime: new Date(),
         currentRoundComment: List([Map(testComment1)]),
         nextRoundComment: List([]),
-        currentComment: null
+        currentComment: null,
+        currentPicIndex: 0
       }));
     });
 
@@ -37,7 +39,8 @@ describe('reducer', function () {
         currentRoundStartTime: new Date(),
         currentRoundComment: List([Map(testComment2)]),
         nextRoundComment: List([Map(testComment1)]),
-        currentComment: Map(testComment1)
+        currentComment: Map(testComment1),
+        currentPicIndex: 1
       });
       this.clock.tick(1000);
       const nextState = reducer(state, { type: Actions.RESET });
@@ -45,7 +48,8 @@ describe('reducer', function () {
         currentRoundStartTime: new Date(),
         currentRoundComment: List([Map(testComment1), Map(testComment2)]),
         nextRoundComment: List([]),
-        currentComment: null
+        currentComment: null,
+        currentPicIndex: 0
       }));
     });
   });
@@ -87,6 +91,26 @@ describe('reducer', function () {
         currentComment: Map({ ...comment, offset: 1000 }),
         commentOffsetMaxMs: 1000
       }));
+    });
+  });
+
+  describe(`test action: ${Actions.NEXT_PICTURE}`, function () {
+    it('will add currentPicIndex', function () {
+      const state = Map({
+        picCount: 100,
+        currentPicIndex: 0
+      });
+      const nextState = reducer(state, { type: Actions.NEXT_PICTURE });
+      expect(nextState.get('currentPicIndex')).eqls(1);
+    });
+
+    it('will round when currentPicIndex > picCount', function () {
+      const state = Map({
+        picCount: 100,
+        currentPicIndex: 99
+      });
+      const nextState = reducer(state, { type: Actions.NEXT_PICTURE });
+      expect(nextState.get('currentPicIndex')).eqls(0);
     });
   });
 });

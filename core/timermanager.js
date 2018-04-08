@@ -1,27 +1,34 @@
-const commentTick = Symbol('commentTick');
-const store = Symbol('store');
-const roundInterval = Symbol('roundInterval');
 const Actions = require('./actions');
 const config = require('../config');
 
-const ROUND_INTERVAL = config.pic.srcs.length * config.pic.interval;
+const commentTick = Symbol('commentTick');
+const picTick = Symbol('picTick');
+const store = Symbol('store');
+const roundInterval = Symbol('roundInterval');
+const picInterval = Symbol('picInterval');
+
+const ROUND_INTERVAL = (config.pic.srcs.length * config.pic.interval) / 2;
 
 class TimerManager {
-  constructor(reduxStore, interval = ROUND_INTERVAL) {
+  constructor(reduxStore, rInterval = ROUND_INTERVAL, pInterval = config.pic.interval) {
     this[store] = reduxStore;
     this[commentTick] = null;
-    this[roundInterval] = interval;
+    this[picTick] = null;
+    this[roundInterval] = rInterval;
+    this[picInterval] = pInterval;
   }
 
   start() {
     setInterval(() => {
+      clearInterval(this[picTick]);
       clearTimeout(this[commentTick]);
 
       this[store].dispatch({ type: Actions.RESET });
-
       this.scheduleComment();
 
-      // TODO: handle pictures timer
+      this[picTick] = setInterval(() => {
+        this[store].dispatch({ type: Actions.NEXT_PICTURE });
+      }, this[picInterval]);
     }, this[roundInterval]);
   }
 
@@ -36,19 +43,6 @@ class TimerManager {
         this.scheduleComment();
       }, offset);
     }
-  }
-
-  /**
-   * @param {VoidFunction} cb - The callback
-   * @param {number} ms - millisecond
-   * @param {...any} Optional - Additional parameters to pass to the cb
-   */
-  setCommentTimeout(cb, ms, ...params) {
-    if (this[commentTick] !== null) {
-      clearTimeout(this[commentTick]);
-    }
-
-    this[commentTick] = setTimeout(cb, ms, ...params);
   }
 }
 
