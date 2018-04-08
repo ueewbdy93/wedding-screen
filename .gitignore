@@ -31,3 +31,5 @@ npm-debug.log
 
 # for macos
 .DS_Store
+
+public/images/Ali*.jpg

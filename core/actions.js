@@ -1,0 +1,9 @@
+const ADD_COMMENT = 'ADD_COMMENT';
+const RESET = 'RESET';
+const PRINT_COMMENT = 'PRINT_COMMENT';
+
+module.exports = {
+  ADD_COMMENT,
+  RESET,
+  PRINT_COMMENT
+};
