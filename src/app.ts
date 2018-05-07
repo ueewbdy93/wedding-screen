@@ -41,9 +41,9 @@ app.use(bodyparser({
 }));
 app.use(json());
 app.use(logger());
-app.use(require('koa-static')(`${__dirname}/public`));
+app.use(require('koa-static')(`${__dirname}/../public`));
 
-app.use(views(`${__dirname}/views`, {
+app.use(views(`${__dirname}/../views`, {
   extension: 'ejs'
 }));
 

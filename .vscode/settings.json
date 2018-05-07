@@ -5,11 +5,5 @@
     "**/.hg": true,
     "**/CVS": true,
     "**/.DS_Store": true,
-    "**/*.js": {
-      "when": "$(basename).ts"
-    },
-    "**/*.map": {
-      "when": "$(basename)"
-    }
   }
 }

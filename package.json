@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "node bin/www",
+    "start": "node dist/bin/www",
+    "debug": "node --nolazy --inspect-brk=9229 dist/bin/www",
     "dev": "./node_modules/.bin/nodemon bin/www",
     "prd": "pm2 start bin/www",
     "test": "mocha --recursive"
