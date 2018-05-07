@@ -33,3 +33,4 @@ npm-debug.log
 .DS_Store
 
 public/images/Ali*.jpg
+dist
