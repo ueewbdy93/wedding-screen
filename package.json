@@ -20,9 +20,9 @@
     "koa-logger": "^2.0.1",
     "koa-onerror": "^1.2.1",
     "koa-router": "^7.1.1",
+    "koa-socket": "^4.4.0",
     "koa-static": "^3.0.0",
     "koa-views": "^5.2.1",
-    "koa-websocket": "^4.1.0",
     "prop-types": "^15.6.0",
     "redux": "^3.7.2"
   },
