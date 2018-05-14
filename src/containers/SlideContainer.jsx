@@ -55,7 +55,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    insertComment: (comment) => dispatch({ type: 'INSERT_COMMENT', data: comment })
+    insertComment: (comment) => dispatch({ type: 'SEND_TO_SERVER', data: { type: 'NEW_COMMENT', data: comment } })
     // onRequestDog: () => dispatch({ type: "API_CALL_REQUEST" })
   };
 };

@@ -59,7 +59,6 @@ class BulletCommentRiver extends React.Component {
     }
   }
   render() {
-    console.log('render');
     const { comments } = this.state;
     return (
       <div style={{ overflow: 'hidden' }}>

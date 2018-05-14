@@ -2,14 +2,14 @@ import { take, put, call, apply, fork } from 'redux-saga/effects';
 import { eventChannel, delay } from 'redux-saga';
 import io from 'socket.io-client';
 
-function createWebSocketConnection() {
+export function createWebSocketConnection() {
   const socket = io();
   return Promise.resolve(socket);
 }
 
 // 這個 function 從一個指定的 socket 建立一個 event channel
 // 設定傳入 `ping` events 的 subscription
-function createSocketChannel(socket) {
+export function createSocketChannel(socket) {
   // `eventChannel` 接收一個 subscriber function
   // subscriber function 接收一個 `emit` 參數，把 message 放到 channel 上 the channel
   return eventChannel((emit) => {
@@ -25,14 +25,4 @@ function createSocketChannel(socket) {
     };
     return unsubscribe;
   });
-}
-
-export default function* watchOnPings() {
-  const socket = yield call(createWebSocketConnection);
-  yield put({ type: 'INIT_DONE' });
-  const socketChannel = yield call(createSocketChannel, socket);
-  while (true) {
-    const action = yield take(socketChannel);
-    yield put(action);
-  }
 }
