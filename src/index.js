@@ -5,7 +5,8 @@ import { applyMiddleware, compose, createStore } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import './index.css';
 import App from './App';
-import { watcherSaga } from './sagas';
+// import { watcherSaga } from './sagas';
+import websocketSaga from './sagas/websocketSaga';
 import { reducer } from './redux';
 
 // create the saga middleware
@@ -18,7 +19,7 @@ const store = createStore(
 );
 
 // run the saga
-sagaMiddleware.run(watcherSaga);
+sagaMiddleware.run(websocketSaga);
 
 ReactDOM.render(
   <Provider store={store}>

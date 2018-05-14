@@ -1,29 +1,30 @@
 // action types
-const API_CALL_REQUEST = 'API_CALL_REQUEST';
-const API_CALL_SUCCESS = 'API_CALL_SUCCESS';
-const API_CALL_FAILURE = 'API_CALL_FAILURE';
+const INIT = 'INIT';
+const INIT_DONE = 'INIT_DONE';
+const NEXT_PIC = 'NEXT_PIC';
+const INSERT_COMMENT = 'INSERT_COMMENT';
 
 // reducer with initial state
 const initialState = {
-  dog: null,
-  error: null,
-  fetching: false
+  picUrls: [],
+  showPicIndex: 0,
+  initing: true,
+  newComment: null
 };
 
 export function reducer(state = initialState, action) {
   console.log(action);
   switch (action.type) {
-    case API_CALL_REQUEST:
-      return { ...state, fetching: true, error: null };
+    case INIT:
+      return { ...state, initing: true };
       break;
-    case API_CALL_SUCCESS:
-      return { ...state, fetching: false, dog: action.dog };
+    case INIT_DONE:
+      return { ...state, initing: false, ...action.data };
       break;
-    case API_CALL_FAILURE:
-      return {
-        ...state, dog: null, error: action.error, fetching: false
-      };
-      break;
+    case NEXT_PIC:
+      return { ...state, ...action.data };
+    case INSERT_COMMENT:
+      return { ...state, newComment: action.data };
     default:
       return state;
   }
