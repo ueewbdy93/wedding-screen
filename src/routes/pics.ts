@@ -1,18 +1,12 @@
-const router = require('koa-router')();
-const config = require('../config');
 
-router.prefix('/pics');
+import express from 'express';
+const router = express.Router();
+import { config } from '../config';
 
 router.get('/', async (ctx, next) => {
   ctx.body = {
-    pics: config.pic.srcs.filter(p => p.search(/thumbnail/) < 0)
+    pics: config.slide.urls,
   };
 });
 
-router.get('/thumbnails', async (ctx, next) => {
-  ctx.body = {
-    pics: config.pic.srcs.filter(p => p.search(/thumbnail/) >= 0)
-  };
-});
-
-module.exports = router;
+export default router;

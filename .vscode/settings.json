@@ -5,5 +5,12 @@
     "**/.hg": true,
     "**/CVS": true,
     "**/.DS_Store": true,
-  }
+  },
+  "tslint.autoFixOnSave": true,
+  "tslint.enable": true,
+  "eslint.enable": false,
+  "eslint.autoFixOnSave": false,
+  "cSpell.words": [
+    "typesafe"
+  ]
 }

@@ -1,13 +1,9 @@
-const router = require('koa-router')();
+import express from 'express';
+const router = express.Router();
 
-router.prefix('/users');
-
-router.get('/', (ctx, next) => {
-  ctx.body = 'this is a users response!';
+/* GET users listing. */
+router.get('/',  (req, res, next) => {
+  res.send('respond with a resource');
 });
 
-router.get('/bar', (ctx, next) => {
-  ctx.body = 'this is a users/bar response';
-});
-
-module.exports = router;
+export default router;

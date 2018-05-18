@@ -1,69 +1,47 @@
-const Koa = require('koa');
-const views = require('koa-views');
-const json = require('koa-json');
-const onerror = require('koa-onerror');
-const bodyparser = require('koa-bodyparser');
-const logger = require('koa-logger');
-const IO = require('koa-socket');
+import cookieParser from 'cookie-parser';
+import express, {
+  NextFunction,
+  Request,
+  Response,
+} from 'express';
+import httpErrors from 'http-errors';
+import morgan from 'morgan';
+import { join } from 'path';
 
-const socketManager = require('./core/socketmanager');
-const store = require('./core/store');
-const index = require('./routes/index');
-const users = require('./routes/users');
-const pics = require('./routes/pics');
+import index from './routes/index';
+import pics from './routes/pics';
+import users from './routes/users';
 
-const app = new Koa();
+const app = express();
+
+// view engine setup
+app.set('views', join(__dirname, '../views'));
+app.set('view engine', 'ejs');
+
+app.use(morgan('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(join(__dirname, 'public')));
+
+app.use('/', index);
+app.use('/users', users);
+app.use('/pics', pics);
+
+// catch 404 and forward to error handler
+app.use((req, res, next) => {
+  next(httpErrors(404));
+});
+
 // error handler
-onerror(app);
-const io = new IO();
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = app.get('env') === 'development' ? err : {};
 
-io.attach(app);
-app._io.on('connection', (socket) => {
-  socket.on('action', (data) => {
-    switch (data.type) {
-      case 'id':
-        socketManager.addClient(data.id, socket);
-        break;
-      default:
-        store.dispatch(data);
-        break;
-    }
-  });
-});
-store.subscribe(() => {
-
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
 });
 
-
-// middlewares
-app.use(bodyparser({
-  enableTypes: ['json', 'form', 'text']
-}));
-app.use(json());
-app.use(logger());
-app.use(require('koa-static')(`${__dirname}/../public`));
-
-app.use(views(`${__dirname}/../views`, {
-  extension: 'ejs'
-}));
-
-// logger
-app.use(async (ctx, next) => {
-  const start = new Date();
-  await next();
-  const ms = new Date() - start;
-  console.log(`${ctx.method} ${ctx.url} - ${ms}ms`);
-});
-
-// routes
-app.use(index.routes(), index.allowedMethods());
-app.use(users.routes(), users.allowedMethods());
-app.use(pics.routes(), pics.allowedMethods());
-
-
-// error-handling
-app.on('error', (err, ctx) => {
-  console.error('server error', err, ctx);
-});
-
-module.exports = app;
+export default app;

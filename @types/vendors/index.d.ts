@@ -1,0 +1,1 @@
+// add `declare module 'missing-module-name'` here

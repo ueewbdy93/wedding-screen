@@ -14,22 +14,10 @@
         "sourceType": "module"
     },
     "rules": {
-        "no-const-assign": "warn",
-        "no-this-before-super": "warn",
-        "no-undef": "warn",
-        "no-unreachable": "warn",
-        "no-unused-vars": "warn",
-        "constructor-super": "warn",
-        "valid-typeof": "warn",
-        "react/jsx-filename-extension": [
-            1,
-            {
-                "extensions": [
-                    ".js",
-                    ".jsx"
-                ]
-            }
+        "no-unused-variable": [
+            true
         ],
+        "valid-typeof": "warn",
         "comma-dangle": [
             "error",
             {
@@ -39,7 +27,17 @@
                 "exports": "never",
                 "functions": "ignore"
             }
+        ],
+        "ordered-imports": [
+            true,
+            {
+                "import-sources-order": "lowercase-last",
+                "named-imports-order": "lowercase-first"
+            }
         ]
     },
-    "extends": "airbnb"
+    "extends": [
+        "tslint-eslint-rules",
+        "tslint-config-airbnb"
+    ]
 }

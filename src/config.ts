@@ -1,12 +1,20 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import lodash from 'lodash';
+import path from 'path';
 
-const pics = fs.readdirSync(path.resolve(__dirname, '../public/images')).filter(f => f.startsWith('Ali')).map(f => `/images/${f}`);
+const pics = fs.readdirSync(path.resolve(__dirname, '../public/images'))
+  .filter(f => f.indexOf('Ali') === 0)
+  .map(f => `/images/${f}`);
 
-module.exports = {
-  pic: {
+const baseConfig = {
+  slide: {
     interval: 1000,
-    srcs: pics
-  }
+    urls: pics,
+  },
 };
 
+export const config = lodash.merge(baseConfig, {
+  slide: {
+    oneRoundMs: baseConfig.slide.interval * baseConfig.slide.urls.length,
+  },
+});
