@@ -1,21 +1,13 @@
-const store = require('./store');
-const TimerManager = require('./timermanager');
-const Actions = require('./actions');
+// const TimerManager = require('./timermanager');
+// const Actions = require('./actions');
+import { addComment } from './comments/actions';
+import store from './store';
 
 
-const tm = new TimerManager(store);
-tm.start();
+// const tm = new TimerManager(store);
+// tm.start();
 
-store.dispatch({
-  type: Actions.ADD_COMMENT,
-  comment: {
-    name: 'shirley', content: 'hahah', type: '', createTime: new Date()
-  }
-});
+console.log(JSON.stringify(store.getState(), null, 4));
+store.dispatch(addComment('kerker'));
+console.log(JSON.stringify(store.getState(), null, 4));
 
-store.dispatch({
-  type: Actions.ADD_COMMENT,
-  comment: {
-    name: 'shirley', content: 'hahah222', type: '', createTime: new Date()
-  }
-});
