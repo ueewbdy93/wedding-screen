@@ -23,19 +23,17 @@ const clientAddComment = createAction(
 );
 
 function* handleClientCommentSaga(io: SocketIO.Server) {
-  while (true) {
-    const ADD_COMMENT = getType(addComment);
-    yield takeEvery<$Call<typeof clientAddComment>>(CLIENT_ADD_COMMENT, function* (clientAction) {
-      const currentRoundStartOffset = yield select<RootState>(
+  const ADD_COMMENT = getType(addComment);
+  yield takeEvery<$Call<typeof clientAddComment>>(CLIENT_ADD_COMMENT, function* (clientAction) {
+    const currentRoundStartOffset = yield select<RootState>(
         (s) => s.comment.currentRoundStartOffset);
-      const action = addComment(
+    const action = addComment(
         uuid.v1(),
         clientAction.payload.content,
         process.uptime() - currentRoundStartOffset);
-      io.local.emit('SLIDE_CHANGE', { newComment: action.payload }); // broadcast to all client
-      yield put(action);
-    });
-  }
+    io.local.emit('SLIDE_CHANGE', { newComment: action.payload }); // broadcast to all client
+    yield put(action);
+  });
 }
 
 function* commentWorkerSaga() {
@@ -67,7 +65,7 @@ function* slideWorkerSaga(io:SocketIO.Server) {
   while (true) {
     yield delay(config.slide.intervalMs);
     yield put(nextSlide());
-    const currentSlideIndex = select<RootState>((s) => s.slide.index);
+    const currentSlideIndex = yield select<RootState>((s) => s.slide.index);
     io.local.emit('SLIDE_CHANGE', { index: currentSlideIndex });
   }
 }
@@ -167,9 +165,9 @@ const playerAnswer = createAction(
 export default function createRootSaga(io: SocketIO.Server) {
   return function* rootSaga() {
     yield fork(handleClientCommentSaga, io);
-    yield fork(commentWorkerSaga);
+    // yield fork(commentWorkerSaga);
     yield fork(slideWorkerSaga, io);
-    yield fork(gameSaga);
+    // yield fork(gameSaga);
 
     const channel = createChannel(io);
     while (true) {
@@ -180,10 +178,11 @@ export default function createRootSaga(io: SocketIO.Server) {
           const ret = lodash.pick(s, ['mode', 'slide']);
           return ret;
         });
-        socket.emit('action', {
-          type: 'INIT_DONE',
-          payload: subState,
-        });
+        socket.emit('SLIDE_CHANGE', subState.slide);
+        socket.emit('GAME_CHANGE', {});
+        socket.emit('MODE_CHANGE', { mode: subState.mode });
+      } else {
+        yield put({ type, payload });
       }
     }
   };
