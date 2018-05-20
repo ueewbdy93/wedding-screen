@@ -1,6 +1,7 @@
 import errorhandler from 'errorhandler';
-
+import socketIo from 'socket.io';
 import app from './app';
+import { configureStore } from './core/store';
 
 /**
  * Error Handler. Provides full stack - remove for production
@@ -19,5 +20,8 @@ const server = app.listen(app.get('port') || '30087', () => {
   );
   console.log('  Press CTRL-C to stop\n');
 });
+
+const io = socketIo(server);
+configureStore({ io });
 
 export default server;

@@ -1,20 +1,53 @@
 import fs from 'fs';
 import lodash from 'lodash';
 import path from 'path';
+import { Omit } from 'utility-types';
+import uuid from 'uuid';
 
 const pics = fs.readdirSync(path.resolve(__dirname, '../public/images'))
-  .filter(f => f.indexOf('Ali') === 0)
-  .map(f => `/images/${f}`);
+  .filter((f) => f.indexOf('Ali') === 0)
+  .map((f) => `/images/${f}`);
 
 const baseConfig = {
   slide: {
-    interval: 1000,
+    intervalMs: 1000,
     urls: pics,
+  },
+  game: {
+    intervalMs: 10 * 1000,
+    questions: [
+      {
+        text: '2 x 2 = ?',
+        options: [
+          '1',
+          '2',
+          '3',
+          '4',
+        ],
+        answer: '4',
+      },
+    ],
   },
 };
 
+// baseConfig.game.questions = baseConfig.game.questions.map((q) => ({ ...q, id: uuid.v1() }));
 export const config = lodash.merge(baseConfig, {
   slide: {
-    oneRoundMs: baseConfig.slide.interval * baseConfig.slide.urls.length,
+    oneRoundMs: baseConfig.slide.intervalMs * baseConfig.slide.urls.length,
+  },
+  game: {
+    questions: baseConfig.game.questions.map((q) => {
+      const options = q.options.map((o) => ({ id: uuid.v1(), text: o }));
+      const answer = options.find((o) => o.text === q.answer)!;
+      const omitted: Omit<typeof q, 'options' | 'answer'> = lodash.omit(q, ['options', 'answer']);
+
+      return Object.assign(
+        omitted,
+        {
+          answer,
+          options,
+          id: uuid.v1(),
+        });
+    }),
   },
 });

@@ -8,6 +8,6 @@ import store from './store';
 // tm.start();
 
 console.log(JSON.stringify(store.getState(), null, 4));
-store.dispatch(addComment('kerker'));
+store.dispatch(addComment('kerker', 'kerker', 100));
 console.log(JSON.stringify(store.getState(), null, 4));
 
