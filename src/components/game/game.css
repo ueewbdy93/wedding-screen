@@ -1,0 +1,111 @@
+.game-container {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    background-color: whitesmoke;
+}
+
+.game-container * {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.game-container .header {
+    width: 100%;
+    height: 55px;
+}
+
+.game-container .header .title {
+    height: 50px;
+}
+
+.game-container .header .bar {
+    height: 5px;
+    background-color: lightgray;
+}
+
+.game-container .content {
+    position: absolute;
+    top: 55px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    height: auto;
+    width: 100%;
+    padding: 5px 10px;
+}
+
+.game-container .content .question {
+    height: 40%;
+    width: 100%;
+}
+
+.game-container .content .option-block {
+    z-index: 999;
+    position: relative;
+    height: 60%;
+    width: 100%;
+}
+
+.game-container .content .option-block .overlay {
+    z-index: 99999;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+    left: 0px;
+    background-color: #0003;
+}
+
+.game-container .content .option-block .hidden {
+    visibility: hidden;
+}
+
+.game-container .content .option-block button.option {
+    border-radius: 10px;
+    width: 100%;
+    height: 24%;
+    cursor: pointer;
+    /* background-color: lightskyblue; */
+    /* border: 2px dashed gray; */
+}
+
+.game-container .content .option-block button.option:nth-child(1) {
+    background-color: lightcoral;
+}
+
+.game-container .content .option-block button.option:nth-child(1).selected {
+    background: repeating-linear-gradient( 45deg, lightcoral, lightcoral 10px, gray 10px, gray 11px);
+}
+
+.game-container .content .option-block button.option:nth-child(2) {
+    background-color: lightsalmon;
+}
+
+.game-container .content .option-block button.option:nth-child(2).selected {
+    background: repeating-linear-gradient( 45deg, lightsalmon, lightsalmon 10px, gray 10px, gray 11px);
+}
+
+.game-container .content .option-block button.option:nth-child(3) {
+    background-color: skyblue;
+}
+
+.game-container .content .option-block button.option:nth-child(3).selected {
+    background: repeating-linear-gradient( 45deg, skyblue, skyblue 10px, gray 10px, gray 11px);
+}
+
+.game-container .content .option-block button.option:nth-child(4) {
+    background-color: lightgreen;
+}
+
+.game-container .content .option-block button.option:nth-child(4).selected {
+    background: repeating-linear-gradient( 45deg, lightgreen, lightgreen 10px, gray 10px, gray 11px);
+}
