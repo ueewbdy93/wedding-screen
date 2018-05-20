@@ -1,5 +1,6 @@
-import { delay, takeEvery } from 'redux-saga';
-import { call, put, race, select, take } from 'redux-saga/effects';
+import lodash from 'lodash';
+import { delay, eventChannel, takeEvery } from 'redux-saga';
+import { call, fork, put, race, select, take } from 'redux-saga/effects';
 import { createAction, getType } from 'typesafe-actions';
 import uuid from 'uuid';
 import { config } from '../config';
@@ -31,13 +32,13 @@ function* handleClientCommentSaga(io: SocketIO.Server) {
         uuid.v1(),
         clientAction.payload.content,
         process.uptime() - currentRoundStartOffset);
-      io.local.emit(ADD_COMMENT, action); // broadcast to all client
+      io.local.emit('SLIDE_CHANGE', { newComment: action.payload }); // broadcast to all client
       yield put(action);
     });
   }
 }
 
-function* commentWorkerSaga(io: SocketIO.Server) {
+function* commentWorkerSaga() {
   while (true) {
     yield put(setCurrentRoundStartOffset(process.uptime()));
 
@@ -62,10 +63,12 @@ function* commentWorkerSaga(io: SocketIO.Server) {
   }
 }
 
-function* slideWorkerSaga() {
+function* slideWorkerSaga(io:SocketIO.Server) {
   while (true) {
-    yield put(nextSlide());
     yield delay(config.slide.intervalMs);
+    yield put(nextSlide());
+    const currentSlideIndex = select<RootState>((s) => s.slide.index);
+    io.local.emit('SLIDE_CHANGE', { index: currentSlideIndex });
   }
 }
 
@@ -98,7 +101,7 @@ const adminShowScore = createAction(
   }),
 );
 
-function* adminGameSaga() {
+function* gameSaga() {
   while (true) {
     yield put(setQuestionIndex(-1));
     for (let i = 0; i < config.game.questions.length; i += 1) {
@@ -161,11 +164,45 @@ const playerAnswer = createAction(
   }),
 );
 
-export function* rootSaga() {
-  yield 'hello';
+export default function createRootSaga(io: SocketIO.Server) {
+  return function* rootSaga() {
+    yield fork(handleClientCommentSaga, io);
+    yield fork(commentWorkerSaga);
+    yield fork(slideWorkerSaga, io);
+    yield fork(gameSaga);
+
+    const channel = createChannel(io);
+    while (true) {
+      const { type, payload } = yield take(channel);
+      if (type === 'NEW_PLAYER') {
+        const { socket }: { socket: SocketIO.Socket } = payload;
+        const subState = yield select<RootState>((s) => {
+          const ret = lodash.pick(s, ['mode', 'slide']);
+          return ret;
+        });
+        socket.emit('action', {
+          type: 'INIT_DONE',
+          payload: subState,
+        });
+      }
+    }
+  };
 }
 
 
-export default function createRootSaga(io: SocketIO.Server) {
+function createChannel(io: SocketIO.Server) {
+  return eventChannel((emit) => {
+    io.on('connection', (socket) => {
+      emit({ type: 'NEW_PLAYER', payload: { socket } });
 
+      socket.on('action', (action) => {
+        emit(action);
+      });
+    });
+
+    const unsubscribe = () => {
+      io.close();
+    };
+    return unsubscribe;
+  });
 }

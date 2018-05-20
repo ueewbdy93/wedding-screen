@@ -3,7 +3,7 @@ import { applyMiddleware, compose, createStore, Middleware } from 'redux';
 import reduxSaga from 'redux-saga';
 import { Actions as GameActions } from './game';
 import { rootReducer, RootState } from './root-reducer';
-import { rootSaga } from './sagas';
+import { default as createRootSaga } from './sagas';
 
 export function configureStore({
   initialState,
@@ -28,15 +28,16 @@ export function configureStore({
     enhancer,
   );
 
-  sagaMiddleware.run(rootSaga);
+
 
   if (io) {
-    io.on('connection', (socket) => {
-      socket.emit('set_state', store.getState());
-      socket.on('set_name', (name) => {
-        store.dispatch(GameActions.addPlayer(name));
-      });
-    });
+    sagaMiddleware.run(createRootSaga(io));
+    // io.on('connection', (socket) => {
+    //   socket.emit('set_state', store.getState());
+    //   socket.on('set_name', (name) => {
+    //     store.dispatch(GameActions.addPlayer(name));
+    //   });
+    // });
   }
   return store;
 }
