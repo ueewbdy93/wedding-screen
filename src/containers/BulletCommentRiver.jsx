@@ -3,7 +3,8 @@ import React from 'react';
 const STYLE = {
   position: 'absolute',
   left: 'auto',
-  whiteSpace: 'nowrap'
+  whiteSpace: 'nowrap',
+  textShadow: '-1px 0 white, 0 1px white, 1px 0 white, 0 -1px white'
 }
 
 function calculate(candidates) {
@@ -53,7 +54,7 @@ class BulletCommentRiver extends React.Component {
         });
         const comments = [...preState.comments];
         const step = Math.floor(Math.random() * 5) + 1;
-        comments.push({ slot: chooseSlot, offset: 0, comment: nextProps.newComment, step });
+        comments.push({ ...nextProps.newComment, slot: chooseSlot, offset: 0, step });
         return { candidates, comments };
       })
     }
@@ -63,8 +64,10 @@ class BulletCommentRiver extends React.Component {
     return (
       <div style={{ overflow: 'hidden' }}>
         {comments.map((comment, i) => (
-          <span key={comment.comment} style={{ ...STYLE, right: `${comment.offset}px`, top: `${(comment.slot + 1) * 2.5}%` }}>
-            {comment.comment}
+          <span
+            key={comment.id} 
+            style={{ ...STYLE, right: `${comment.offset}px`, top: `${(comment.slot + 1) * 2.5}%` }}>
+            {comment.content}
           </span>
         ))}
       </div>

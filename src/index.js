@@ -1,29 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { applyMiddleware, compose, createStore } from 'redux';
-import createSagaMiddleware from 'redux-saga';
-import './index.css';
-import App from './App';
-// import { watcherSaga } from './sagas';
-import rootSaga from './sagas/rootSaga';
-import { reducer } from './redux';
+import App from './containers/AppContainer';
 
-// create the saga middleware
-const sagaMiddleware = createSagaMiddleware();
+import { configure, history } from './configure-store';
+import { init } from './socket';
 
-// create a redux store with our reducer above and middleware
-const store = createStore(
-  reducer,
-  compose(applyMiddleware(sagaMiddleware))
-);
-
-// run the saga
-sagaMiddleware.run(rootSaga);
+const store = configure();
+init(store);
 
 ReactDOM.render(
   <Provider store={store}>
     <App />
   </Provider>,
-  document.getElementById('root')
+  document.getElementById('root'),
 );

@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { Actions } from '../reducers/slide';
 import CommentInput from './CommentInput';
 import BulletCommentRiver from './BulletCommentRiver';
+
 import './slide.css';
+
 
 const STYLE = {
   position: 'absolute',
@@ -15,13 +19,13 @@ const STYLE = {
   backgroundSize: 'cover'
 }
 
-function PicSlider({ showPicIndex, picUrls }) {
+function PicSlider({ index, pictures }) {
   return (
     <div>{
-      picUrls.map((url, i) => {
-        if ((i + 1) % picUrls.length === showPicIndex) {
+      pictures.map((url, i) => {
+        if ((i + 1) % pictures.length === index) {
           return <div key={i} className="hidden" style={{ ...STYLE, backgroundImage: `url("${url}")` }}></div>
-        } else if (i === showPicIndex) {
+        } else if (i === index) {
           return <div key={i} className="visible" style={{ ...STYLE, backgroundImage: `url("${url}")` }}></div>
         }
         return <div key={i} className="hidden" style={{ ...STYLE, backgroundImage: `url("${url}")` }}></div>
@@ -32,13 +36,12 @@ function PicSlider({ showPicIndex, picUrls }) {
 
 class Slide extends Component {
   render() {
-    const { initing, showPicIndex, picUrls, insertComment, newComment } = this.props;
+    const { index, pictures, addComment, newComment } = this.props;
     return (
       <div>
-        {initing && <span>initing</span>}
-        {!initing && <PicSlider showPicIndex={showPicIndex} picUrls={picUrls} />}
+        <PicSlider index={index} pictures={pictures} />
         <BulletCommentRiver newComment={newComment} />
-        <CommentInput insertComment={insertComment} />
+        <CommentInput addComment={addComment} />
       </div>
     );
   }
@@ -46,17 +49,15 @@ class Slide extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    picUrls: state.picUrls,
-    showPicIndex: state.showPicIndex,
-    initing: state.initing,
-    newComment: state.newComment
+    pictures: state.slide.pictures,
+    index: state.slide.index,
+    newComment: state.slide.newComment
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    insertComment: (comment) => dispatch({ type: 'SEND_TO_SERVER', data: { type: 'NEW_COMMENT', data: comment } })
-    // onRequestDog: () => dispatch({ type: "API_CALL_REQUEST" })
+    addComment: bindActionCreators(Actions.addComment, dispatch)
   };
 };
 

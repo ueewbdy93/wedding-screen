@@ -25,9 +25,9 @@ class CommentInput extends React.Component {
   onSubmit(e) {
     e.preventDefault();
     const { comment } = this.state;
-    const { insertComment } = this.props;
+    const { addComment } = this.props;
     if (comment) {
-      insertComment(comment);
+      addComment(comment);
       this.setState({ comment: '' });
     }
   }
