@@ -1,14 +1,14 @@
-import { $Call } from 'utility-types';
-import { addComment, removeComments } from './actions';
+import { addComment, removeComments, setCurrentRoundStartOffset } from './actions';
 
 export type ActionTypes = $Call<
   typeof addComment |
-  typeof removeComments
+  typeof removeComments |
+  typeof setCurrentRoundStartOffset
 >;
 
 
 export interface Comment {
   id: string;
-  timestamp: Date;
+  offsetSec: number;
   content: string;
 }

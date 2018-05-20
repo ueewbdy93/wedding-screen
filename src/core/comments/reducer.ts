@@ -1,23 +1,29 @@
+import lodash from 'lodash';
 import { combineReducers } from 'redux';
 import { getType } from 'typesafe-actions';
-import { addComment, removeComments } from './actions';
+import { addComment, removeComments, setCurrentRoundStartOffset } from './actions';
 import { ActionTypes, Comment } from './types';
 
 export type CommentState = {
   readonly comments: ReadonlyArray<Comment>,
+  readonly currentRoundStartOffset: number,
 };
 
 export const commentsReducer = combineReducers<CommentState, ActionTypes>({
   comments: (state = [], action) => {
     switch (action.type) {
       case getType(addComment):
-        return state.concat({
-          id: '0',
-          timestamp: new Date(),
-          content: action.payload.comment,
-        });
+        return state.concat(action.payload);
       case getType(removeComments):
         return [];
+      default:
+        return state;
+    }
+  },
+  currentRoundStartOffset: (state = 0, action) => {
+    switch (action.type) {
+      case getType(setCurrentRoundStartOffset):
+        return action.payload.offset;
       default:
         return state;
     }
