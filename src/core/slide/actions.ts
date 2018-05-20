@@ -6,6 +6,5 @@ export const nextSlide = createAction(
   NEXT_SLIDE,
   () => ({
     type: NEXT_SLIDE,
-    payload: {},
   }),
 );

@@ -34,7 +34,8 @@
                 "import-sources-order": "lowercase-last",
                 "named-imports-order": "lowercase-first"
             }
-        ]
+        ],
+        "ter-arrow-parens": [true, "always"]
     },
     "extends": [
         "tslint-eslint-rules",
