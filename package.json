@@ -6,11 +6,16 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "storybook": "start-storybook -p 9009 -s public",
+    "build-storybook": "build-storybook -s public"
   },
   "proxy": {
+    "/images/.*.jpg": {
+      "target": "http://localhost:5566"
+    },
     "/socket": {
-      "target": "ws://localhost:3001",
+      "target": "ws://localhost:5566",
       "ws": true
     }
   },
@@ -19,13 +24,22 @@
     "react-dom": "^16.3.2",
     "react-redux": "^5.0.7",
     "react-scripts": "1.1.4",
+    "react-transition-group": "^2.3.1",
     "redux": "^4.0.0",
+    "redux-logger": "^3.0.6",
     "redux-saga": "^0.16.0",
+    "redux-thunk": "^2.2.0",
     "socket.io-client": "^2.1.0"
   },
   "devDependencies": {
+    "@storybook/addon-actions": "^3.4.4",
+    "@storybook/addon-links": "^3.4.4",
+    "@storybook/addons": "^3.4.4",
+    "@storybook/react": "^3.4.4",
     "axios": "^0.18.0",
+    "babel-core": "^6.26.3",
     "express": "^4.16.3",
+    "faker": "^4.1.0",
     "socket.io": "^2.1.0"
   }
 }
