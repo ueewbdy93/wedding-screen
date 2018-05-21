@@ -11,7 +11,7 @@ app.use(errorhandler());
 /**
  * Start Express server.
  */
-const server = app.listen(app.get('port') || '30087', () => {
+const server = app.listen(Number.parseInt(app.get('port') || '5566', 10), () => {
   const { port } = server.address();
   console.log(
     '  App is running at http://localhost:%d in %s mode',
