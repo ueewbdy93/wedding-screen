@@ -1,6 +1,8 @@
 import React from 'react';
 import { Transition } from 'react-transition-group';
 
+const MAX_DURATION = 94; // second
+
 const defaultStyle = {
   position: 'absolute',
   right: '0px',
@@ -68,8 +70,8 @@ class BulletCommentRiver extends React.Component {
           return v + 1;
         });
         const now = Date.now();
-        const comments = preState.comments.filter(({ createAt }) => now - createAt < 80000);
-        const duration = Math.max(-10, Math.floor(nextProps.newComment.content.length / -5)) * 5 + 80;
+        const comments = preState.comments.filter(({ createAt }) => now - createAt < MAX_DURATION * 1000);
+        const duration = MAX_DURATION - Math.min(64, nextProps.newComment.content.length);
         comments.push({
           ...nextProps.newComment,
           duration,
