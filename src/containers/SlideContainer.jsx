@@ -15,8 +15,8 @@ const STYLE = {
   width: '100%',
   /* Center and scale the image nicely */
   backgroundPosition: 'center',
-  backgroundRepeat: 'no-repeat',
-  backgroundSize: 'cover'
+  backgroundRepeat: 'repeat',
+  backgroundSize: 'auto 100%'
 }
 
 function PicSlider({ index, pictures }) {
