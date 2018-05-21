@@ -18,16 +18,17 @@ class CommentInput extends React.Component {
   }
   onChange(e) {
     if (e && e.target) {
-      const { value = '' } = e.target;
-      this.setState({ comment: value.trim() });
+      const { value } = e.target;
+      this.setState({ comment: value || '' });
     }
   }
   onSubmit(e) {
     e.preventDefault();
     const { comment } = this.state;
     const { addComment } = this.props;
-    if (comment) {
-      addComment(comment);
+    const timedComment = comment.trim();
+    if (timedComment) {
+      addComment(timedComment);
       this.setState({ comment: '' });
     }
   }
@@ -36,7 +37,7 @@ class CommentInput extends React.Component {
     return (
       <div style={STYLE}>
         <form onSubmit={this.onSubmit}>
-          <input type="text" value={comment} onChange={this.onChange} />
+          <input maxlength="64" type="text" value={comment} onChange={this.onChange} />
         </form>
       </div>
     )
