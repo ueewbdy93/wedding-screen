@@ -8,7 +8,9 @@ import { addComment, removeComments, setCurrentRoundStartOffset } from './commen
 import { Comment } from './comments/types';
 import { nextQuestion, setQuestionIndex, setStage, updatePlayerScore } from './game/actions';
 import { Player, Question, Stage } from './game/types';
+import { setMode } from './root-action';
 import { RootState } from './root-reducer';
+import { Mode } from './root-types';
 import { nextSlide } from './slide/actions';
 
 const CLIENT_ADD_COMMENT = '@@CLIENT_ADD_COMMENT';
@@ -26,11 +28,11 @@ function* handleClientCommentSaga(io: SocketIO.Server) {
   const ADD_COMMENT = getType(addComment);
   yield takeEvery<$Call<typeof clientAddComment>>(CLIENT_ADD_COMMENT, function* (clientAction) {
     const currentRoundStartOffset = yield select<RootState>(
-        (s) => s.comment.currentRoundStartOffset);
+      (s) => s.comment.currentRoundStartOffset);
     const action = addComment(
-        uuid.v1(),
-        clientAction.payload.content,
-        process.uptime() - currentRoundStartOffset);
+      uuid.v1(),
+      clientAction.payload.content,
+      process.uptime() - currentRoundStartOffset);
     io.local.emit('SLIDE_CHANGE', { newComment: action.payload }); // broadcast to all client
     yield put(action);
   });
@@ -61,7 +63,7 @@ function* commentWorkerSaga() {
   }
 }
 
-function* slideWorkerSaga(io:SocketIO.Server) {
+function* slideWorkerSaga(io: SocketIO.Server) {
   while (true) {
     yield delay(config.slide.intervalMs);
     yield put(nextSlide());
@@ -69,6 +71,14 @@ function* slideWorkerSaga(io:SocketIO.Server) {
     io.local.emit('SLIDE_CHANGE', { index: currentSlideIndex });
   }
 }
+
+const ADMIN_CHANGE_MODE = '@@ADMIN_CHANGE_MODE';
+const adminChangeMode = createAction(
+  ADMIN_CHANGE_MODE,
+  () => ({
+    type: ADMIN_CHANGE_MODE,
+  }),
+);
 
 const ADMIN_NEXT_QUESTION = '@@ADMIN_START_QUESTION';
 const adminNextQuestion = createAction(
@@ -99,54 +109,99 @@ const adminShowScore = createAction(
   }),
 );
 
-function* gameSaga() {
-  while (true) {
-    yield put(setQuestionIndex(-1));
-    for (let i = 0; i < config.game.questions.length; i += 1) {
-      yield take(getType(adminNextQuestion));
-      yield put(nextQuestion());
-      yield put(setStage(Stage.START_QUESTION));
+function* gameRound(io: SocketIO.Server) {
+  for (let i = 0; i < config.game.questions.length; i += 1) {
+    yield take(getType(adminNextQuestion));
+    yield put(nextQuestion());
+    yield put(setStage(Stage.START_QUESTION));
 
-      yield take(getType(adminStartAnswer));
-      yield put(setStage(Stage.START_ANSWER));
+    const { questions, questionIndex } = yield select<RootState>((s) => s.game);
+    io.local.emit('GAME_CHANGE', {
+      stage: Stage.START_QUESTION,
+      question: {
+        text: questions[questionIndex].text,
+        id: questions[questionIndex].id,
+      },
+    });
 
-      const startTime = process.uptime();
-      const { timeout, forceTimeout, answer } = yield race({
-        timeout: delay(config.game.intervalMs),
-        forceTimeout: take(getType(adminRevealAnswer)),
-        playerAnswer: call(function* () {
-          while (true) {
-            const action: $Call<typeof playerAnswer> = yield take(getType(playerAnswer));
+    yield take(getType(adminStartAnswer));
+    yield put(setStage(Stage.START_ANSWER));
 
-            const { playerID, answerID } = action.payload;
-            // add score for player
+    io.local.emit('GAME_CHANGE', {
+      stage: Stage.START_ANSWER,
+      options: questions[questionIndex].options,
+    });
 
-            const { player, question }: { player?: Player, question: Question }
-              = yield select<RootState>((s) => {
-                const player = s.game.players.find((p) => p.id === playerID);
-                const question = s.game.questions[s.game.questionIndex];
-                return { player, question };
-              });
+    const startTime = process.uptime();
+    const { timeout, forceTimeout, answer } = yield race({
+      timeout: delay(config.game.intervalMs),
+      forceTimeout: take(getType(adminRevealAnswer)),
+      playerAnswer: call(function* () {
+        while (true) {
+          const action: $Call<typeof playerAnswer> = yield take(getType(playerAnswer));
 
-            if (player === undefined) {
-              continue;
-            }
+          const { playerID, answerID } = action.payload;
+          // add score for player
 
-            let score = player.score;
-            if (answerID === question.answer.id) {
-              score += config.game.intervalMs - (process.uptime() - startTime) * 1000;
-            }
+          const { player, question }: { player?: Player, question: Question }
+            = yield select<RootState>((s) => {
+              const player = s.game.players.find((p) => p.id === playerID);
+              const question = s.game.questions[s.game.questionIndex];
+              return { player, question };
+            });
 
-            yield put(updatePlayerScore(player.id, score));
+          if (player === undefined) {
+            continue;
           }
-        }),
-      });
 
-      yield put(setStage(Stage.REVEAL_ANSWER));
+          let score = player.score;
+          if (answerID === question.answer.id) {
+            score += config.game.intervalMs - (process.uptime() - startTime) * 1000;
+          }
 
-      yield take(getType(adminShowScore));
-      yield put(setStage(Stage.SCORE));
-    }
+          yield put(updatePlayerScore(player.id, score));
+        }
+      }),
+    });
+
+    yield put(setStage(Stage.REVEAL_ANSWER));
+
+    io.local.emit('GAME_CHANGE', {
+      stage: Stage.REVEAL_ANSWER,
+      answer: questions[questionIndex].answer,
+    });
+
+    yield take(getType(adminShowScore));
+    yield put(setStage(Stage.SCORE));
+
+    const { rank } = yield select<RootState>((s) => s.game);
+    io.local.emit('GAME_CHANGE', {
+      rank,
+      stage: Stage.SCORE,
+    });
+  }
+
+  const { rank } = yield select<RootState>((s) => s.game);
+  yield put(setStage(Stage.FINAL));
+  io.local.emit('GAME_CHANGE', {
+    rank,
+    stage: Stage.FINAL,
+  });
+}
+
+function* gameSaga(io: SocketIO.Server) {
+  while (true) {
+    yield take(getType(adminChangeMode));
+    yield put(setMode(Mode.Game));
+    yield put(setQuestionIndex(-1));
+    io.local.emit('GAME_CHANGE', { stage: Stage.JOIN });
+    io.local.emit('MODE_CHANGE', { mode: Mode.Game });
+    yield race({
+      changeMode: take(getType(adminChangeMode)),
+      game: call(gameRound, io),
+    });
+    yield put(setMode(Mode.Slide));
+    io.local.emit('MODE_CHANGE', { mode: Mode.Slide });
   }
 }
 
@@ -165,9 +220,9 @@ const playerAnswer = createAction(
 export default function createRootSaga(io: SocketIO.Server) {
   return function* rootSaga() {
     yield fork(handleClientCommentSaga, io);
-    // yield fork(commentWorkerSaga);
+    yield fork(commentWorkerSaga);
     yield fork(slideWorkerSaga, io);
-    // yield fork(gameSaga);
+    yield fork(gameSaga, io);
 
     const channel = createChannel(io);
     while (true) {
@@ -175,10 +230,11 @@ export default function createRootSaga(io: SocketIO.Server) {
       if (type === 'NEW_PLAYER') {
         const { socket }: { socket: SocketIO.Socket } = payload;
         const subState = yield select<RootState>((s) => {
-          const ret = lodash.pick(s, ['mode', 'slide']);
+          const ret = lodash.pick(s, ['mode', 'slide', 'game']);
           return ret;
         });
         socket.emit('SLIDE_CHANGE', subState.slide);
+        const { questions, questionIndex } = subState.game;
         socket.emit('GAME_CHANGE', {});
         socket.emit('MODE_CHANGE', { mode: subState.mode });
       } else {
