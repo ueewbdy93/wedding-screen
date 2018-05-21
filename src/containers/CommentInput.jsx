@@ -37,7 +37,7 @@ class CommentInput extends React.Component {
     return (
       <div style={STYLE}>
         <form onSubmit={this.onSubmit}>
-          <input maxlength="64" type="text" value={comment} onChange={this.onChange} />
+          <input maxLength="64" type="text" value={comment} onChange={this.onChange} />
         </form>
       </div>
     )
