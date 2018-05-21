@@ -12,5 +12,6 @@
   "eslint.autoFixOnSave": false,
   "cSpell.words": [
     "typesafe"
-  ]
+  ],
+  "editor.tabSize": 2
 }
