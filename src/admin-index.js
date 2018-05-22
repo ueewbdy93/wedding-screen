@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import App from './containers/AppContainer';
+import AdmContainer from './containers/AdmContainer';
 
-import { configure, history } from './configure-store';
+import { configure } from './admin-configure-store';
 import { init } from './socket';
 
 const store = configure();
@@ -11,7 +11,7 @@ init(store);
 
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    <AdmContainer />
   </Provider>,
   document.getElementById('root'),
 );
