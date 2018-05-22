@@ -9,7 +9,8 @@ function init(reduxStore) {
   [
     'MODE_CHANGE',
     'SLIDE_CHANGE',
-    'GAME_CHANGE'
+    'GAME_CHANGE',
+    'ADMIN_CHANGE'
   ].map(event => {
     socket.on(event, (payload) => store.dispatch({ type: event, payload }))
   });
@@ -23,16 +24,23 @@ function init(reduxStore) {
   });
 }
 
-function emit(action, cb) {
+function _emit(eventName, payload, cb) {
   if (socket === null) {
     throw new Error('socket is null');
   }
-  store.dispatch({ type: action.type });
   if (cb) {
-    socket.emit('action', action, cb);
+    socket.emit(eventName, payload, cb);
   } else {
-    socket.emit('action', action);
+    socket.emit(eventName, payload);
   }
 }
 
-export { init, emit };
+function emit(action, cb) {
+  _emit('action', action, cb);
+}
+
+function adminEmit(action, cb) {
+  _emit('admin', action, cb);
+}
+
+export { init, emit, adminEmit };
