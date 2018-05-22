@@ -1,4 +1,5 @@
 import React from 'react';
+import Login from './login';
 
 const STAGE_JOIN = 0;
 const STAGE_START_QUESTION = 1;
@@ -20,6 +21,7 @@ function GameAdm(props) {
     revealAnswer,
     showScore
   } = props;
+
   return (
     <div>
       <div>
@@ -56,6 +58,7 @@ function GameAdm(props) {
 
 function Adm(props) {
   const {
+    login,
     mode,
     stage,
     players,
@@ -63,12 +66,16 @@ function Adm(props) {
     options,
     answer,
     rank,
+    adminLogin,
     startQuestion,
     startAnswer,
     revealAnswer,
     showScore,
     changeMode
   } = props;
+  if (!login) {
+    return <Login adminLogin={adminLogin} />;
+  }
   return (
     <div>
       {mode === 1 && <button onClick={() => changeMode(0)}>切換到遊戲</button>}
