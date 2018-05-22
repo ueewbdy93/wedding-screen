@@ -9,6 +9,9 @@ const pics = fs.readdirSync(path.resolve(__dirname, '../public/images'))
   .map((f) => `/images/${f}`);
 
 const baseConfig = {
+  admin: {
+    password: 'happy',
+  },
   slide: {
     intervalMs: 1000,
     urls: pics,

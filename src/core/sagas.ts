@@ -253,6 +253,14 @@ function createChannel(io: SocketIO.Server) {
       socket.on('action', (action) => {
         emit(action);
       });
+
+      socket.on('admin', (action) => {
+        const { password, type, payload } = action;
+        socket.emit('ADMIN_CHANGE', { login: password === config.admin.password });
+        if (type !== '@@ADMIN_LOGIN') {
+          emit({ type, payload });
+        }
+      });
     });
 
     const unsubscribe = () => {
