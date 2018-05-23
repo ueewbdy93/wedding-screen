@@ -2,23 +2,42 @@ import lodash from 'lodash';
 import { combineReducers } from 'redux';
 import { getType } from 'typesafe-actions';
 import { config } from '../../config';
-import { addPlayer, nextQuestion, setQuestionIndex, setStage, updatePlayerScore } from './actions';
-import { ActionTypes, GameState, Stage } from './types';
+import {
+  addPlayer,
+  nextQuestion,
+  resetPlayerAnswers,
+  setQuestionIndex,
+  setRank,
+  setStage,
+  updatePlayerScore,
+  updatePlayerSelectedOption,
+} from './actions';
+import { ActionTypes, GameState, PlayerAnswer, PlayerAnswers, Stage } from './types';
 
 export const gameReducer = combineReducers<GameState, ActionTypes>({
+  selectedOption: (state = Array(config.game.questions.length).fill({}), action) => {
+    switch (action.type) {
+      case getType(resetPlayerAnswers):
+        return Array(config.game.questions.length).fill({});
+      case getType(updatePlayerSelectedOption): {
+        const { questionIndex, playerID } = action.payload;
+        const playerAnswers = state[questionIndex];
+        return [
+          ...state.slice(0, questionIndex),
+          { ...playerAnswers, [playerID]: action.payload },
+          ...state.slice(questionIndex + 1),
+        ];
+      }
+      default:
+        return state;
+    }
+  },
   players: (state = [], action) => {
     switch (action.type) {
       case getType(addPlayer):
         return state.concat(action.payload);
-      case getType(updatePlayerScore): {
-        const playerIndex = state.findIndex((p) => p.id === action.payload.playerID);
-        if (playerIndex !== -1) {
-          const player = { ...state[playerIndex] };
-          player.score = action.payload.score;
-          return [...state.slice(0, playerIndex), player, ...state.slice(playerIndex + 1)];
-        }
-        return state;
-      }
+      case getType(updatePlayerScore):
+        return action.payload;
       default:
         return state;
     }
@@ -45,6 +64,10 @@ export const gameReducer = combineReducers<GameState, ActionTypes>({
     }
   },
   rank: (state = [], action) => {
+    switch (action.type) {
+      case getType(setRank):
+        return action.payload.rank;
+    }
     return state;
   },
 });

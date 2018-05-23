@@ -1,6 +1,6 @@
 import { createAction } from 'typesafe-actions';
 import uuid from 'uuid';
-import { Stage } from './types';
+import { Player, Stage } from './types';
 
 const NEXT_QUESTION = 'NEXT_QUESTION';
 const SET_QUESTION_INDEX = 'SET_QUESTION_INDEX';
@@ -22,32 +22,58 @@ export const setQuestionIndex = createAction(
   }),
 );
 
-
 const ADD_PLAYER = 'ADD_PLAYER';
 const UPDATE_PLAYER_SCORE = 'UPDATE_PLAYER_SCORE';
 export const addPlayer = createAction(
   ADD_PLAYER,
-  (name) => ({
+  (id, name) => ({
     type: ADD_PLAYER,
     payload: {
       name,
-      id: uuid.v1(),
+      id,
       score: 0,
     },
   }),
 );
 
-export const updatePlayerScore = createAction(
-  UPDATE_PLAYER_SCORE,
-  (playerID: string, score: number) => ({
-    type: UPDATE_PLAYER_SCORE,
-    payload:{
-      playerID,
-      score,
-    },
+const RESET_PLAYER_ANSWERS = 'RESET_PLAYER_ANSWERS';
+export const resetPlayerAnswers = createAction(
+  RESET_PLAYER_ANSWERS,
+  () => ({
+    type: RESET_PLAYER_ANSWERS,
   }),
 );
 
+export const updatePlayerScore = createAction(
+  UPDATE_PLAYER_SCORE,
+  (players: Player[]) => ({
+    type: UPDATE_PLAYER_SCORE,
+    payload: players,
+  }),
+);
+
+const SET_RANK = 'SET_RANK';
+export const setRank = createAction(
+  SET_RANK,
+  (rank: Player[]) => ({
+    type: SET_RANK,
+    payload: { rank },
+  }),
+);
+
+const UPDATE_PLAYER_SELECTED_OPTION = 'UPDATE_PLAYER_SELECTED_OPTION';
+export const updatePlayerSelectedOption = createAction(
+  UPDATE_PLAYER_SELECTED_OPTION,
+  (playerID: string, optionID: string, questionIndex: number, createTime: number) => ({
+    type: UPDATE_PLAYER_SELECTED_OPTION,
+    payload: {
+      playerID,
+      optionID,
+      questionIndex,
+      createTime,
+    },
+  }),
+);
 
 const SET_STAGE = 'SET_STAGE';
 export const setStage = createAction(
