@@ -22,22 +22,33 @@ const transitionStyles = {
   entered: { width: '500%' }
 };
 
-function Comment(props) {
-  const { top, text, duration } = props;
-  return (
-    <Transition in appear timeout={100}>
-      {(state) => (
-        <span style={{
-          ...defaultStyle,
-          ...transitionStyles[state],
-          top,
-          transitionDuration: `${duration}s`
-        }}>
-          {text}
-        </span>
-      )}
-    </Transition>
-  );
+class Comment extends React.Component {
+  constructor(props) {
+    super(props)
+  }
+
+  componentDidMount() {
+    // workaround since _jf can not be solved by webpack externals option
+    global._jf.flush();
+  }
+
+  render() {
+    const { top, text, duration } = this.props;
+    return (
+      <Transition in appear timeout={100}>
+        {(state) => (
+          <span className="setofont" style={{
+            ...defaultStyle,
+            ...transitionStyles[state],
+            top,
+            transitionDuration: `${duration}s`
+          }}>
+            {text}
+          </span>
+        )}
+      </Transition>
+    );
+  }
 }
 
 function calculate(slotWeight) {

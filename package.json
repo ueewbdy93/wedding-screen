@@ -10,7 +10,7 @@
     "build-storybook": "build-storybook -s public"
   },
   "proxy": {
-    "/images/.*.jpg": {
+    "/images/.*": {
       "target": "http://localhost:5566"
     },
     "/socket": {
