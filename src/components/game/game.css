@@ -8,6 +8,13 @@
     left: 0px;
     right: 0px;
     background-color: whitesmoke;
+    font-size: 32px;
+}
+
+@media (max-width: 480px) {
+    .game-container {
+        font-size: 20px;
+    }
 }
 
 .game-container * {
@@ -71,11 +78,19 @@
 
 .game-container .content .option-block button.option {
     border-radius: 10px;
-    width: 100%;
-    height: 24%;
+    width: 50%;
+    height: 50%;
+    float: left;
     cursor: pointer;
-    /* background-color: lightskyblue; */
-    /* border: 2px dashed gray; */
+}
+
+@media (max-width: 480px) {
+    .game-container .content .option-block button.option {
+        border-radius: 10px;
+        width: 100%;
+        height: 24%;
+        cursor: pointer;
+    }
 }
 
 .game-container .content .option-block button.option:nth-child(1) {

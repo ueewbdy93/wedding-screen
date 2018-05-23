@@ -1,7 +1,5 @@
 import React from 'react';
-import { Container, Header, Content, OptionBlock, Option, QuestionBlock, OptionBlockOverlay } from './common';
-import CenterText from './centerText';
-import Profile from './profile';
+import { Container, Header, Content } from './common';
 import './score.css';
 
 function score(props) {
@@ -14,6 +12,7 @@ function score(props) {
       <Content>
         <table className="score">
           <tbody>
+            <tr><td><small>名次</small></td><td><small>名字</small></td><td><small>分數</small></td></tr>
             {
               top10.map((playerScore, i) => (
                 <tr key={i} className={i === myRank ? 'me' : ''}>
@@ -23,8 +22,8 @@ function score(props) {
                 </tr>
               ))
             }
-            {myRank > 10 && <tr><td></td><td>...</td><td></td></tr>}
-            {myRank >= 10 && <tr className="me"><td>{myRank + 1}</td><td>{rank[myRank].name}</td><td>{rank[myRank].score}</td></tr>}
+            {myRank > 10 && <tr><td colSpan={3}>...</td></tr>}
+            {myRank >= 10 && <tr className="me"><td>{myRank + 1}</td><td>{player.name}</td><td>{player.score}</td></tr>}
           </tbody>
         </table>
       </Content>

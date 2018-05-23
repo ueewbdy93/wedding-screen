@@ -20,7 +20,7 @@ const defaultStyle = {
 
 const transitionStyles = {
   entering: { width: '0%' },
-  entered: { width: '500%' }
+  entered: { width: '500%' },
 };
 
 class Comment extends React.Component {

@@ -10,7 +10,7 @@ function LockedOption(props) {
       <Option />
       <Option />
       <Option />
-      <OptionBlockOverlay text="Ready?"></OptionBlockOverlay>
+      <OptionBlockOverlay text="準備..."></OptionBlockOverlay>
     </OptionBlock>
   )
 }
@@ -47,11 +47,11 @@ class EnabledOption extends React.Component {
         }
         {
           (selectedOption || locked) &&
-          <OptionBlockOverlay text=""></OptionBlockOverlay>
+          <OptionBlockOverlay text={locked ? '嗶嗶~時間到!' : ''}></OptionBlockOverlay>
         }
         {
-          showOverlay &&
-          <OptionBlockOverlay text="Go!" onEntered={this.onTransitionEntered}></OptionBlockOverlay>
+          (!locked && showOverlay) &&
+          <OptionBlockOverlay text="開始作答!" onEntered={this.onTransitionEntered}></OptionBlockOverlay>
         }
       </OptionBlock >
     )

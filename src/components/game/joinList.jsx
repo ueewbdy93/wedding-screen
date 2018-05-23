@@ -16,7 +16,7 @@ const COLORS = [
 const defaultStyle = {
   float: 'left',
   whiteSpace: 'pre',
-  borderRadius: '12px',
+  borderRadius: '20px',
   color: 'dimgray',
   margin: '2px',
   padding: '2px 10px',
@@ -30,13 +30,14 @@ const transitionStyles = {
 };
 
 function JoinUser({ player }) {
+  const hash = Number.parseInt(player.id.substring(0, 8), 16);
   return (
     <Transition in appear timeout={duration}>
       {(state) => (
         <span style={{
           ...defaultStyle,
           ...transitionStyles[state],
-          backgroundColor: COLORS[player.id % COLORS.length]
+          backgroundColor: COLORS[hash % COLORS.length]
         }}>
           {player.name}
         </span>

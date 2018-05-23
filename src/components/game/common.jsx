@@ -42,36 +42,26 @@ export function Option({ children, isSelect, isAnswer, onClick, disabled }) {
   )
 }
 
-// export function Option({ option, onClick, isAnswer, isSelect }) {
-//   return (
-//     <button
-//       disabled={option.disabled}
-//       className="option"
-//       onClick={onClick.bind(option.id)}>
-//       {`${isAnswer ? '[正解]' : ''} ${isSelect ? '[x]' : '[]'} ${option.text}`}
-//     </button>
-//   )
-// }
-
-
 const duration = 500;
 
 const defaultStyle = {
   width: '100%',
   transition: `opacity ${duration}ms ease-in-out`,
   opacity: 1,
+  fontSize: '40px',
+  textShadow: '-1px 0 whitesmoke, 0 1px whitesmoke, 1px 0 whitesmoke, 0 -1px whitesmoke',
 }
 
 const transitionStyles = {
   entering: { opacity: 0 },
-  entered: { opacity: 1 }
+  entered: { opacity: 1 },
 };
 
 export function OptionBlockOverlay({ text, onEntered }) {
   return (
     <div className="overlay">
       <CenterText>
-        <Transition in appear timeout={duration} onEntered={onEntered}>
+        <Transition in appear timeout={100} onEntered={onEntered}>
           {(state) => (
             <p style={{
               ...defaultStyle,

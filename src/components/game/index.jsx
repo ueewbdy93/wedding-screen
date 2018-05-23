@@ -3,7 +3,6 @@ import NameInput from './nameInput';
 import JoinList from './joinList';
 import QA from './qa';
 import Score from './score';
-import Final from './final';
 import { GameStage } from '../../constants';
 
 class Game extends React.Component {
@@ -57,8 +56,6 @@ class Game extends React.Component {
           answer={answer} />
       case GameStage.SCORE:
         return <Score rank={rank} player={player} />
-      case GameStage.FINAL:
-        return <Final rank={rank} player={player} />;
       default:
         return null;
     }
