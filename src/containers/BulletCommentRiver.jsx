@@ -13,7 +13,8 @@ const defaultStyle = {
   textShadow: '-1px 0 whitesmoke, 0 1px whitesmoke, 1px 0 whitesmoke, 0 -1px whitesmoke',
   textAlign: 'left',
   overflow: 'hidden',
-  color: 'dimgray'
+  color: 'dimgray',
+  fontSize: '32px',
 }
 
 const transitionStyles = {
