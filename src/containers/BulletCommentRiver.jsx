@@ -24,17 +24,12 @@ const transitionStyles = {
 };
 
 class Comment extends React.Component {
-  componentDidMount() {
-    // workaround since _jf can not be solved by webpack externals option
-    global._jf.flush();
-  }
-
   render() {
     const { top, text, duration } = this.props;
     return (
       <Transition in appear timeout={100}>
         {(state) => (
-          <span className="setofont bulletcomment" style={{
+          <span className="bulletcomment" style={{
             ...defaultStyle,
             ...transitionStyles[state],
             top,
