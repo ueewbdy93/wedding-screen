@@ -5,7 +5,8 @@ const STYLE = {
   position: 'absolute',
   bottom: '0px',
   height: '40px',
-  width: '100%'
+  width: '100%',
+  zIndex: 10
 }
 
 const INPUT_STYLE = {

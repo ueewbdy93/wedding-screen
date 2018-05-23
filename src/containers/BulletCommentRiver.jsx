@@ -15,6 +15,7 @@ const defaultStyle = {
   overflow: 'hidden',
   color: 'dimgray',
   fontSize: '32px',
+  zIndex: 100,
 }
 
 const transitionStyles = {
