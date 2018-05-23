@@ -6,7 +6,6 @@ const STAGE_START_QUESTION = 1;
 const STAGE_START_ANSWER = 2;
 const STAGE_REVEAL_ANSWER = 3;
 const STAGE_SCORE = 4;
-const STAGE_FINAL = 5;
 
 function GameAdm(props) {
   const {
@@ -15,7 +14,6 @@ function GameAdm(props) {
     question,
     options,
     answer,
-    rank,
     startQuestion,
     startAnswer,
     revealAnswer,
