@@ -17,6 +17,7 @@ import {
   updatePlayerSelectedOption,
 } from './game/actions';
 import { Player, PlayerAnswers, Question, Stage } from './game/types';
+import  logger  from './logger';
 import { setMode } from './root-action';
 import { RootState } from './root-reducer';
 import { Mode } from './root-types';
@@ -383,6 +384,9 @@ function createChannel(io: SocketIO.Server) {
       emit({ socket, type: 'NEW_PLAYER' });
 
       socket.on('action', (action) => {
+        if (action.type === CLIENT_ADD_COMMENT) {
+          logger.info('client add comment', action.payload.content);
+        }
         emit({ ...action, socket });
       });
 
