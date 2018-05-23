@@ -1,4 +1,5 @@
 import io from 'socket.io-client';
+import Cookies from 'js-cookie';
 
 let socket = null;
 let store = null;
@@ -11,17 +12,23 @@ function init(reduxStore) {
     'SLIDE_CHANGE',
     'GAME_CHANGE',
     'ADMIN_CHANGE'
-  ].map(event => {
+  ].forEach(event => {
     socket.on(event, (payload) => store.dispatch({ type: event, payload }))
   });
 
   [
     'disconnect',
     'connect_failed',
-    'connect',
   ].forEach((event) => {
     socket.on(event, () => console.log(`websocket ${event}`));
   });
+
+  socket.on('connect', () => {
+    const player = Cookies.getJSON('player');
+    if (player && player.id) {
+      emit({ type: '@@CLIENT_CHECK_PLAYER', payload: player });
+    }
+  })
 }
 
 function _emit(eventName, payload, cb) {
