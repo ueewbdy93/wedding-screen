@@ -1,6 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import Game from '../components/game';
+import { Actions } from '../reducers/game';
 
 const mapStateToProps = (state) => {
   return {
@@ -9,16 +11,17 @@ const mapStateToProps = (state) => {
     stage: state.game.stage,
     question: state.game.question,
     options: state.game.options,
-    solution: state.game.solution,
-    score: state.game.score
+    answer: state.game.answer,
+    rank: state.game.rank,
+    selectedOption: state.game.selectedOption
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    setName: (name) => dispatch({ type: 'SEND_TO_SERVER', data: { type: 'SET_NAME', data: name } })
-    // addComment: (comment) => dispatch({ type: 'SEND_TO_SERVER', data: { type: 'NEW_COMMENT', data: comment } })
-    // onRequestDog: () => dispatch({ type: "API_CALL_REQUEST" })
+    init: bindActionCreators(Actions.init, dispatch),
+    addPlayer: bindActionCreators(Actions.addPlayer, dispatch),
+    selectOption: bindActionCreators(Actions.selectOption, dispatch)
   };
 };
 

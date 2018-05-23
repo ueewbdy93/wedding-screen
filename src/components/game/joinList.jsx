@@ -29,30 +29,30 @@ const transitionStyles = {
   entered: { opacity: 1 },
 };
 
-function JoinUser({ user }) {
+function JoinUser({ player }) {
   return (
     <Transition in appear timeout={duration}>
       {(state) => (
         <span style={{
           ...defaultStyle,
           ...transitionStyles[state],
-          backgroundColor: COLORS[user.id % COLORS.length]
+          backgroundColor: COLORS[player.id % COLORS.length]
         }}>
-          {user.name}
+          {player.name}
         </span>
       )}
     </Transition>
   );
 }
 
-function JoinList({ users }) {
+function JoinList({ players, player }) {
   return (
     <Container>
       <Header title="等待其它人加入"></Header>
       <Content>
         <div style={{ height: '100%', overflowY: 'scroll' }}>
-          <small>人數: {users.length}</small><br />
-          {users.map(user => <JoinUser key={user.id} user={user} />)}
+          <small>人數: {players.length}</small><br />
+          {players.map(player => <JoinUser key={player.id} player={player} />)}
         </div>
       </Content>
     </Container>

@@ -6,32 +6,38 @@ class NameInput extends React.Component {
     super(props);
     this.state = {
       name: '',
-      enableSubmit: false
+      disabledSubmit: true
     }
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
   }
   onChange(e) {
     if (e && e.target) {
-      const { value = '' } = e.target;
-      this.setState({ name: value, enableSubmit: value.trim() !== '' });
+      const { value } = e.target;
+      this.setState({
+        name: value || '',
+        disabledSubmit: !(value && value.trim())
+      });
     }
   }
   onSubmit(e) {
     e.preventDefault();
-    this.setState({ name: '', enableSubmit: false }, () => {
-      this.props.onSubmit(this.state.name.trim());
-    })
+    const { name, disabledSubmit } = this.state;
+    const { addPlayer } = this.props;
+    if (!disabledSubmit) {
+      addPlayer(name);
+      this.setState({ name: '', disabledSubmit: true });
+    }
   }
   render() {
-    const { name, enableSubmit } = this.state;
+    const { name, disabledSubmit } = this.state;
     return (
       <Container>
         <Header title="請輸入名字"></Header>
         <Content>
           <form>
-            <input type="text" value={name} onChange={this.onChange} />
-            <button onClick={this.onSubmit} disabled={!enableSubmit}>OK</button>
+            <input maxLength="10" type="text" value={name} onChange={this.onChange} />
+            <button onClick={this.onSubmit} disabled={disabledSubmit}>OK</button>
           </form>
         </Content>
       </Container>

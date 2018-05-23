@@ -30,9 +30,10 @@ export function OptionBlock({ children }) {
   return (<div className="option-block">{children}</div>);
 }
 
-export function Option({ children, isSelect, isAnswer, onClick }) {
+export function Option({ children, isSelect, isAnswer, onClick, disabled }) {
   return (
     <button
+      disabled={disabled}
       onClick={onClick}
       className={isSelect ? 'selected option' : 'option'}>
       {isAnswer && <i className="fas fa-check" style={{ marginRight: '5px' }}></i>}

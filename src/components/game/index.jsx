@@ -4,36 +4,64 @@ import JoinList from './joinList';
 import QA from './qa';
 import Score from './score';
 import Final from './final';
+import { GameStage } from '../../constants';
 
-function Game(props) {
-  const {
-    stage,
-    player,
-    players,
-    question,
-    options,
-    solution,
-    rank,
-    onOptionSelect,
-    addPlayer
-  } = props;
-  switch (stage) {
-    case 'JOIN':
-      return player ?
-        <NameInput addPlayer={addPlayer} /> :
-        <JoinList players={players} player={player} />;
-    case 'START_QUESTION':
-      return <QA rank={rank} player={player} stage={stage} question={question} options={options} />
-    case 'START_ANSWER':
-      return <QA rank={rank} player={player} stage={stage} question={question} options={options} onOptionSelect={onOptionSelect} />
-    case 'REVEAL_ANSWER':
-      return <QA rank={rank} player={player} stage={stage} question={question} options={options} answer={solution} />
-    case 'SCORE':
-      return <Score rank={rank} player={player} />
-    case 'FINAL':
-      return <Final rank={rank} player={player} />;
-    default:
-      return null;
+class Game extends React.Component {
+  componentDidMount() {
+    const { init } = this.props;
+    init();
+  }
+  render() {
+    const {
+      stage,
+      player,
+      players,
+      question,
+      options,
+      answer,
+      rank,
+      selectedOption,
+      selectOption,
+      addPlayer
+    } = this.props;
+    if (player === null) {
+      return <NameInput addPlayer={addPlayer} />;
+    }
+    switch (stage) {
+      case GameStage.JOIN:
+        return <JoinList players={players} player={player} />;
+      case GameStage.START_QUESTION:
+        return <QA
+          rank={rank}
+          player={player}
+          stage={stage}
+          question={question}
+          options={options} />
+      case GameStage.START_ANSWER:
+        return <QA
+          rank={rank}
+          player={player}
+          stage={stage}
+          question={question}
+          options={options}
+          selectedOption={selectedOption}
+          selectOption={selectOption} />
+      case GameStage.REVEAL_ANSWER:
+        return <QA
+          rank={rank}
+          player={player}
+          stage={stage}
+          question={question}
+          options={options}
+          selectedOption={selectedOption}
+          answer={answer} />
+      case GameStage.SCORE:
+        return <Score rank={rank} player={player} />
+      case GameStage.FINAL:
+        return <Final rank={rank} player={player} />;
+      default:
+        return null;
+    }
   }
 }
 

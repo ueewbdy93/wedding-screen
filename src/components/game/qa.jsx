@@ -1,7 +1,7 @@
 import React from 'react';
-import Transition from 'react-transition-group/Transition';
 import { Container, Header, Content, OptionBlock, Option, QuestionBlock, OptionBlockOverlay } from './common';
 import Profile from './profile';
+import { GameStage } from '../../constants';
 
 function LockedOption(props) {
   return (
@@ -30,7 +30,7 @@ class EnabledOption extends React.Component {
   }
   render() {
     const { showOverlay } = this.state;
-    const { selectOption, onOptionSelect, options, answer, locked } = this.props;
+    const { selectedOption, selectOption, options, answer, locked } = this.props;
     return (
       <OptionBlock>
         {
@@ -38,14 +38,15 @@ class EnabledOption extends React.Component {
             <Option
               key={option.id}
               isAnswer={answer && answer.id === option.id}
-              isSelect={selectOption === option.id}
-              onClick={() => onOptionSelect(option.id)}>
+              isSelect={selectedOption === option.id}
+              disabled={locked}
+              onClick={() => selectOption(option.id)}>
               {option.text}
             </Option>
           ))
         }
         {
-          (selectOption || locked) &&
+          (selectedOption || locked) &&
           <OptionBlockOverlay text=""></OptionBlockOverlay>
         }
         {
@@ -61,28 +62,29 @@ class EnabledOption extends React.Component {
 function ShowOptionBlock(props) {
   const {
     stage,
-    selectOption,
+    selectedOption,
     options,
     answer,
-    onOptionSelect,
+    selectOption,
   } = props;
   switch (stage) {
-    case 'START_QUESTION':
+    case GameStage.START_QUESTION:
       return <LockedOption />;
-    case 'START_ANSWER':
+    case GameStage.START_ANSWER:
       return (
         <EnabledOption
           locked={false}
+          selectedOption={selectedOption}
           selectOption={selectOption}
-          onOptionSelect={onOptionSelect}
           options={options} />
       );
-    case 'REVEAL_ANSWER':
+    case GameStage.REVEAL_ANSWER:
       return (
         <EnabledOption
           locked={true}
           answer={answer}
-          selectOption={selectOption}
+          selectOption={() => { }}
+          selectedOption={selectedOption}
           options={options} />
       );
     default:
@@ -96,11 +98,11 @@ class QA extends React.Component {
       stage,
       question,
       options,
-      selectOption,
+      selectedOption,
       answer,
       rank,
       player,
-      onOptionSelect
+      selectOption
     } = this.props;
     return (
       <Container>
@@ -114,8 +116,8 @@ class QA extends React.Component {
             question={question}
             options={options}
             answer={answer}
-            selectOption={selectOption}
-            onOptionSelect={onOptionSelect} />
+            selectedOption={selectedOption}
+            selectOption={selectOption} />
         </Content>
       </Container>
     )

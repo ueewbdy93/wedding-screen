@@ -7,7 +7,12 @@ function profile(props) {
   const myRank = rank.find(entry => entry.id === player.id);
   return (
     <table style={STYLE}>
-      <tbody><tr><td style={{ verticalAlign: 'middle' }}>{player.name} / {myRank.score}</td></tr></tbody>
+      <tbody>
+        <tr>
+          <td style={{ verticalAlign: 'middle' }}>
+            {player.name} / {myRank ? myRank.score : 0}
+          </td>
+        </tr></tbody>
     </table>
   );
 }
