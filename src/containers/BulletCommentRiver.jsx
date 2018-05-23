@@ -59,6 +59,20 @@ class BulletCommentRiver extends React.Component {
       comments: []
     }
   }
+
+  normalizeLength(str) {
+    const l = str.length;
+    let len = 0;
+    for (let i = 0; i < l; i += 1) {
+      let cc = str.charCodeAt(i);
+      while (cc > 0) {
+        len += 1;
+        cc = cc >> 8;
+      }
+    }
+    return len;
+  }
+
   componentWillReceiveProps(nextProps) {
     if (this.props.newComment !== nextProps.newComment && nextProps.newComment) {
       this.setState((preState) => {
@@ -71,7 +85,8 @@ class BulletCommentRiver extends React.Component {
         });
         const now = Date.now();
         const comments = preState.comments.filter(({ createAt }) => now - createAt < MAX_DURATION * 1000);
-        const duration = MAX_DURATION - Math.min(64, nextProps.newComment.content.length);
+
+        const duration = MAX_DURATION - Math.min(64, this.normalizeLength(nextProps.newComment.content) * 4);
         comments.push({
           ...nextProps.newComment,
           duration,

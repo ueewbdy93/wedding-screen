@@ -8,7 +8,7 @@ const initialState = {
 
 export const Actions = {
   changeMode: (mode) => (dispatch) => {
-    dispatch({ type: CHANGE_MODE, data: mode });
+    dispatch({ type: CHANGE_MODE, payload: mode });
   }
 }
 

@@ -1,4 +1,5 @@
 import io from 'socket.io-client';
+import Cookies from 'js-cookie';
 
 let socket = null;
 let store = null;
@@ -9,30 +10,44 @@ function init(reduxStore) {
   [
     'MODE_CHANGE',
     'SLIDE_CHANGE',
-    'GAME_CHANGE'
-  ].map(event => {
+    'GAME_CHANGE',
+    'ADMIN_CHANGE'
+  ].forEach(event => {
     socket.on(event, (payload) => store.dispatch({ type: event, payload }))
   });
 
   [
     'disconnect',
     'connect_failed',
-    'connect',
   ].forEach((event) => {
     socket.on(event, () => console.log(`websocket ${event}`));
   });
+
+  socket.on('connect', () => {
+    const player = Cookies.getJSON('player');
+    if (player && player.id) {
+      emit({ type: '@@CLIENT_CHECK_PLAYER', payload: player });
+    }
+  })
 }
 
-function emit(action, cb) {
+function _emit(eventName, payload, cb) {
   if (socket === null) {
     throw new Error('socket is null');
   }
-  store.dispatch({ type: action.type });
   if (cb) {
-    socket.emit('action', action, cb);
+    socket.emit(eventName, payload, cb);
   } else {
-    socket.emit('action', action);
+    socket.emit(eventName, payload);
   }
 }
 
-export { init, emit };
+function emit(action, cb) {
+  _emit('action', action, cb);
+}
+
+function adminEmit(action, cb) {
+  _emit('admin', action, cb);
+}
+
+export { init, emit, adminEmit };
