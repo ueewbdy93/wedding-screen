@@ -75,7 +75,7 @@ function* commentWorkerSaga() {
     yield put(setCurrentRoundStartOffset(process.uptime()));
 
     const allComment: ReadonlyArray<Comment> = yield select<RootState>((s) => s.comment.comments);
-    if (allComment.length > 0) {
+    if (allComment.length === 0) {
       // delay for next round
       yield delay(config.slide.oneRoundMs);
     } else {
