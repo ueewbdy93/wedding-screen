@@ -5,33 +5,32 @@ import { Actions } from '../reducers/slide';
 import CommentInput from './CommentInput';
 import BulletCommentRiver from './BulletCommentRiver';
 import Header from '../components/common/header';
-
 import './slide.css';
-
-
-const STYLE = {
-  position: 'absolute',
-  top: '0px',
-  bottom: '0px',
-  width: '100%',
-  /* Center and scale the image nicely */
-  backgroundPosition: 'center',
-  backgroundRepeat: 'repeat',
-  backgroundSize: 'auto 100%'
-}
 
 function PicSlider({ index, pictures }) {
   return (
-    <div>{
-      pictures.map((url, i) => {
-        if ((i + 1) % pictures.length === index) {
-          return <div key={i} className="hidden" style={{ ...STYLE, backgroundImage: `url("${url}")` }}></div>
-        } else if (i === index) {
-          return <div key={i} className="visible" style={{ ...STYLE, backgroundImage: `url("${url}")` }}></div>
-        }
-        return <div key={i} className="hidden" style={{ ...STYLE, backgroundImage: `url("${url}")` }}></div>
-      })
-    }</div>
+    <div>
+      {
+        pictures.map((url, i) => {
+          if ((i + 1) % pictures.length === index) {
+            return <div key={i} className="slide-blur hidden" style={{ backgroundImage: `url("${url}")` }}></div>
+          } else if (i === index) {
+            return (<div key={i} className="slide-blur visible" style={{ backgroundImage: `url("${url}")` }}></div>)
+          }
+          return <div key={i} className="slide-blur hidden" style={{ backgroundImage: `url("${url}")` }}></div>
+        })
+      }
+      {
+        pictures.map((url, i) => {
+          if ((i + 1) % pictures.length === index) {
+            return <div key={i} className="slide hidden" style={{ backgroundImage: `url("${url}")` }}></div>
+          } else if (i === index) {
+            return (<div key={i} className="slide visible" style={{ backgroundImage: `url("${url}")` }}></div>)
+          }
+          return <div key={i} className="slide hidden" style={{ backgroundImage: `url("${url}")` }}></div>
+        })
+      }
+    </div>
   )
 }
 

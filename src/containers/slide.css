@@ -6,6 +6,46 @@
 
 .hidden {
     visibility: hidden;
+    display: gone;
     opacity: 0;
     transition: visibility 0s 2s, opacity 2s linear;
- }
+}
+
+.slide {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    width: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: auto 100%;
+    z-index: 2;
+}
+
+.slide-blur {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    width: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    z-index: 1;
+    -webkit-filter: blur(5px);
+    -moz-filter: blur(5px);
+    -o-filter: blur(5px);
+    -ms-filter: blur(5px);
+    filter: blur(5px);
+}
+
+@media (max-width: 480px) {
+    .slide {
+        position: absolute;
+        top: 0px;
+        bottom: 0px;
+        width: 100%;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: contain;
+    }
+}
