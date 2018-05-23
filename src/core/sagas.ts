@@ -149,7 +149,7 @@ function* calculateScoreSaga(io: SocketIO.Server, questionIndex: number, startAn
   }));
 
   const newPlayers: Player[] = players.map((player: Player) => {
-    if (!selectedOption) {
+    if (!selectedOption || selectedOption[player.id]) {
       return player;
     }
     const { optionID, createTime } = selectedOption[player.id];
