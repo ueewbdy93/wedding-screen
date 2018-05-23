@@ -26,6 +26,7 @@
     "uuid": "^3.2.1"
   },
   "devDependencies": {
+    "@types/bunyan": "^1.8.4",
     "@types/cookie-parser": "^1.4.1",
     "@types/errorhandler": "0.0.32",
     "@types/http-errors": "^1.6.1",

@@ -1,8 +1,8 @@
-const bunyan = require('bunyan');
+import bunyan from 'bunyan';
 
-module.exports = bunyan.createLogger({
+export default bunyan.createLogger({
   name: 'logger',
   level: bunyan.DEBUG,
-  src: true
+  src: true,
 });
 
