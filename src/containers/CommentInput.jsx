@@ -16,8 +16,8 @@ const INPUT_STYLE = {
   borderRadius: '20px',
   border: 'none',
   backgroundColor: 'whitesmoke',
-  padding: '2px 10px',
-  fontSize: '26px',
+  padding: '5px 10px',
+  fontSize: '16px',
 }
 
 class CommentInput extends React.Component {
