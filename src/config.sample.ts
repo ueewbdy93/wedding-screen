@@ -5,7 +5,7 @@ import { Omit } from 'utility-types';
 import uuid from 'uuid';
 
 const pics = fs.readdirSync(path.resolve(__dirname, '../public/images'))
-  .filter((f) => f.indexOf('Ali') === 0)
+  .filter((f) => f.indexOf('.jpg') !== -1)
   .map((f) => `/images/${f}`);
 
 const baseConfig = {
@@ -13,7 +13,7 @@ const baseConfig = {
     password: 'happy',
   },
   slide: {
-    intervalMs: 1000,
+    intervalMs: 3000,
     urls: pics,
   },
   game: {

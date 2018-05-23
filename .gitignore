@@ -32,5 +32,7 @@ npm-debug.log
 # for macos
 .DS_Store
 
-public/images/Ali*.jpg
 dist
+
+public/images/**/*.jpg
+public/images/**/*.jpeg
