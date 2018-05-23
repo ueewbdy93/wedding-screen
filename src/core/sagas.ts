@@ -228,8 +228,7 @@ function* gameRound(io: SocketIO.Server) {
       stage: Stage.SCORE,
     });
   }
-
-  yield put(setStage(Stage.FINAL));
+  // yield put(setStage(Stage.FINAL));
 }
 
 function* addPlayerSaga(io: SocketIO.Server) {
@@ -292,6 +291,8 @@ function* checkPlayerSaga() {
         answer: question.answer,
         selectedOption: selectedOptionId,
       });
+    } else {
+      socket.emit('GAME_CHANGE', { player: null });
     }
   });
 }
