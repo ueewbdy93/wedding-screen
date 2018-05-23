@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import { Actions } from '../reducers/slide';
 import CommentInput from './CommentInput';
 import BulletCommentRiver from './BulletCommentRiver';
+import Header from '../components/common/header';
 
 import './slide.css';
 
@@ -39,6 +40,7 @@ class Slide extends Component {
     const { index, pictures, addComment, newComment } = this.props;
     return (
       <div>
+        <Header />
         <PicSlider index={index} pictures={pictures} />
         <BulletCommentRiver newComment={newComment} />
         <CommentInput addComment={addComment} />
