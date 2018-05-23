@@ -149,7 +149,7 @@ function* calculateScoreSaga(io: SocketIO.Server, questionIndex: number, startAn
   }));
 
   const newPlayers: Player[] = players.map((player: Player) => {
-    if (!selectedOption || selectedOption[player.id]) {
+    if (!selectedOption || !selectedOption[player.id]) {
       return player;
     }
     const { optionID, createTime } = selectedOption[player.id];
@@ -302,6 +302,7 @@ function* resetGameSaga(io: SocketIO.Server) {
   ));
   const newPlayers = players.map((player) => ({ ...player, score: 0 }));
   yield put(updatePlayerScore(newPlayers));
+  yield put(setRank(newPlayers.sort((a, b) => b.score - a.score)));
   yield put(resetPlayerAnswers());
   yield put(setQuestionIndex(-1));
   yield put(setStage(Stage.JOIN));
