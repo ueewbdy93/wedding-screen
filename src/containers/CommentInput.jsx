@@ -1,10 +1,22 @@
 import React from 'react';
 
 const STYLE = {
+  textAlign: 'center',
   position: 'absolute',
-  right: '0px',
-  bottom: '10px',
-  height: '20px',
+  bottom: '0px',
+  height: '40px',
+  width: '100%'
+}
+
+const INPUT_STYLE = {
+  boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
+  width: '80%',
+  textAlign: 'center',
+  borderRadius: '20px',
+  border: 'none',
+  backgroundColor: 'whitesmoke',
+  padding: '2px 10px',
+  fontSize: '26px',
 }
 
 class CommentInput extends React.Component {
@@ -37,7 +49,13 @@ class CommentInput extends React.Component {
     return (
       <div style={STYLE}>
         <form onSubmit={this.onSubmit}>
-          <input maxLength="64" type="text" value={comment} onChange={this.onChange} />
+          <input
+            style={INPUT_STYLE}
+            maxLength="64"
+            type="text"
+            value={comment}
+            placeholder="我要留言..."
+            onChange={this.onChange} />
         </form>
       </div>
     )
