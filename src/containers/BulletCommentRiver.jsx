@@ -1,5 +1,6 @@
 import React from 'react';
 import { Transition } from 'react-transition-group';
+import './bulletcomment.css';
 
 const MAX_DURATION = 94; // second
 
@@ -14,7 +15,6 @@ const defaultStyle = {
   textAlign: 'left',
   overflow: 'hidden',
   color: 'dimgray',
-  fontSize: '32px',
   zIndex: 100,
 }
 
@@ -28,7 +28,7 @@ function Comment(props) {
   return (
     <Transition in appear timeout={100}>
       {(state) => (
-        <span style={{
+        <span className="bulletcomment" style={{
           ...defaultStyle,
           ...transitionStyles[state],
           top,
