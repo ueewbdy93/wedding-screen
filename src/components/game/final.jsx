@@ -1,5 +1,4 @@
 import React from 'react';
-import { Container, Header, Content, OptionBlock, Option, QuestionBlock, OptionBlockOverlay } from './common';
 
 function final(props) {
   const { rank, player } = props;

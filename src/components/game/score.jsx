@@ -1,7 +1,5 @@
 import React from 'react';
-import { Container, Header, Content, OptionBlock, Option, QuestionBlock, OptionBlockOverlay } from './common';
-import CenterText from './centerText';
-import Profile from './profile';
+import { Container, Header, Content } from './common'
 import './score.css';
 
 function score(props) {
