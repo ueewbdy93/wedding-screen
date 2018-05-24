@@ -355,12 +355,34 @@ const playerAnswer = createAction(
   }),
 );
 
+function* handleAdminLogin() {
+  yield takeEvery('@@ADMIN_LOGIN', function* (action: any) {
+    const {
+      players,
+      stage,
+      questions,
+      questionIndex,
+      rank,
+    } = yield select<RootState>((s) => s.game);
+    const question = questions[questionIndex] || {};
+    action.socket.emit('GAME_CHANGE', {
+      stage,
+      players,
+      rank,
+      question: { text: question.text, id: question.id },
+      options: question.options,
+      answer: question.answer,
+    });
+  });
+}
+
 export default function createRootSaga(io: SocketIO.Server) {
   return function* rootSaga() {
     yield fork(handleClientCommentSaga, io);
     yield fork(commentWorkerSaga);
     yield fork(slideWorkerSaga, io);
     yield fork(gameSaga, io);
+    yield fork(handleAdminLogin);
 
     const channel = createChannel(io);
     while (true) {
@@ -396,9 +418,7 @@ function createChannel(io: SocketIO.Server) {
       socket.on('admin', (action) => {
         const { password, type, payload } = action;
         socket.emit('ADMIN_CHANGE', { login: password === config.admin.password });
-        if (type !== '@@ADMIN_LOGIN') {
-          emit({ type, payload, socket });
-        }
+        emit({ type, payload, socket });
       });
     });
 

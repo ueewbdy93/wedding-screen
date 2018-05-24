@@ -56,7 +56,7 @@ export const gameReducer = combineReducers<GameState, ActionTypes>({
   questionIndex: (state = 0, action) => {
     switch (action.type) {
       case getType(nextQuestion):
-        return (state + 1) % 10;
+        return (state + 1) % config.game.questions.length;
       case getType(setQuestionIndex):
         return action.payload.index;
       default:
