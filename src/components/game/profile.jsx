@@ -1,6 +1,6 @@
 import React from 'react';
 
-const STYLE = { height: '100%', width: '100%' };
+const STYLE = { height: '100%', width: '100%', padding: '0px 10px' };
 
 function profile(props) {
   const { player, rank } = props;

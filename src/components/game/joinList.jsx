@@ -16,10 +16,10 @@ const COLORS = [
 const defaultStyle = {
   float: 'left',
   whiteSpace: 'pre',
-  borderRadius: '20px',
+  borderRadius: '30px',
   color: 'dimgray',
   margin: '2px',
-  padding: '2px 10px',
+  padding: '5px 20px',
   transition: `opacity ${duration}ms ease-in-out`,
   opacity: 0,
 }
