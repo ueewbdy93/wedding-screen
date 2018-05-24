@@ -31,17 +31,8 @@ class CommentInput extends React.Component {
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
   }
-  componentDidMount() {
-    window.onresize = (event) => {
-      setTimeout(() => {
-        window.scrollTo(0, document.body.scrollHeight);
-      }, 500);
-    };
-  }
-  componentWillUnmount() {
-    window.onresize = undefined;
-  }
   onChange(e) {
+    window.scrollTo(0, document.body.scrollHeight);
     if (e && e.target) {
       const { value } = e.target;
       this.setState({
