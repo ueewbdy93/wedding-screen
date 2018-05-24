@@ -8,12 +8,12 @@
     left: 0px;
     right: 0px;
     background-color: whitesmoke;
-    font-size: 32px;
+    font-size: 40px;
 }
 
 @media (max-width: 480px) {
     .game-container {
-        font-size: 20px;
+        font-size: 32px;
     }
 }
 
