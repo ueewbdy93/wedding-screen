@@ -13,6 +13,9 @@
     "/images/.*": {
       "target": "http://localhost:5566"
     },
+    "/resources/.*": {
+      "target": "http://localhost:5566"
+    },
     "/socket": {
       "target": "ws://localhost:5566",
       "ws": true

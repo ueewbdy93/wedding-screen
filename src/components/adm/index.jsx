@@ -45,7 +45,7 @@ function GameAdm(props) {
         {
           stage === STAGE_START_ANSWER &&
           <div>選項：
-          <ul>{options.map(option => <li>{option.text}</li>)}</ul>
+          <ul>{options.map(option => <li key={option.id}>{option.text}</li>)}</ul>
           </div>
         }
         {stage === STAGE_REVEAL_ANSWER && <div>答案: {answer.text}</div>}
