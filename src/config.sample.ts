@@ -1,3 +1,4 @@
+import bunyan from 'bunyan';
 import fs from 'fs';
 import lodash from 'lodash';
 import path from 'path';
@@ -31,9 +32,21 @@ const baseConfig = {
       },
     ],
   },
+  log: {
+    name: 'logger',
+    level: bunyan.DEBUG,
+    src: true,
+    // streams: [
+    //   {
+    //     type: 'rotating-file',
+    //     path: '/var/log/foo.log',
+    //     period: '1d',   // daily rotation
+    //     count: 3,        // keep 3 back copies
+    //   },
+    // ],
+  },
 };
 
-// baseConfig.game.questions = baseConfig.game.questions.map((q) => ({ ...q, id: uuid.v1() }));
 export const config = lodash.merge(baseConfig, {
   slide: {
     oneRoundMs: baseConfig.slide.intervalMs * baseConfig.slide.urls.length,

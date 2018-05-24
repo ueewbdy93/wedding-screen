@@ -36,3 +36,5 @@ dist
 
 public/images/**/*.jpg
 public/images/**/*.jpeg
+log.json*
+src/config.ts

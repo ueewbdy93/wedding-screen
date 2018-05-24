@@ -16,8 +16,8 @@ import {
   updatePlayerScore,
   updatePlayerSelectedOption,
 } from './game/actions';
-import { Player, PlayerAnswers, Question, Stage } from './game/types';
-import  logger  from './logger';
+import { GameState, Player, PlayerAnswers, Question, Stage } from './game/types';
+import logger from './logger';
 import { setMode } from './root-action';
 import { RootState } from './root-reducer';
 import { Mode } from './root-types';
@@ -229,7 +229,8 @@ function* gameRound(io: SocketIO.Server) {
       stage: Stage.SCORE,
     });
   }
-  // yield put(setStage(Stage.FINAL));
+  const game: GameState = yield select<RootState>((s) => s.game);
+  logger.info('The final game state', JSON.stringify(game));
 }
 
 function* addPlayerSaga(io: SocketIO.Server) {

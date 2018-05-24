@@ -1,8 +1,6 @@
 import bunyan from 'bunyan';
-
+import { config } from '../config';
 export default bunyan.createLogger({
-  name: 'logger',
-  level: bunyan.DEBUG,
-  src: true,
+  ...config.log,
 });
 
