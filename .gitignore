@@ -36,5 +36,7 @@ dist
 
 public/images/**/*.jpg
 public/images/**/*.jpeg
+public/blur/**/*.jpg
+public/blur/**/*.jpeg
 log.json*
 src/config.ts
