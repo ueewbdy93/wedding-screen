@@ -52,27 +52,34 @@ class CommentInput extends React.Component {
   }
   render() {
     const { comment, disabled } = this.state;
+    const { toggleSilence, silence } = this.props;
     return (
       <div style={STYLE}>
         <table style={{ position: 'relative', height: '100%', width: '100%', verticalAlign: 'bottom' }}>
           <tbody>
-            <tr style={{ verticalAlign: 'bottom' }}><td>
-              <form onSubmit={this.onSubmit}>
-                <input
-                  style={INPUT_STYLE}
-                  maxLength="64"
-                  type="text"
-                  value={comment}
-                  placeholder="我要留言..."
-                  onChange={this.onChange} />
-                <input
-                  disabled={disabled}
-                  type="button"
-                  style={{ ...INPUT_STYLE, width: '50px', marginLeft: '1px' }}
-                  value="送出"
-                  onClick={this.onSubmit} />
-              </form>
-            </td></tr>
+            <tr style={{ verticalAlign: 'bottom' }}>
+              <td>
+                <form onSubmit={this.onSubmit}>
+                  <input
+                    style={INPUT_STYLE}
+                    maxLength="64"
+                    type="text"
+                    value={comment}
+                    placeholder="我要留言..."
+                    onChange={this.onChange} />
+                  <input
+                    disabled={disabled}
+                    type="button"
+                    style={{ ...INPUT_STYLE, width: '50px', marginLeft: '1px' }}
+                    value="送出"
+                    onClick={this.onSubmit} />
+                </form>
+              </td>
+              <td>
+                <button onClick={toggleSilence} style={{ ...INPUT_STYLE, width: '40px' }}>
+                  <i className={silence ? 'fas fa-comment-slash' : 'fas fa-comment-dots'}></i>
+                </button>
+              </td></tr>
           </tbody>
         </table>
       </div>

@@ -34,13 +34,31 @@ function PicSlider({ index, pictures }) {
 }
 
 class Slide extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      silence: false
+    };
+    this.toggleSilence = this.toggleSilence.bind(this);
+    this.addComment = this.addComment.bind(this);
+  }
+  addComment(comment) {
+    this.setState({ silence: false });
+    this.props.addComment(comment);
+  }
+  toggleSilence() {
+    this.setState((preState) => {
+      return { silence: !preState.silence }
+    });
+  }
   render() {
-    const { index, pictures, addComment, newComment } = this.props;
+    const { silence } = this.state;
+    const { index, pictures, newComment } = this.props;
     return (
       <div>
         <PicSlider index={index} pictures={pictures} />
-        <BulletCommentRiver newComment={newComment} />
-        <CommentInput addComment={addComment} />
+        <BulletCommentRiver silence={silence} newComment={newComment} />
+        <CommentInput silence={silence} toggleSilence={this.toggleSilence} addComment={this.addComment} />
       </div>
     );
   }

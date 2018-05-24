@@ -78,7 +78,7 @@ class BulletCommentRiver extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.newComment !== nextProps.newComment && nextProps.newComment) {
+    if (this.props.newComment !== nextProps.newComment && nextProps.newComment && nextProps.silence === false) {
       this.setState((preState) => {
         const chooseSlot = calculate(preState.slotWeight);
         const slotWeight = preState.slotWeight.map((v, i) => {
