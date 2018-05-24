@@ -4,12 +4,14 @@ import { config } from '../../config';
 import { nextSlide } from './actions';
 import { ActionTypes } from './types';
 
+type picture = { origin: string, blur: string };
+
 export type SlideState = {
-  readonly pictures: ReadonlyArray<string>,
+  readonly pictures: ReadonlyArray<picture>,
   readonly index: number,
 };
 
-const initPictures: ReadonlyArray<string> = config.slide.urls;
+const initPictures: ReadonlyArray<picture> = config.slide.urls;
 
 
 export const slideReducer = combineReducers<SlideState, ActionTypes>({
