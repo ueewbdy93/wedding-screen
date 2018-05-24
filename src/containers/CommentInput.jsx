@@ -33,7 +33,6 @@ class CommentInput extends React.Component {
   }
   componentDidMount() {
     window.onresize = (event) => {
-      console.log('resize');
       setTimeout(() => {
         window.scrollTo(0, document.body.scrollHeight);
       }, 500);
