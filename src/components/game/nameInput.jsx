@@ -59,26 +59,30 @@ class NameInput extends React.Component {
     const { name, disabledSubmit } = this.state;
     return (
       <Container>
-        <Header title="請輸入你的名字"></Header>
+        <Header title="加入遊戲"></Header>
         <Content>
-          <div style={{ textAlign: 'center', paddingTop: '35%' }}>
-            <form>
-              <input
-                style={INPUT_STYLE}
-                maxLength="10"
-                type="text"
-                value={name}
-                placeholder="請輸入你的名字"
-                onChange={this.onChange} />
-              <br />
-              <button
-                style={BTN_STYLE}
-                onClick={this.onSubmit}
-                disabled={disabledSubmit}>
-                OK
+          <table style={{ height: '100%', width: '100%', textAlign: 'center' }}>
+            <tbody>
+              <tr style={{ verticalAlign: 'middle' }}><td>
+                <form>
+                  <input
+                    style={INPUT_STYLE}
+                    maxLength="10"
+                    type="text"
+                    value={name}
+                    placeholder="請輸入你的名字"
+                    onChange={this.onChange} />
+                  <br />
+                  <button
+                    style={BTN_STYLE}
+                    onClick={this.onSubmit}
+                    disabled={disabledSubmit}>
+                    送出
               </button>
-            </form>
-          </div>
+                </form>
+              </td></tr>
+            </tbody>
+          </table>
         </Content>
       </Container>
     )
