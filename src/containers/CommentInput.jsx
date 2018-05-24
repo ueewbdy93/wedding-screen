@@ -4,14 +4,14 @@ const STYLE = {
   textAlign: 'center',
   position: 'absolute',
   bottom: '0px',
-  height: '40px',
+  height: '100%',
   width: '100%',
-  zIndex: 10
+  zIndex: 10,
 }
 
 const INPUT_STYLE = {
   boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
-  width: '80%',
+  width: '70%',
   textAlign: 'center',
   borderRadius: '20px',
   border: 'none',
@@ -25,39 +25,54 @@ class CommentInput extends React.Component {
     super(props);
     this.state = {
       comment: '',
-    }
+      disabled: true,
+    };
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
   }
   onChange(e) {
     if (e && e.target) {
       const { value } = e.target;
-      this.setState({ comment: value || '' });
+      this.setState({
+        comment: value || '',
+        disabled: !value || !value.trim()
+      });
     }
   }
   onSubmit(e) {
     e.preventDefault();
-    const { comment } = this.state;
+    const { comment, disabled } = this.state;
     const { addComment } = this.props;
-    const timedComment = comment.trim();
-    if (timedComment) {
-      addComment(timedComment);
-      this.setState({ comment: '' });
+    if (!disabled) {
+      addComment(comment.trim());
+      this.setState({ comment: '', disabled: true });
     }
   }
   render() {
-    const { comment } = this.state;
+    const { comment, disabled } = this.state;
     return (
       <div style={STYLE}>
-        <form onSubmit={this.onSubmit}>
-          <input
-            style={INPUT_STYLE}
-            maxLength="64"
-            type="text"
-            value={comment}
-            placeholder="我要留言..."
-            onChange={this.onChange} />
-        </form>
+        <table style={{ position: 'relative', height: '100%', width: '100%', verticalAlign: 'bottom' }}>
+          <tbody>
+            <tr style={{ verticalAlign: 'bottom' }}><td>
+              <form onSubmit={this.onSubmit}>
+                <input
+                  style={INPUT_STYLE}
+                  maxLength="64"
+                  type="text"
+                  value={comment}
+                  placeholder="我要留言..."
+                  onChange={this.onChange} />
+                <input
+                  disabled={disabled}
+                  type="button"
+                  style={{ ...INPUT_STYLE, width: '50px', marginLeft: '1px' }}
+                  value="送出"
+                  onClick={this.onSubmit} />
+              </form>
+            </td></tr>
+          </tbody>
+        </table>
       </div>
     )
   }
