@@ -12,7 +12,9 @@ const mapStateToProps = (state) => {
     question: state.game.question,
     options: state.game.options,
     answer: state.game.answer,
-    score: state.game.score
+    score: state.game.score,
+    rank: state.game.rank,
+    playerAnswers: state.admin.playerAnswers
   };
 };
 
