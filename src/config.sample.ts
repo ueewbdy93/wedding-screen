@@ -7,7 +7,7 @@ import uuid from 'uuid';
 
 const pics = fs.readdirSync(path.resolve(__dirname, '../public/images'))
   .filter((f) => f.indexOf('.jpg') !== -1)
-  .map((f) => ({ origin: `/images/${f}`, blur: `/blur/${f}` }));
+  .map((f) => `/images/${f}`);
 
 const baseConfig = {
   admin: {
