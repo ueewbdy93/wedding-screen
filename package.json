@@ -10,9 +10,6 @@
     "build-storybook": "build-storybook -s public"
   },
   "proxy": {
-    "/blur/.*": {
-      "target": "http://localhost:5566"
-    },
     "/images/.*": {
       "target": "http://localhost:5566"
     },

@@ -10,23 +10,23 @@ function PicSlider({ index, pictures }) {
   return (
     <div>
       {
-        pictures.map(({ blur }, i) => {
+        pictures.map((url, i) => {
           if ((i + 1) % pictures.length === index) {
-            return <div key={i} className="slide-blur hidden" style={{ backgroundImage: `url("${blur}")` }}></div>
+            return <div key={i} className="slide-blur hidden" style={{ backgroundImage: `url("${url}")` }}></div>
           } else if (i === index) {
-            return (<div key={i} className="slide-blur visible" style={{ backgroundImage: `url("${blur}")` }}></div>)
+            return (<div key={i} className="slide-blur visible" style={{ backgroundImage: `url("${url}")` }}></div>)
           }
-          return <div key={i} className="slide-blur hidden" style={{ backgroundImage: `url("${blur}")` }}></div>
+          return <div key={i} className="slide-blur hidden" style={{ backgroundImage: `url("${url}")` }}></div>
         })
       }
       {
-        pictures.map(({ origin }, i) => {
+        pictures.map((url, i) => {
           if ((i + 1) % pictures.length === index) {
-            return <div key={i} className="slide hidden" style={{ backgroundImage: `url("${origin}")` }}></div>
+            return <div key={i} className="slide hidden" style={{ backgroundImage: `url("${url}")` }}></div>
           } else if (i === index) {
-            return (<div key={i} className="slide visible" style={{ backgroundImage: `url("${origin}")` }}></div>)
+            return (<div key={i} className="slide visible" style={{ backgroundImage: `url("${url}")` }}></div>)
           }
-          return <div key={i} className="slide hidden" style={{ backgroundImage: `url("${origin}")` }}></div>
+          return <div key={i} className="slide hidden" style={{ backgroundImage: `url("${url}")` }}></div>
         })
       }
     </div>
