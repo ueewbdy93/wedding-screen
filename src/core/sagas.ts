@@ -13,8 +13,8 @@ import {
   setQuestionIndex,
   setRank,
   setStage,
+  updatePlayerAnswer,
   updatePlayerScore,
-  updatePlayerSelectedOption,
 } from './game/actions';
 import { GameState, Player, PlayerAnswers, Question, Stage } from './game/types';
 import logger from './logger';
@@ -143,17 +143,17 @@ const adminShowScore = createAction(
 );
 
 function* calculateScoreSaga(io: SocketIO.Server, questionIndex: number, startAnswerTime: number) {
-  const { players, answer, selectedOption } = yield select<RootState>((s) => ({
+  const { players, answer, playerAnswers } = yield select<RootState>((s) => ({
     players: s.game.players,
     answer: s.game.questions[questionIndex].answer,
-    selectedOption: s.game.selectedOption[questionIndex],
+    playerAnswers: s.game.playerAnswers[questionIndex],
   }));
 
   const newPlayers: Player[] = players.map((player: Player) => {
-    if (!selectedOption || !selectedOption[player.id]) {
+    if (!playerAnswers || !playerAnswers[player.id]) {
       return player;
     }
-    const { optionID, createTime } = selectedOption[player.id];
+    const { optionID, createTime } = playerAnswers[player.id];
     if (optionID !== answer.id) {
       return player;
     }
@@ -201,7 +201,7 @@ function* gameRound(io: SocketIO.Server) {
 
           const { playerID, answerID } = action.payload;
           // add score for player
-          yield put(updatePlayerSelectedOption(playerID, answerID, questionIndex, Date.now()));
+          yield put(updatePlayerAnswer(playerID, answerID, questionIndex, Date.now()));
           action.socket.emit('GAME_CHANGE', { selectedOption: answerID });
         }
       }),
@@ -214,15 +214,20 @@ function* gameRound(io: SocketIO.Server) {
       answer: questions[questionIndex].answer,
     });
 
+    const playerAnswers: PlayerAnswers[]
+      = yield select<RootState>((s) => (s.game.playerAnswers[questionIndex]));
+    io.local.emit('ADMIN_CHANGE', { playerAnswers });
+
     yield call(calculateScoreSaga, io, questionIndex, startAnswerTime);
 
     yield take(getType(adminShowScore));
     yield put(setStage(Stage.SCORE));
 
-    const [players, rank]: [Player[], Player[]] = yield select<RootState>((s) => ([
-      s.game.players,
-      s.game.rank,
-    ]));
+    const [players, rank]: [Player[], Player[]]
+      = yield select<RootState>((s) => ([
+        s.game.players,
+        s.game.rank,
+      ]));
     io.local.emit('GAME_CHANGE', {
       rank,
       players,
@@ -244,23 +249,23 @@ function* addPlayerSaga(io: SocketIO.Server) {
       questions,
       questionIndex,
       rank,
-      selectedOption,
+      playerAnswers,
     } = yield select<RootState>((s) => s.game);
     io.local.emit('GAME_CHANGE', { players });
     const question = questionIndex === -1 ? {} : questions[questionIndex];
-    const selectedOptionId = questionIndex !== -1 &&
-      selectedOption[questionIndex] &&
-      selectedOption[questionIndex][id] ?
-      selectedOption[questionIndex][id].optionID : null;
+    const selectedOption = questionIndex !== -1 &&
+      playerAnswers[questionIndex] &&
+      playerAnswers[questionIndex][id] ?
+      playerAnswers[questionIndex][id].optionID : null;
     socket.emit('GAME_CHANGE', {
       stage,
       players,
       rank,
+      selectedOption,
       player: players.find((p: Player) => p.id === id),
       question: { text: question.text, id: question.id },
       options: question.options,
       answer: question.answer,
-      selectedOption: selectedOptionId,
     });
   });
 }
@@ -276,22 +281,22 @@ function* checkPlayerSaga() {
         questions,
         questionIndex,
         rank,
-        selectedOption,
+        playerAnswers,
       } = yield select<RootState>((s) => s.game);
       const question = questionIndex === -1 ? {} : questions[questionIndex];
-      const selectedOptionId = questionIndex !== -1 &&
-        selectedOption[questionIndex] &&
-        selectedOption[questionIndex][id] ?
-        selectedOption[questionIndex][id].optionID : null;
+      const selectedOption = questionIndex !== -1 &&
+        playerAnswers[questionIndex] &&
+        playerAnswers[questionIndex][id] ?
+        playerAnswers[questionIndex][id].optionID : null;
       socket.emit('GAME_CHANGE', {
         stage,
         players,
         rank,
+        selectedOption,
         player: players.find((p: Player) => p.id === id),
         question: { text: question.text, id: question.id },
         options: question.options,
         answer: question.answer,
-        selectedOption: selectedOptionId,
       });
     } else {
       socket.emit('GAME_CHANGE', { player: null });
@@ -300,9 +305,7 @@ function* checkPlayerSaga() {
 }
 
 function* resetGameSaga(io: SocketIO.Server) {
-  const [players, selectedOption]: [Player[], PlayerAnswers[]] = yield select<RootState>((s) => (
-    [s.game.players, s.game.selectedOption]
-  ));
+  const [players]: [Player[]] = yield select<RootState>((s) => ([s.game.players]));
   const newPlayers = players.map((player) => ({ ...player, score: 0 }));
   yield put(updatePlayerScore(newPlayers));
   yield put(setRank(newPlayers.sort((a, b) => b.score - a.score)));
@@ -363,15 +366,20 @@ function* handleAdminLogin() {
       questions,
       questionIndex,
       rank,
+      playerAnswers,
     } = yield select<RootState>((s) => s.game);
     const question = questions[questionIndex] || {};
     action.socket.emit('GAME_CHANGE', {
       stage,
       players,
       rank,
+      selectedOption: null,
       question: { text: question.text, id: question.id },
       options: question.options,
       answer: question.answer,
+    });
+    action.socket.emit('ADMIN_CHANGE', {
+      playerAnswers: playerAnswers[questionIndex] || {}
     });
   });
 }

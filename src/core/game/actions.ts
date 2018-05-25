@@ -61,11 +61,11 @@ export const setRank = createAction(
   }),
 );
 
-const UPDATE_PLAYER_SELECTED_OPTION = 'UPDATE_PLAYER_SELECTED_OPTION';
-export const updatePlayerSelectedOption = createAction(
-  UPDATE_PLAYER_SELECTED_OPTION,
+const UPDATE_PLAYER_ANSWER = 'UPDATE_PLAYER_ANSWER';
+export const updatePlayerAnswer = createAction(
+  UPDATE_PLAYER_ANSWER,
   (playerID: string, optionID: string, questionIndex: number, createTime: number) => ({
-    type: UPDATE_PLAYER_SELECTED_OPTION,
+    type: UPDATE_PLAYER_ANSWER,
     payload: {
       playerID,
       optionID,

@@ -9,17 +9,17 @@ import {
   setQuestionIndex,
   setRank,
   setStage,
+  updatePlayerAnswer,
   updatePlayerScore,
-  updatePlayerSelectedOption,
 } from './actions';
 import { ActionTypes, GameState, PlayerAnswer, PlayerAnswers, Stage } from './types';
 
 export const gameReducer = combineReducers<GameState, ActionTypes>({
-  selectedOption: (state = Array(config.game.questions.length).fill({}), action) => {
+  playerAnswers: (state = Array(config.game.questions.length).fill({}), action) => {
     switch (action.type) {
       case getType(resetPlayerAnswers):
         return Array(config.game.questions.length).fill({});
-      case getType(updatePlayerSelectedOption): {
+      case getType(updatePlayerAnswer): {
         const { questionIndex, playerID } = action.payload;
         const playerAnswers = state[questionIndex];
         return [

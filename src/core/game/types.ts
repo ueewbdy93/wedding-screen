@@ -5,8 +5,8 @@ import {
   setQuestionIndex,
   setRank,
   setStage,
+  updatePlayerAnswer,
   updatePlayerScore,
-  updatePlayerSelectedOption,
 } from './actions';
 
 export type ActionTypes = $Call<
@@ -16,7 +16,7 @@ export type ActionTypes = $Call<
   typeof addPlayer |
   typeof resetPlayerAnswers |
   typeof updatePlayerScore |
-  typeof updatePlayerSelectedOption |
+  typeof updatePlayerAnswer |
 
   typeof setStage |
 
@@ -57,5 +57,5 @@ export type GameState = Readonly<{
   questions: ReadonlyArray<Question>,
   questionIndex: number,
   rank: ReadonlyArray<Player>,
-  selectedOption: ReadonlyArray<PlayerAnswers>,
+  playerAnswers: ReadonlyArray<PlayerAnswers>,
 }>;
