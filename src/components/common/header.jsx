@@ -28,24 +28,34 @@ class Header extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isFullscreen: screenfull.isFullscreen
+      isFullscreen: false
     };
+    this.toggle = this.toggle.bind(this);
+  }
+  toggle(){
+    if(screenfull.enabled){
+      screenfull.toggle();
+    }
   }
   componentWillMount() {
-    screenfull.on('change', () => {
-      this.setState({
-        isFullscreen: screenfull.isFullscreen
-      })
-    });
+    if(screenfull.enabled){
+      screenfull.on('change', () => {
+        this.setState({
+          isFullscreen: screenfull.isFullscreen
+        })
+      });
+    }
   }
   componentWillUnmount() {
-    screenfull.off('change');
+    if(screenfull.enabled){
+       screenfull.off('change');
+    }    
   }
   render() {
     const { isFullscreen } = this.state;
     return (
       <div style={STYLE}>
-        <button style={BTN_STYLE} onClick={() => screenfull.toggle()}>
+        <button style={BTN_STYLE} onClick={this.toggle}>
           <i className={isFullscreen ? 'fas fa-compress' : 'fas fa-expand'}></i>
         </button>
       </div>
