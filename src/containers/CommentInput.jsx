@@ -59,6 +59,11 @@ class CommentInput extends React.Component {
           <tbody>
             <tr style={{ verticalAlign: 'bottom' }}>
               <td>
+                <button onClick={toggleSilence} style={{ ...INPUT_STYLE, width: '40px' }}>
+                  <i className={silence ? 'fas fa-comment-slash' : 'fas fa-comment-dots'}></i>
+                </button>
+              </td>
+              <td>
                 <form onSubmit={this.onSubmit}>
                   <input
                     style={INPUT_STYLE}
@@ -75,11 +80,7 @@ class CommentInput extends React.Component {
                     onClick={this.onSubmit} />
                 </form>
               </td>
-              <td>
-                <button onClick={toggleSilence} style={{ ...INPUT_STYLE, width: '40px' }}>
-                  <i className={silence ? 'fas fa-comment-slash' : 'fas fa-comment-dots'}></i>
-                </button>
-              </td></tr>
+              </tr>
           </tbody>
         </table>
       </div>
