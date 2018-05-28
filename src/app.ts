@@ -8,10 +8,6 @@ import httpErrors from 'http-errors';
 import morgan from 'morgan';
 import { join } from 'path';
 
-import index from './routes/index';
-import pics from './routes/pics';
-import users from './routes/users';
-
 const app = express();
 
 // view engine setup
@@ -26,10 +22,6 @@ app.use(express.static(join(__dirname, '../public'),  {
   maxAge: '2h',
 }));
 app.use(express.static(join(__dirname, '../frontend/build')));
-
-app.use('/', index);
-app.use('/users', users);
-app.use('/pics', pics);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
