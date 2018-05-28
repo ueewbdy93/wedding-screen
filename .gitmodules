@@ -1,3 +1,3 @@
 [submodule "frontend"]
 	path = frontend
-	url = git@bitbucket.org:dy93/wedding-screan-frontend.git
+	url = git@github.com:dy93/wedding-screen-frontend.git
