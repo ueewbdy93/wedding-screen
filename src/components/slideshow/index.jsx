@@ -1,7 +1,7 @@
 import React from 'react';
 import CommentInput from './commentInput';
 import BulletCommentRiver from './bulletCommentRiver';
-import './slide.css';
+import './slideshow.css';
 
 function PicSlider({ index, pictures }) {
   return (
@@ -30,7 +30,7 @@ function PicSlider({ index, pictures }) {
   )
 }
 
-class Slide extends React.Component {
+class Slideshow extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -61,4 +61,4 @@ class Slide extends React.Component {
   }
 }
 
-export default Slide;
+export default Slideshow;

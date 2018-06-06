@@ -1,13 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import SlideContainer from './SlideContainer';
+import SlideshowContainer from './SlideshowContainer';
 import GameContainer from './GameContainer';
 
 function App(props) {
   const { mode } = props;
   switch (mode) {
     case 1:
-      return <SlideContainer />;
+      return <SlideshowContainer />;
     case 0:
       return <GameContainer />;
     default:

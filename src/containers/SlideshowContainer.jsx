@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Actions } from '../reducers/slide';
-import SlideshowContainer from '../components/slideshow';
+import Slideshow from '../components/slideshow';
 
 const mapStateToProps = (state) => {
   return {
@@ -17,4 +17,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(SlideshowContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(Slideshow);
