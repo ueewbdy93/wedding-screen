@@ -1,33 +1,33 @@
 import React from 'react';
 import Transition from 'react-transition-group/Transition';
 import CenterText from './centerText';
-import './game.css';
+import styles from './game.css';
 
 export function Container({ children }) {
-  return (<div className="game-container">{children}</div>);
+  return (<div className={styles.container}>{children}</div>);
 }
 
 export function Header({ title, children }) {
   return (
-    <div className="header">
-      <div className="title">
+    <div className={styles.header}>
+      <div className={styles.title}>
         {title ? <CenterText text={title} /> : children}
       </div>
-      <div className="bar"></div>
+      <div className={styles.bar}></div>
     </div>
   );
 }
 
 export function Content({ children }) {
-  return (<div className="content">{children}</div>);
+  return (<div className={styles.content}>{children}</div>);
 }
 
 export function QuestionBlock({ question }) {
-  return (<div className="question"><CenterText text={question.text} /></div>)
+  return (<div className={styles.question}><CenterText text={question.text} /></div>)
 }
 
 export function OptionBlock({ children }) {
-  return (<div className="option-block">{children}</div>);
+  return (<div className={styles.optionBlock}>{children}</div>);
 }
 
 export function Option({ children, isSelect, isAnswer, onClick, disabled }) {
@@ -35,7 +35,7 @@ export function Option({ children, isSelect, isAnswer, onClick, disabled }) {
     <button
       disabled={disabled}
       onClick={onClick}
-      className={isSelect ? 'selected option' : 'option'}>
+      className={isSelect ? `${styles.selected} ${styles.option}` : styles.option}>
       {isAnswer && <i className="fas fa-check" style={{ marginRight: '5px' }}></i>}
       {children}
     </button>
@@ -59,7 +59,7 @@ const transitionStyles = {
 
 export function OptionBlockOverlay({ text, onEntered }) {
   return (
-    <div className="overlay">
+    <div className={styles.overlay}>
       <CenterText>
         <Transition in appear timeout={100} onEntered={onEntered}>
           {(state) => (

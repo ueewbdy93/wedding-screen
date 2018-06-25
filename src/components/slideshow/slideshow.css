@@ -22,7 +22,7 @@
     z-index: 2;
 }
 
-.slide-blur {
+.blur {
     position: absolute;
     top: 0px;
     bottom: 0px;

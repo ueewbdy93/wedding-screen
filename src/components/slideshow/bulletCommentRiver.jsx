@@ -1,6 +1,6 @@
 import React from 'react';
 import { Transition } from 'react-transition-group';
-import './bulletcomment.css';
+import styles from './bulletcomment.css';
 
 const MAX_DURATION = 94; // second
 
@@ -29,7 +29,7 @@ class Comment extends React.Component {
     return (
       <Transition in appear timeout={100}>
         {(state) => (
-          <span className="bulletcomment" style={{
+          <span className={styles.bulletcomment} style={{
             ...defaultStyle,
             ...transitionStyles[state],
             top,

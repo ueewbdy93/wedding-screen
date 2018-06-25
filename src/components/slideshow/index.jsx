@@ -1,7 +1,7 @@
 import React from 'react';
 import CommentInput from './commentInput';
 import BulletCommentRiver from './bulletCommentRiver';
-import './slideshow.css';
+import styles from './slideshow.css';
 
 function PicSlider({ index, pictures }) {
   return (
@@ -9,21 +9,21 @@ function PicSlider({ index, pictures }) {
       {
         pictures.map((url, i) => {
           if ((i + 1) % pictures.length === index) {
-            return <div key={i} className="slide-blur hidden" style={{ backgroundImage: `url("${url}")` }}></div>
+            return <div key={i} className={`${styles.blur} ${styles.hidden}`} style={{ backgroundImage: `url("${url}")` }}></div>
           } else if (i === index) {
-            return (<div key={i} className="slide-blur visible" style={{ backgroundImage: `url("${url}")` }}></div>)
+            return (<div key={i} className={`${styles.blur} ${styles.visible}`} style={{ backgroundImage: `url("${url}")` }}></div>)
           }
-          return <div key={i} className="slide-blur hidden" style={{ backgroundImage: `url("${url}")` }}></div>
+          return <div key={i} className={`${styles.blur} ${styles.hidden}`} style={{ backgroundImage: `url("${url}")` }}></div>
         })
       }
       {
         pictures.map((url, i) => {
           if ((i + 1) % pictures.length === index) {
-            return <div key={i} className="slide hidden" style={{ backgroundImage: `url("${url}")` }}></div>
+            return <div key={i} className={`${styles.slide} ${styles.hidden}`} style={{ backgroundImage: `url("${url}")` }}></div>
           } else if (i === index) {
-            return (<div key={i} className="slide visible" style={{ backgroundImage: `url("${url}")` }}></div>)
+            return (<div key={i} className={`${styles.slide} ${styles.visible}`} style={{ backgroundImage: `url("${url}")` }}></div>)
           }
-          return <div key={i} className="slide hidden" style={{ backgroundImage: `url("${url}")` }}></div>
+          return <div key={i} className={`${styles.slide} ${styles.hidden}`} style={{ backgroundImage: `url("${url}")` }}></div>
         })
       }
     </div>

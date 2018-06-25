@@ -1,4 +1,4 @@
-.game-container {
+.container {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
@@ -12,32 +12,32 @@
 }
 
 @media (max-width: 480px) {
-    .game-container {
+    .container {
         font-size: 32px;
     }
 }
 
-.game-container * {
+.container * {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
 
-.game-container .header {
+.container .header {
     width: 100%;
     height: 55px;
 }
 
-.game-container .header .title {
+.container .header .title {
     height: 50px;
 }
 
-.game-container .header .bar {
+.container .header .bar {
     height: 5px;
     background-color: lightgray;
 }
 
-.game-container .content {
+.container .content {
     position: absolute;
     top: 55px;
     left: 0px;
@@ -48,19 +48,19 @@
     padding: 5px 10px;
 }
 
-.game-container .content .question {
+.container .content .question {
     height: 40%;
     width: 100%;
 }
 
-.game-container .content .option-block {
+.container .content .optionBlock {
     z-index: 999;
     position: relative;
     height: 60%;
     width: 100%;
 }
 
-.game-container .content .option-block .overlay {
+.container .content .optionBlock .overlay {
     z-index: 99999;
     position: absolute;
     width: 100%;
@@ -72,11 +72,11 @@
     background-color: #0003;
 }
 
-.game-container .content .option-block .hidden {
+.container .content .optionBlock .hidden {
     visibility: hidden;
 }
 
-.game-container .content .option-block button.option {
+.container .content .optionBlock button.option {
     border-radius: 10px;
     width: 50%;
     height: 50%;
@@ -85,7 +85,7 @@
 }
 
 @media (max-width: 480px) {
-    .game-container .content .option-block button.option {
+    .container .content .optionBlock button.option {
         border-radius: 10px;
         width: 100%;
         height: 24%;
@@ -93,34 +93,34 @@
     }
 }
 
-.game-container .content .option-block button.option:nth-child(1) {
+.container .content .optionBlock button.option:nth-child(1) {
     background-color: lightcoral;
 }
 
-.game-container .content .option-block button.option:nth-child(1).selected {
+.container .content .optionBlock button.option:nth-child(1).selected {
     background: repeating-linear-gradient( 45deg, lightcoral, lightcoral 10px, gray 10px, gray 11px);
 }
 
-.game-container .content .option-block button.option:nth-child(2) {
+.container .content .optionBlock button.option:nth-child(2) {
     background-color: lightsalmon;
 }
 
-.game-container .content .option-block button.option:nth-child(2).selected {
+.container .content .optionBlock button.option:nth-child(2).selected {
     background: repeating-linear-gradient( 45deg, lightsalmon, lightsalmon 10px, gray 10px, gray 11px);
 }
 
-.game-container .content .option-block button.option:nth-child(3) {
+.container .content .optionBlock button.option:nth-child(3) {
     background-color: skyblue;
 }
 
-.game-container .content .option-block button.option:nth-child(3).selected {
+.container .content .optionBlock button.option:nth-child(3).selected {
     background: repeating-linear-gradient( 45deg, skyblue, skyblue 10px, gray 10px, gray 11px);
 }
 
-.game-container .content .option-block button.option:nth-child(4) {
+.container .content .optionBlock button.option:nth-child(4) {
     background-color: lightgreen;
 }
 
-.game-container .content .option-block button.option:nth-child(4).selected {
+.container .content .optionBlock button.option:nth-child(4).selected {
     background: repeating-linear-gradient( 45deg, lightgreen, lightgreen 10px, gray 10px, gray 11px);
 }
