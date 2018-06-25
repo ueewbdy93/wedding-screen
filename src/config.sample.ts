@@ -5,33 +5,51 @@ import path from 'path';
 import { Omit } from 'utility-types';
 import uuid from 'uuid';
 
+/***************************
+ * configuration starts here
+ ***************************/
+
+/*
+ * The pictures location, we place pictures at public/images
+ */
 const pics = fs.readdirSync(path.resolve(__dirname, '../public/images'))
   .filter((f) => f.indexOf('.jpg') !== -1)
   .map((f) => `/images/${f}`);
 
 const baseConfig = {
   admin: {
+    /* The password of admin page */
     password: 'happy',
   },
   slide: {
+    /* The time interval between every pictures in milliseconds */
     intervalMs: 3000,
+    /* The pictures url, by default we place pictures at public/images */
     urls: pics,
   },
   game: {
+    /* The time interval for client to answering questions */
     intervalMs: 10 * 1000,
+    /* An array of questions */
     questions: [
       {
+        /* The question content */
         text: '2 x 2 = ?',
+        /* The candidate answers, every questions *MUST*
+         * contains four candidate answers, and we do not
+         * allow duplicate candidate answers */
         options: [
           '1',
           '2',
           '3',
           '4',
         ],
+        /* The answer MUST be equal to one of the options */
         answer: '4',
       },
     ],
   },
+  /* The logger options for bunyan logger, see {} */
   log: {
     name: 'logger',
     level: bunyan.DEBUG,
@@ -46,6 +64,9 @@ const baseConfig = {
     // ],
   },
 };
+/***************************
+ * configuration ends here
+ ***************************/
 
 export const config = lodash.merge(baseConfig, {
   slide: {

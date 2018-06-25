@@ -1,26 +1,34 @@
+# TL;DR
+
+1. `git clone https://github.com/ueewbdy93/wedding-screen.git && cd wedding-screen && git submodule update --init`
+2. in wedding-screen: `npm install && npm run build`
+3. in wedding-screen/frontend: `npm install && npm run build`
+4. in wedding-screen: `npm run start`
+5. now open browser to http://localhost:5566 for client, http://localhost:5566/admin-index.html (password: happy) for admin
+
 # About
 
-A wedding activity website implemented by a happy programming couple `dy93` and `ueewbd` ❤️.
+A wedding activity website implemented by a happy programmer couple [dy93](https://github.com/dy93) and [ueewbd](https://github.com/ueewbd) ❤️.
 
-There are two modes: `slideshow` and `game`.
+There are two modes and a admin page
 
-In `slideshow` mode, users can see wedding pictures and leave messages.
-The messages would fly from right to left of the screen in every round of slideshow.
+1. _slideshow_ mode:
 
-The `game` mode was inspired by [Kahoot!](https://kahoot.com/welcomeback/), but we implemented it to meet our need.
+    Users can see wedding pictures and leave bullet comments.
+2. _game_ mode:
 
-Also, there is an admin site which allow admin user to switch between slideshow and game modes and control game state.
+    This mode was inspired by [Kahoot!](https://kahoot.com/welcomeback/). Since Kahoot does not let user to see option contents when answering questions on their phone, so we implement our version to meet this requirement.
+3. _admin_ page:
 
-The whole service consists of two projects: [wedding-screen](https://github.com/ueewbdy93/wedding-screen) and [wedding-screen-frontend](https://github.com/ueewbdy93/wedding-screen-frontend). 
-The formmer is responsible for server side and another is for client side.
-And we set `wedding-screen-frontend` a *git submodule* of `wedding-screen`
+    Admin can switch between modes and control the game state.
+
+The whole service consists of two projects: [wedding-screen](https://github.com/ueewbdy93/wedding-screen) and [wedding-screen-frontend](https://github.com/ueewbdy93/wedding-screen-frontend).
+The former is responsible for back-end and another is for front-end.
+We manage *wedding-screen-frontend* as a git submodule of *wedding-screen*.
 
 # Prerequisite
 
 - Nodejs 8
-- Knowlege of typescript
-- Knowlege of create-react-app, react, redux, redux-thunk, redux-saga
-- Knowlege of websocket
 
 # Start
 
@@ -48,7 +56,7 @@ And we set `wedding-screen-frontend` a *git submodule* of `wedding-screen`
     cp src/config.sample.ts src/config.ts
     ```
 
-5. Compile `typescript` into `javascript`.
+5. Compile **typescript** into **javascript**.
 
     ```
     npm run build
@@ -57,19 +65,19 @@ And we set `wedding-screen-frontend` a *git submodule* of `wedding-screen`
 Now, the back-end work is done.
 Follow the steps below to prepare front-end.
 
-6. Check out `wedding-screen-frontend`
+6. Check out `wedding-screen-frontend`.
 
     ```
     git submodule update --init
     ```
 
-7. Cd into frontend folder
+7. Cd into frontend folder.
 
     ```
     cd frontend
     ```
 
-8. Install dependency of `wedding-screen-frontend`
+8. Install dependency of *wedding-screen-frontend*.
 
     ```
     npm install
@@ -94,14 +102,15 @@ Visit http://localhost:5566/admin-index.html and login(default password:happy) t
 
 # Config
 
-Edit `wedding-screen/src/config.ts`
-(If not exists, copy from `wedding-screen/src/config.sample.ts`)
+Edit *wedding-screen/src/config.ts*
+(If not exists, copy from *wedding-screen/src/config.sample.ts*),
+see [config.sample.ts](src/config.sample.ts) for more detail.
 
 | property  | description  |
 |---|---|
 | admin.password | Admin login password. |
 | slide.intervalMs | Slideshow interval.  |
-| slide.urls | Paths of slideshow pictures, auto generate by scaning `wedding-screen/public/images/*.jpg` |
+| slide.urls | Paths of slideshow pictures, auto generate by scanning *wedding-screen/public/images/\*.jpg* |
 | game.intervalMs | Answer time |
 | game.questions | Array of questions.<br/> The shape of question:<br/> `{ text: <string>, options: [<string>], answer: <string>}` |
 
@@ -109,33 +118,18 @@ Edit `wedding-screen/src/config.ts`
 
 ## Back-end
 
-1. Modify the code under `src/` to meet your need. Notice that the code is written in `typescript`.
-
-2. Compile `typescript` code into `javascript`. The compiled files would be placed into `dist/` folder respectively.
-
-    ```
-    npm run build
-    ```
-    Or take the `--watch` option to enable watch mode which will auto build on save
-    ```
-    npm run build -- --watch
-    ```
-
-3. Check the result of build. If fail then fix it.
-
-4. Restart server
-    ```
-    npm run start
-    ```
+1. Compile typescript in watch mode: `npm run build -- --watch`
+2. Modify the code under *src*
+3. Whenever you modify the code, restart the server
 
 ## Front-end
 
-`wedding-screen-frontend` is a submodule of `wedding-screen` and link to `wedding-screen/frontend/` folder.
+*wedding-screen-frontend* is a submodule of *wedding-screen* and link to *frontend/* folder.
 
 The project is initiated by [create-react-app (CRA)](https://github.com/facebook/create-react-app).
-Base on `CRA`, we integrated it with `redux`, `redux-thunk`, `websocket`, `css-module` and `storybook`(for test).
+Base on **CRA**, we integrated it with *redux*, *redux-thunk*, *websocket*, *css-module* and *storybook*(for test).
 
-And we [eject](https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md#npm-run-eject) `CRA`'s configurations and made some changes:
+We [eject CRA configurations](https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md#npm-run-eject) and made some changes:
 1. Allow multi entry points. One for user page the other for admin page.
 2. Enable css module.
 
@@ -146,10 +140,10 @@ Followings are the steps to develop.
     cd wedding-screen
     npm run start
     ```
-    Although `CRA` will run webpack-dev-server to host static files in development mode. However, we need to connect to back-end server to deal with actions (ex: add comment).
-    See [Proxying API Requests in Development](https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md#proxying-api-requests-in-development).
-2. Cd into `frontend/`
-3. Modify code under `frontend/src/` to meet your need.
+    Although **CRA** will run webpack-dev-server to host static files in development mode. However, we need to connect to back-end server to deal with actions (ex: add comment).
+    See [Proxy API Requests in Development](https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md#proxying-api-requests-in-development).
+2. Cd into *frontend/*
+3. Modify code under *frontend/src/* to meet your need.
 4. Runs the app in development mode.
 
     ```
@@ -162,11 +156,11 @@ Followings are the steps to develop.
 
 ## Back-end
 
-dy93: You barely have errors when you write `typescript`.
+dy93: You barely have errors when you are writing **typescript**.
 
 ## Front-end
 
-We use [storybook](https://storybook.js.org/basics/guide-react/) to have a quick demo of our react components.
+We use [storybook](https://storybook.js.org/basics/guide-react/) to have a quick demo of react components.
 
 Just run `npm run storybook` and visit http://localhost:9009.
 
