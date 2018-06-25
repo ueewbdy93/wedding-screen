@@ -29,7 +29,7 @@ const baseConfig = {
   },
   game: {
     /* The time interval for client to answering questions */
-    intervalMs: 10 * 1000,
+    intervalMs: 8 * 1000,
     /* An array of questions */
     questions: [
       {
