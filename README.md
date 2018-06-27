@@ -1,14 +1,14 @@
 # TL;DR
 
 1. `git clone https://github.com/ueewbdy93/wedding-screen.git && cd wedding-screen && git submodule update --init`
-2. In wedding-screen: `npm install && npm run build`
+2. In wedding-screen: `cp src/config.sample.ts src/config.ts && npm install && npm run build`
 3. In wedding-screen/frontend: `npm install && npm run build`
 4. In wedding-screen: `npm run start`
 5. Now you can browse the service with your favorite browser at http://localhost:5566 as user and, http://localhost:5566/admin-index.html (password: happy) as admin.
 
 # About
 
-A wedding activity website implemented by a happy programmer couple [dy93](https://github.com/dy93) and [ueewbd](https://github.com/ueewbd) ❤️.
+A wedding activity web app implemented by a happy programmer couple [dy93](https://github.com/dy93) and [ueewbd](https://github.com/ueewbd) ❤️.
 
 There are two modes and a admin page
 
@@ -22,7 +22,7 @@ There are two modes and a admin page
 
     Admin can switch between modes and control the game state.
 
-The whole service consists of two projects: [wedding-screen](https://github.com/ueewbdy93/wedding-screen) and [wedding-screen-frontend](https://github.com/ueewbdy93/wedding-screen-frontend).
+The whole web app consists of two projects: [wedding-screen](https://github.com/ueewbdy93/wedding-screen) and [wedding-screen-frontend](https://github.com/ueewbdy93/wedding-screen-frontend).
 The former is responsible for back-end and the other is for front-end.
 We manage *wedding-screen-frontend* as a git submodule of *wedding-screen*.
 
@@ -140,7 +140,8 @@ Followings are the steps to develop.
     cd wedding-screen
     npm run start
     ```
-    Although **CRA** will run webpack-dev-server to host static files in development mode. However, we need to connect to back-end server to deal with actions (ex: add comment).
+    Although **CRA** will run webpack-dev-server to host static files in development mode. However, we need to connect to back-end server to deal with actions (ex: add comment). 
+    We proxy some uris (*/socket*, */images/* and */resources/*) to the back-end server.
     See [Proxy API Requests in Development](https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md#proxying-api-requests-in-development).
 2. cd into *frontend/*
 3. Modify code under *frontend/src/* to meet your need.
