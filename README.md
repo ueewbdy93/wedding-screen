@@ -1,3 +1,6 @@
+![](sample1.png)
+![](sample2.png)
+
 # TL;DR
 
 1. `git clone https://github.com/ueewbdy93/wedding-screen.git && cd wedding-screen && git submodule update --init`
