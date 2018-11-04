@@ -1,5 +1,5 @@
 ![](sample1.png)
-![](sample2.png)
+![](sample-2-20181104.png)
 
 # TL;DR
 
