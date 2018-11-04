@@ -52,6 +52,7 @@ export type PlayerAnswers = Readonly<{
 }>;
 
 export type GameState = Readonly<{
+  intervalMs: Readonly<Number>,
   players: ReadonlyArray<Player>,
   stage: Stage,
   questions: ReadonlyArray<Question>,

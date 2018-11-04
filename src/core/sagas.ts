@@ -397,11 +397,13 @@ export default function createRootSaga(io: SocketIO.Server) {
       const { type, payload, socket }: { type: any, payload: any, socket: SocketIO.Socket }
         = yield take(channel);
       if (type === 'NEW_PLAYER') {
+        // 新的connection
         const subState = yield select<RootState>((s) => {
           const ret = lodash.pick(s, ['mode', 'slide', 'game']);
           return ret;
         });
         socket.emit('SLIDE_CHANGE', subState.slide);
+        socket.emit('GAME_CHANGE', { intervalMs: subState.game.intervalMs });
         socket.emit('MODE_CHANGE', { mode: subState.mode });
       } else {
         yield put({ type, payload, socket });

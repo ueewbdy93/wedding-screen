@@ -15,6 +15,9 @@ import {
 import { ActionTypes, GameState, PlayerAnswer, PlayerAnswers, Stage } from './types';
 
 export const gameReducer = combineReducers<GameState, ActionTypes>({
+  intervalMs: (state = config.game.intervalMs, action) => {
+    return state;
+  },
   playerAnswers: (state = Array(config.game.questions.length).fill({}), action) => {
     switch (action.type) {
       case getType(resetPlayerAnswers):
