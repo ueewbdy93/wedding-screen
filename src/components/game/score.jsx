@@ -10,7 +10,7 @@ function score(props) {
     <Container>
       <Header>
         <h3 className="masthead-brand">排行榜</h3>
-        <small>您的名次: {myRankIndex + 1}</small>
+        <small>您的大名: {player.name} | 分數: {myRank ? myRank.score : 0} | 名次: {myRankIndex ? 'N/A' : myRankIndex + 1}</small>
       </Header>
       <Content>
         <div style={{ display: 'flex', flexDirection: 'column' }}>

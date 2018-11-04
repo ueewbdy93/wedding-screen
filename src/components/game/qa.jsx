@@ -1,6 +1,5 @@
 import React from 'react';
 import { Container, Header, Content } from './common';
-import Profile from './profile';
 import { GameStage } from '../../constants';
 import styles from './game.css';
 
@@ -92,6 +91,7 @@ class QA extends React.Component {
       intervalMs
     } = this.props;
     const { progress } = this.state;
+    const myRankIndex = rank.findIndex(entry => entry.id === player.id);
     if (options.length === 0) {
       options.push(
         { id: 0, text: '' },
@@ -109,7 +109,10 @@ class QA extends React.Component {
     return (
       <Container>
         <Header hideBottomBorder>
-          <Profile player={player} rank={rank} />
+          <h3 className="masthead-brand">
+            開始作答
+          </h3>
+          <small>您的大名: {player.name} | 分數: {myRankIndex === -1 ? 0 : rank[myRankIndex].score} | 目前名次: {myRankIndex ? 'N/A' : myRankIndex + 1}</small>
         </Header>
         <ProgressBar stage={stage} intervalMs={intervalMs} progress={progress} />
         <Content fullHeight>

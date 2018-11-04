@@ -33,9 +33,9 @@ function JoinUser({ player }) {
           ...defaultStyle,
           ...transitionStyles[state]
         }}>
-        <span className={`badge badge-pill ${COLORS[hash % COLORS.length]}`} >
-          {player.name}
-        </span>
+          <span className={`badge badge-pill ${COLORS[hash % COLORS.length]}`} >
+            {player.name}
+          </span>
         </h3>
       )}
     </Transition>
@@ -50,35 +50,34 @@ class JoinList extends React.Component {
     };
     this.tick = null;
   }
-  componentDidMount(){
-    this.tick = setInterval(()=>{
-      this.setState(preState=>{
-        const {loading} = preState;
-        if(loading==='...'){
-          return {loading: ''};
-        }else{
-          return {loading: `.${loading}`}
+  componentDidMount() {
+    this.tick = setInterval(() => {
+      this.setState(preState => {
+        const { loading } = preState;
+        if (loading === '..') {
+          return { loading: '' };
+        } else {
+          return { loading: `.${loading}` }
         }
       })
     }, 800);
   }
-  componentWillUnmount(){
+  componentWillUnmount() {
     clearInterval(this.tick);
   }
-  render(){
-    const {players, player} = this.props;
-    const {loading} = this.state;
+  render() {
+    const { players, player } = this.props;
+    const { loading } = this.state;
     return (
       <Container>
         <Header>
           <h3 className="masthead-brand">{`等待其它人加入${loading}`}</h3>
-          <small>人數: {players.length}</small>
-          <small>您的大名: {player.name}</small>
+          <small>您的大名: {player.name} | 人數: {players.length}</small>
         </Header>
         <Content>
-            <div style={{display:'flex', justifyContent:'center', alignContent:'center', flexWrap:'wrap'}}>
+          <div style={{ display: 'flex', justifyContent: 'center', alignContent: 'center', flexWrap: 'wrap' }}>
             {players.map(player => <JoinUser key={player.id} player={player} />)}
-            </div>
+          </div>
         </Content>
       </Container>
     )
