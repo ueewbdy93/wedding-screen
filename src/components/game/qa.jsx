@@ -53,13 +53,41 @@ function ProgressBar(props) {
   )
 }
 
+class Ready extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      suffix: '..'
+    }
+    this.tick = null;
+  }
+  componentDidMount() {
+    this.tick = setInterval(() => {
+      this.setState(({ suffix }) => {
+        if (suffix === '...') {
+          return { suffix: '' }
+        } else {
+          return { suffix: `${suffix}.` };
+        }
+      })
+    }, 800)
+  }
+  componentWillUnmount() {
+    clearInterval(this.tick);
+  }
+  render() {
+    const { suffix } = this.state;
+    return <h3>{`Ready${suffix}`}</h3>
+  }
+}
+
 function Overlay(props) {
   const { stage } = props;
   if (stage === GameStage.START_QUESTION || stage === GameStage.REVEAL_ANSWER) {
     return (
       <div style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, zIndex: 999999, background: '#FFFFF' }}>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%' }}>
-          <h3>{stage === GameStage.START_QUESTION ? 'Ready...' : `Time's up!!`}</h3>
+          {stage === GameStage.START_QUESTION ? <Ready /> : <h3>Time's up!!</h3>}
         </div>
       </div>
     );
