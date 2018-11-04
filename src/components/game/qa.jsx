@@ -29,7 +29,7 @@ function Option(props) {
 
 function QuestionBlock({ question }) {
   return (
-    <div style={{ alignItems: 'stretch', flex: 3, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    <div style={{ flex: 3, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
       <h4>{question.text}</h4>
     </div>
   )
@@ -42,7 +42,7 @@ function ProgressBar(props) {
       <div
         className="progress-bar progress-bar-striped progress-bar-animated"
         role="progressbar"
-        style={{ width: `${progress}%`, transition: `width ${intervalMs || 8000}ms linear` }}>
+        style={{ width: `${progress}%`, transition: `width ${intervalMs}ms linear` }}>
       </div>
       <div
         className="progress-bar progress-bar-striped progress-bar-animated"

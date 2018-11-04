@@ -16,7 +16,8 @@ const initialState = {
   options: [],
   rank: [],
   answer: null,
-  selectedOption: null
+  selectedOption: null,
+  intervalMs: 8000
 };
 
 export const Actions = {

@@ -21,7 +21,8 @@ class Game extends React.Component {
       rank,
       selectedOption,
       selectOption,
-      addPlayer
+      addPlayer,
+      intervalMs
     } = this.props;
     if (player === null) {
       return <NameInput addPlayer={addPlayer} />;
@@ -30,29 +31,17 @@ class Game extends React.Component {
       case GameStage.JOIN:
         return <JoinList players={players} player={player} />;
       case GameStage.START_QUESTION:
-        return <QA
-          rank={rank}
-          player={player}
-          stage={stage}
-          question={question}
-          options={options} />
       case GameStage.START_ANSWER:
-        return <QA
-          rank={rank}
-          player={player}
-          stage={stage}
-          question={question}
-          options={options}
-          selectedOption={selectedOption}
-          selectOption={selectOption} />
       case GameStage.REVEAL_ANSWER:
         return <QA
+          intervalMs={intervalMs}
           rank={rank}
           player={player}
           stage={stage}
           question={question}
           options={options}
           selectedOption={selectedOption}
+          selectOption={selectOption}
           answer={answer} />
       case GameStage.SCORE:
         return <Score rank={rank} player={player} />
