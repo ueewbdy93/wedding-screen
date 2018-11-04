@@ -9,12 +9,16 @@ function score(props) {
   return (
     <Container>
       <Header>
-        <h3 className="masthead-brand">排行榜</h3>
+        <h3 className="masthead-brand">
+          <small><i className="fas fa-trophy"></i></small>
+          {` 排行榜 `}
+          <small><i className="fas fa-trophy"></i></small>
+        </h3>
         <small>您的大名: {player.name} | 分數: {myRank ? myRank.score : 0} | 名次: {myRankIndex ? 'N/A' : myRankIndex + 1}</small>
       </Header>
       <Content>
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <table className="table table-striped table-lg">
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <table className="table table-striped table-lg" style={{ maxWidth: '42em' }}>
             <thead>
               <tr>
                 <th scope="col">名次</th>

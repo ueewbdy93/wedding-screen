@@ -123,7 +123,9 @@ class QA extends React.Component {
       <Container>
         <Header hideBottomBorder>
           <h3 className="masthead-brand">
-            開始作答
+            <small><i className="fas fa-question-circle"></i></small>
+            {` 題目 `}
+            <small><i className="fas fa-question-circle"></i></small>
           </h3>
           <small>您的大名: {player.name} | 分數: {myRankIndex === -1 ? 0 : rank[myRankIndex].score} | 目前名次: {myRankIndex ? 'N/A' : myRankIndex + 1}</small>
         </Header>
@@ -133,7 +135,7 @@ class QA extends React.Component {
             <QuestionBlock question={question} />
             <div style={{ flex: 7, display: 'flex', flexDirection: 'column', position: 'relative' }}>
               <Overlay stage={stage} />
-              <div style={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
+              <div className={styles.optionBlock}>
                 {
                   options.slice(0, 2).map((option, i) => (
                     <Option
@@ -149,7 +151,7 @@ class QA extends React.Component {
                   ))
                 }
               </div>
-              <div style={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
+              <div className={styles.optionBlock}>
                 {
                   options.slice(2, 4).map((option, i) => (
                     <Option
