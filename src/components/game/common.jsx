@@ -1,7 +1,4 @@
 import React from 'react';
-import Transition from 'react-transition-group/Transition';
-import CenterText from './centerText';
-import styles from './game.css';
 
 export function Container({ children }) {
   return (

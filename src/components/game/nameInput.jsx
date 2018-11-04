@@ -1,32 +1,6 @@
 import React from 'react';
 import { Container, Header, Content } from './common';
 
-const INPUT_STYLE = {
-  boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
-  width: '80%',
-  textAlign: 'center',
-  borderRadius: '20px',
-  border: 'none',
-  backgroundColor: 'white',
-  padding: '5px 10px',
-  fontSize: '16px',
-  height: '40px'
-}
-
-const BTN_STYLE = {
-  height: '40px',
-  marginTop: '10px',
-  boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
-  width: '80%',
-  textAlign: 'center',
-  borderRadius: '20px',
-  border: 'none',
-  backgroundColor: 'lightcoral',
-  padding: '5px 10px',
-  fontSize: '16px',
-  cursor: 'pointer'
-}
-
 class NameInput extends React.Component {
   constructor(props) {
     super(props);

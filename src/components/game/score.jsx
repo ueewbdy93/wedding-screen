@@ -1,6 +1,5 @@
 import React from 'react';
 import { Container, Header, Content } from './common';
-import styles from './score.css';
 
 function score(props) {
   const { player, rank } = props;
