@@ -53,6 +53,19 @@ function ProgressBar(props) {
   )
 }
 
+function Overlay(props) {
+  const { stage } = props;
+  if (stage === GameStage.START_QUESTION || stage === GameStage.REVEAL_ANSWER) {
+    return (
+      <div style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, zIndex: 999999, background: '#FFFFF' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%' }}>
+          <h3>{stage === GameStage.START_QUESTION ? 'Ready...' : `Time's up!!`}</h3>
+        </div>
+      </div>
+    );
+  }
+  return null;
+}
 
 class QA extends React.Component {
   constructor(props) {
@@ -118,7 +131,8 @@ class QA extends React.Component {
         <Content fullHeight>
           <div style={{ display: 'flex', height: '100%', flexDirection: 'column' }}>
             <QuestionBlock question={question} />
-            <div style={{ flex: 7, display: 'flex', flexDirection: 'column' }}>
+            <div style={{ flex: 7, display: 'flex', flexDirection: 'column', position: 'relative' }}>
+              <Overlay stage={stage} />
               <div style={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
                 {
                   options.slice(0, 2).map((option, i) => (
