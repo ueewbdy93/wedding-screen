@@ -23,7 +23,6 @@
   },
   "dependencies": {
     "autoprefixer": "7.1.6",
-    "babel-core": "6.26.0",
     "babel-eslint": "7.2.3",
     "babel-jest": "20.0.3",
     "babel-loader": "7.1.2",
@@ -77,6 +76,7 @@
     "@storybook/addon-viewport": "^3.4.6",
     "@storybook/addons": "^3.4.4",
     "@storybook/react": "^3.4.4",
+    "ajv": "^6.5.4",
     "axios": "^0.18.0",
     "babel-core": "^6.26.3",
     "express": "^4.16.3",
