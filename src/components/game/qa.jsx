@@ -38,7 +38,7 @@ function QuestionBlock({ question }) {
 function ProgressBar(props) {
   const { intervalMs, progress, stage } = props;
   return (
-    <div className="progress" style={{ height: '0.25rem' }}>
+    <div className="progress" style={{ height: '0.4rem' }}>
       <div
         className="progress-bar progress-bar-striped progress-bar-animated"
         role="progressbar"
