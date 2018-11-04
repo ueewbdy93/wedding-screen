@@ -4,22 +4,17 @@ import { Container, Header, Content } from './common';
 
 const duration = 300;
 const COLORS = [
-  'lightblue',
-  'lightcoral',
-  'lightgreen',
-  'lightpink',
-  'lightsalmon',
-  'lightseagreen',
-  'lightskyblue',
+  'badge-primary',
+  'badge-secondary',
+  'badge-success',
+  'badge-danger',
+  'badge-warning',
+  'badge-info',
+  'badge-light',
 ];
 
 const defaultStyle = {
   float: 'left',
-  whiteSpace: 'pre',
-  borderRadius: '30px',
-  color: 'dimgray',
-  margin: '2px',
-  padding: '5px 20px',
   transition: `opacity ${duration}ms ease-in-out`,
   opacity: 0,
 }
@@ -34,30 +29,60 @@ function JoinUser({ player }) {
   return (
     <Transition in appear timeout={duration}>
       {(state) => (
-        <span style={{
+        <h3 style={{
           ...defaultStyle,
-          ...transitionStyles[state],
-          backgroundColor: COLORS[hash % COLORS.length]
+          ...transitionStyles[state]
         }}>
+        <span className={`badge badge-pill ${COLORS[hash % COLORS.length]}`} >
           {player.name}
         </span>
+        </h3>
       )}
     </Transition>
   );
 }
 
-function JoinList({ players, player }) {
-  return (
-    <Container>
-      <Header title="等待其它人加入"></Header>
-      <Content>
-        <div style={{ height: '100%', overflowY: 'scroll' }}>
-          <small>人數: {players.length}</small><br />
-          {players.map(player => <JoinUser key={player.id} player={player} />)}
-        </div>
-      </Content>
-    </Container>
-  )
+class JoinList extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: '.',
+    };
+    this.tick = null;
+  }
+  componentDidMount(){
+    this.tick = setInterval(()=>{
+      this.setState(preState=>{
+        const {loading} = preState;
+        if(loading==='...'){
+          return {loading: ''};
+        }else{
+          return {loading: `.${loading}`}
+        }
+      })
+    }, 800);
+  }
+  componentWillUnmount(){
+    clearInterval(this.tick);
+  }
+  render(){
+    const {players, player} = this.props;
+    const {loading} = this.state;
+    return (
+      <Container>
+        <Header>
+          <h3 className="masthead-brand">{`等待其它人加入${loading}`}</h3>
+          <small>人數: {players.length}</small>
+          <small>您的大名: {player.name}</small>
+        </Header>
+        <Content>
+            <div style={{display:'flex', justifyContent:'center', alignContent:'center', flexWrap:'wrap'}}>
+            {players.map(player => <JoinUser key={player.id} player={player} />)}
+            </div>
+        </Content>
+      </Container>
+    )
+  }
 }
 
 export default JoinList;

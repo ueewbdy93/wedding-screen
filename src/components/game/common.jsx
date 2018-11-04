@@ -4,74 +4,42 @@ import CenterText from './centerText';
 import styles from './game.css';
 
 export function Container({ children }) {
-  return (<div className={styles.container}>{children}</div>);
-}
-
-export function Header({ title, children }) {
   return (
-    <div className={styles.header}>
-      <div className={styles.title}>
-        {title ? <CenterText text={title} /> : children}
-      </div>
-      <div className={styles.bar}></div>
+    <div className="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+      {children}
+      <footer className="mastfoot mt-auto">
+        <div className="inner">
+          <p>Power by dy93 & ueewbd <i className="fas fa-heart"></i></p>
+        </div>
+      </footer>
     </div>
   );
 }
 
-export function Content({ children }) {
-  return (<div className={styles.content}>{children}</div>);
-}
-
-export function QuestionBlock({ question }) {
-  return (<div className={styles.question}><CenterText text={question.text} /></div>)
-}
-
-export function OptionBlock({ children }) {
-  return (<div className={styles.optionBlock}>{children}</div>);
-}
-
-export function Option({ children, isSelect, isAnswer, onClick, disabled }) {
+export function Header({ children, hideBottomBorder }) {
+  const style = {};
+  if (!hideBottomBorder) {
+    style.borderBottom = '.25rem solid #fff';
+  }
   return (
-    <button
-      disabled={disabled}
-      onClick={onClick}
-      className={isSelect ? `${styles.selected} ${styles.option}` : styles.option}>
-      {isAnswer && <i className="fas fa-check" style={{ marginRight: '5px' }}></i>}
+    <header className="masthead mb-auto" style={style}>
+      <div className="inner">
+        {
+          children
+        }
+      </div>
+    </header>
+  );
+}
+
+export function Content({ children, fullHeight }) {
+  const style = {};
+  if (fullHeight) {
+    style.height = '100%';
+  }
+  return (
+    <main role="main" className="container" style={style}>
       {children}
-    </button>
-  )
-}
-
-const duration = 500;
-
-const defaultStyle = {
-  width: '100%',
-  transition: `opacity ${duration}ms ease-in-out`,
-  opacity: 1,
-  fontSize: '40px',
-  textShadow: '-1px 0 whitesmoke, 0 1px whitesmoke, 1px 0 whitesmoke, 0 -1px whitesmoke',
-}
-
-const transitionStyles = {
-  entering: { opacity: 0 },
-  entered: { opacity: 1 },
-};
-
-export function OptionBlockOverlay({ text, onEntered }) {
-  return (
-    <div className={styles.overlay}>
-      <CenterText>
-        <Transition in appear timeout={100} onEntered={onEntered}>
-          {(state) => (
-            <p style={{
-              ...defaultStyle,
-              ...transitionStyles[state]
-            }}>
-              {text}
-            </p>
-          )}
-        </Transition>
-      </CenterText>
-    </div >
+    </main>
   )
 }
