@@ -34,18 +34,33 @@ const baseConfig = {
     questions: [
       {
         /* The question content */
-        text: '2 x 2 = ?',
+        text: 'Something is small, red, round and sweet?',
         /* The candidate answers, every questions *MUST*
          * contains four candidate answers, and we do not
          * allow duplicate candidate answers */
         options: [
-          '1',
-          '2',
-          '3',
-          '4',
+          'Orange',
+          'Apple',
+          'Cherry',
+          'Strawberry',
         ],
         /* The answer MUST be equal to one of the options */
-        answer: '4',
+        answer: 'Apple',
+      },
+      {
+        /* The question content */
+        text: 'Something starts with an H and ends with an oof?',
+        /* The candidate answers, every questions *MUST*
+         * contains four candidate answers, and we do not
+         * allow duplicate candidate answers */
+        options: [
+          'Bokoblin',
+          'Moblin',
+          'Lynel Hoof',
+          'Lizalfos',
+        ],
+        /* The answer MUST be equal to one of the options */
+        answer: 'Lynel Hoof',
       },
     ],
   },
