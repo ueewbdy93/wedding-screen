@@ -14,7 +14,7 @@ export const ActionTypes = {
 const initialState = {
   password: null,
   login: false,
-  playerAnswers: []
+  playerAnswers: {},
 };
 
 export const Actions = {

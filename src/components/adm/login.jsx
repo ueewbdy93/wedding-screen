@@ -1,4 +1,5 @@
 import React from 'react';
+import { Container, Header, Content } from '../game/common';
 
 class Login extends React.Component {
   constructor(props) {
@@ -28,12 +29,32 @@ class Login extends React.Component {
     const { password } = this.state;
     const disabledSubmit = !(password && password.trim());
     return (
-      <div>
-        <form>
-          <input type="password" value={password} onChange={this.onChange} />
-          <button type="submit" onClick={this.onSubmit} disabled={disabledSubmit}>登入</button>
-        </form>
-      </div>
+      <Container>
+        <Header hideBottomBorder>
+          <h3 className="masthead-brand">
+            後台
+        </h3>
+        </Header>
+        <Content>
+          <form>
+            <div className="form-group">
+              <input
+                className="form-control form-control-lg"
+                type="password"
+                placeholder="請輸入密碼"
+                value={password}
+                onChange={this.onChange}
+              />
+            </div>
+            <button
+              onClick={this.onSubmit}
+              disabled={disabledSubmit}
+              className="btn btn-primary mb-2 btn-lg btn-block">
+              登入
+          </button>
+          </form>
+        </Content>
+      </Container>
     )
   }
 }
