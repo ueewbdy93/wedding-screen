@@ -181,6 +181,7 @@ function* gameRound(io: SocketIO.Server) {
         text: questions[questionIndex].text,
         id: questions[questionIndex].id,
       },
+      vote: null
     });
 
     yield take(getType(adminStartAnswer));
@@ -203,6 +204,7 @@ function* gameRound(io: SocketIO.Server) {
           // add score for player
           yield put(updatePlayerAnswer(playerID, answerID, questionIndex, Date.now()));
           action.socket.emit('GAME_CHANGE', { selectedOption: answerID });
+          io.local.emit('GAME_CHANGE', { vote: { optionId: answerID, playerID: playerID } });
         }
       }),
     });
@@ -320,7 +322,12 @@ function* resetGameSaga(io: SocketIO.Server) {
     question: null,
     options: null,
     answer: null,
+    vote: null
   });
+
+  io.local.emit('ADMIN_CHANGE', {
+    playerAnswers: {}
+  })
 }
 
 function* gameSaga(io: SocketIO.Server) {
@@ -427,8 +434,11 @@ function createChannel(io: SocketIO.Server) {
 
       socket.on('admin', (action) => {
         const { password, type, payload } = action;
-        socket.emit('ADMIN_CHANGE', { login: password === config.admin.password });
-        emit({ type, payload, socket });
+        const isValid = password === config.admin.password;
+        socket.emit('ADMIN_CHANGE', { login: isValid });
+        if (isValid) {
+          emit({ type, payload, socket });
+        }
       });
     });
 
