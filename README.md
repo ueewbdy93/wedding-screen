@@ -1,13 +1,26 @@
-![](sample1.png)
-![](sample-2-20181104.png)
+wedding pictures slideshow & bullet comments
+![](screenshots/slide.png)
+
+game
+![](screenshots/game.png)
+
+admin
+![](screenshots/admin.png)
 
 # TL;DR
 
 1. `git clone https://github.com/ueewbdy93/wedding-screen.git && cd wedding-screen && git submodule update --init`
-2. In wedding-screen: `cp src/config.sample.ts src/config.ts && npm install && npm run build`
-3. In wedding-screen/frontend: `npm install && npm run build`
-4. In wedding-screen: `npm run start`
+2. Build backend: `cp src/config.sample.ts src/config.ts && npm install && npm run build`
+3. Build frontend: `npm install --prefix frontend/ && npm run build --prefix frontend/`
+4. Start server: `npm run start`
 5. Now you can browse the service with your favorite browser at http://localhost:5566 as user and, http://localhost:5566/admin-index.html (password: happy) as admin.
+
+# Demo
+
+- User:
+https://wedding-screen.herokuapp.com/
+- Admin (password: happy):
+https://wedding-screen.herokuapp.com/admin-index.html
 
 # About
 
@@ -163,6 +176,8 @@ Followings are the steps to develop.
 dy93: You barely have errors when you are writing **typescript**.
 
 ## Front-end
+
+**To be fix.**
 
 We use [storybook](https://storybook.js.org/basics/guide-react/) to have a quick demo of react components.
 
