@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Content, Header } from '../game/common';
-import GameMgr from './gameMgr';
-import SlideMgr from './slideMgr';
+import GameMgr from './game-mgr';
+import SlideMgr from './slide-mgr';
 import Nav from './nav';
 import './admin.css';
 

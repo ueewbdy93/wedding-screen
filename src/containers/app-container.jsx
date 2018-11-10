@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import SlideshowContainer from './SlideshowContainer';
-import GameContainer from './GameContainer';
+import SlideshowContainer from './slideshow-container';
+import GameContainer from './game-container';
 
 function App(props) {
   const { mode } = props;

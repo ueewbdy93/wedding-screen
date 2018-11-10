@@ -1,6 +1,6 @@
 import React from 'react';
-import NameInput from './nameInput';
-import JoinList from './joinList';
+import NameInput from './name-input';
+import JoinList from './join-list';
 import QA from './qa';
 import Score from './score';
 import { GameStage } from '../../constants';

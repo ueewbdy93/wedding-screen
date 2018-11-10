@@ -1,6 +1,6 @@
 import React from 'react';
-import CommentInput from './commentInput';
-import BulletCommentRiver from './bulletCommentRiver';
+import CommentInput from './comment-input';
+import BulletCommentRiver from './bulletcomment-river';
 import styles from './slideshow.css';
 
 function PicSlider({ index, pictures }) {
