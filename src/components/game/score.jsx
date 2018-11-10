@@ -29,7 +29,7 @@ function score(props) {
             <tbody>
               {
                 top10.map((playerScore, i) => (
-                  <tr key={i} className={i === myRankIndex ? 'bg-primary' : ''}>
+                  <tr key={i} className={i === myRankIndex ? 'bg-info' : ''}>
                     <th scope="row">{i + 1}</th>
                     <td>{playerScore.name.length > 8 ? `${playerScore.name.slice(0, 8)}...` : playerScore.name}</td>
                     <td>{playerScore.score}</td>
@@ -37,7 +37,7 @@ function score(props) {
                 ))
               }
               {myRankIndex > 10 && <tr><td colSpan={3}>...</td></tr>}
-              {myRankIndex >= 10 && <tr className="bg-primary"><th scope="row">{myRankIndex + 1}</th><td>{myRank.name}</td><td>{myRank.score}</td></tr>}
+              {myRankIndex >= 10 && <tr className="bg-info"><th scope="row">{myRankIndex + 1}</th><td>{myRank.name}</td><td>{myRank.score}</td></tr>}
             </tbody>
           </table>
         </div>

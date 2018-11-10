@@ -4,7 +4,7 @@ class SlideMgr extends React.Component {
   render() {
     return (
       <div>
-        沒有留言
+        (Coming soon)
       </div>
     );
   }

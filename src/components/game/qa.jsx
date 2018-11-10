@@ -36,18 +36,20 @@ function QuestionBlock({ question }) {
 }
 
 function ProgressBar(props) {
-  const { intervalMs, progress, stage } = props;
+  const { intervalMs, stage } = props;
+  const transitionTime = stage === GameStage.START_ANSWER ? intervalMs : 0;
+  let progress = 0;
+  if (stage === GameStage.START_ANSWER) {
+    progress = 100;
+  } else if (stage === GameStage.REVEAL_ANSWER) {
+    progress = 101;
+  }
   return (
     <div className="progress" style={{ height: '0.4rem' }}>
       <div
         className="progress-bar progress-bar-striped progress-bar-animated"
         role="progressbar"
-        style={{ width: `${progress}%`, transition: `width ${intervalMs}ms linear` }}>
-      </div>
-      <div
-        className="progress-bar progress-bar-striped progress-bar-animated"
-        role="progressbar"
-        style={{ width: '100%', display: stage === GameStage.REVEAL_ANSWER ? 'unset' : 'none' }}>
+        style={{ width: `${progress}%`, transition: `width ${transitionTime}ms linear` }}>
       </div>
     </div>
   )
@@ -95,112 +97,86 @@ function Overlay(props) {
   return null;
 }
 
-class QA extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      progress: 0
-    };
-    this.total = 8000;
-    this.tick = null;
-  }
-
-  componentWillReceiveProps(nextProps, nextState) {
-    const currentStage = this.props.stage;
-    const nextStage = nextProps.stage;
-    if (currentStage !== nextStage) {
-      if (nextStage === GameStage.START_ANSWER) {
-        this.setState({ progress: 100 });
-      } else if (nextStage === GameStage.REVEAL_ANSWER) {
-        this.setState(() => ({ progress: 100 }));
-      } else if (nextStage === GameStage.START_QUESTION) {
-        this.setState(() => ({ progress: 0 }));
-      }
-    }
-  }
-
-  render() {
-    const {
-      stage,
-      question,
-      options,
-      selectedOption,
-      answer,
-      rank,
-      player,
-      selectOption,
-      intervalMs
-    } = this.props;
-    const { progress } = this.state;
-    const myRankIndex = rank.findIndex(entry => entry.id === player.id);
-    if (options.length === 0) {
-      options.push(
-        { id: 0, text: '' },
-        { id: 1, text: '' },
-        { id: 2, text: '' },
-        { id: 3, text: '' }
-      )
-    }
-    const disabled =
-      (stage === GameStage.START_QUESTION) ||
-      (stage === GameStage.START_ANSWER && selectedOption) ||
-      (stage === GameStage.REVEAL_ANSWER);
-    const showAnswer = stage === GameStage.REVEAL_ANSWER;
-    const showOption = stage !== GameStage.START_QUESTION;
-    return (
-      <Container>
-        <Header hideBottomBorder>
-          <h3 className="masthead-brand">
-            <small><i className="fas fa-question-circle"></i></small>
-            {` 題目 `}
-            <small><i className="fas fa-question-circle"></i></small>
-          </h3>
-          <small>您的大名: {player.name} | 分數: {myRankIndex === -1 ? 0 : rank[myRankIndex].score} | 目前名次: {myRankIndex ? 'N/A' : myRankIndex + 1}</small>
-        </Header>
-        <ProgressBar stage={stage} intervalMs={intervalMs} progress={progress} />
-        <Content fullHeight>
-          <div style={{ display: 'flex', height: '100%', flexDirection: 'column' }}>
-            <QuestionBlock question={question} />
-            <div style={{ flex: 7, display: 'flex', flexDirection: 'column', position: 'relative' }}>
-              <Overlay stage={stage} />
-              <div className={styles.optionBlock}>
-                {
-                  options.slice(0, 2).map((option, i) => (
-                    <Option
-                      order={i}
-                      key={option.id}
-                      showAnswer={showAnswer}
-                      isAnswer={showAnswer ? answer.id === option.id : false}
-                      isSelect={selectedOption === option.id}
-                      disabled={disabled}
-                      onClick={() => disabled ? null : selectOption(option.id)}
-                      text={showOption ? option.text : ''}>
-                    </Option>
-                  ))
-                }
-              </div>
-              <div className={styles.optionBlock}>
-                {
-                  options.slice(2, 4).map((option, i) => (
-                    <Option
-                      order={i + 2}
-                      key={option.id}
-                      showAnswer={showAnswer}
-                      isAnswer={showAnswer ? answer.id === option.id : false}
-                      isSelect={selectedOption === option.id}
-                      disabled={disabled}
-                      onClick={() => disabled ? null : selectOption(option.id)}
-                      text={showOption ? option.text : ''}>
-                    </Option>
-                  ))
-                }
-              </div>
-            </div>
-          </div>
-        </Content>
-      </Container>
+function QA(props) {
+  const {
+    stage,
+    question,
+    options,
+    selectedOption,
+    answer,
+    rank,
+    player,
+    selectOption,
+    intervalMs
+  } = props;
+  const myRankIndex = rank.findIndex(entry => entry.id === player.id);
+  if (options.length === 0) {
+    options.push(
+      { id: 0, text: '' },
+      { id: 1, text: '' },
+      { id: 2, text: '' },
+      { id: 3, text: '' }
     )
   }
+  const disabled =
+    (stage === GameStage.START_QUESTION) ||
+    (stage === GameStage.START_ANSWER && selectedOption) ||
+    (stage === GameStage.REVEAL_ANSWER);
+  const showAnswer = stage === GameStage.REVEAL_ANSWER;
+  const showOption = stage !== GameStage.START_QUESTION;
+  return (
+    <Container>
+      <Header hideBottomBorder>
+        <h3 className="masthead-brand">
+          <small><i className="fas fa-question-circle"></i></small>
+          {` 題目 `}
+          <small><i className="fas fa-question-circle"></i></small>
+        </h3>
+        <small>您的大名: {player.name} | 分數: {myRankIndex === -1 ? 0 : rank[myRankIndex].score} | 目前名次: {myRankIndex ? 'N/A' : myRankIndex + 1}</small>
+      </Header>
+      <ProgressBar stage={stage} intervalMs={intervalMs} />
+      <Content fullHeight>
+        <div style={{ display: 'flex', height: '100%', flexDirection: 'column' }}>
+          <QuestionBlock question={question} />
+          <div style={{ flex: 7, display: 'flex', flexDirection: 'column', position: 'relative' }}>
+            <Overlay stage={stage} />
+            <div className={styles.optionBlock}>
+              {
+                options.slice(0, 2).map((option, i) => (
+                  <Option
+                    order={i}
+                    key={option.id}
+                    showAnswer={showAnswer}
+                    isAnswer={showAnswer ? answer.id === option.id : false}
+                    isSelect={selectedOption === option.id}
+                    disabled={disabled}
+                    onClick={() => disabled ? null : selectOption(option.id)}
+                    text={showOption ? option.text : ''}>
+                  </Option>
+                ))
+              }
+            </div>
+            <div className={styles.optionBlock}>
+              {
+                options.slice(2, 4).map((option, i) => (
+                  <Option
+                    order={i + 2}
+                    key={option.id}
+                    showAnswer={showAnswer}
+                    isAnswer={showAnswer ? answer.id === option.id : false}
+                    isSelect={selectedOption === option.id}
+                    disabled={disabled}
+                    onClick={() => disabled ? null : selectOption(option.id)}
+                    text={showOption ? option.text : ''}>
+                  </Option>
+                ))
+              }
+            </div>
+          </div>
+        </div>
+      </Content>
+    </Container>
+  )
 }
 
 export default QA;
