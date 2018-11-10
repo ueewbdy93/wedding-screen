@@ -1,11 +1,5 @@
-wedding pictures slideshow & bullet comments
-![](screenshots/slide.png)
 
-game
-![](screenshots/game.png)
-
-admin
-![](screenshots/admin.png)
+![](screenshots/sample.png)
 
 # TL;DR
 
