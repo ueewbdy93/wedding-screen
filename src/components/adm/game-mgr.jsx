@@ -37,7 +37,7 @@ function GameStatus(props) {
         options2.map((option, i) => {
           const { text, id } = option;
           const count = finalCount[id] ? finalCount[id] : (selectedCount[id] || 0);
-          const progress = id ? Math.round(count / total * 100) : 0;
+          const progress = id && total ? Math.round(count / total * 100) : 0;
           const isAnswer = answer && answer.id === id;
           return (
             <div key={i} className="progress" style={{ height: 'unset' }}>
@@ -58,13 +58,35 @@ function GameStatus(props) {
   )
 }
 
+function RevealAnswerButton(props) {
+  const { stage, intervalMs, revealAnswer } = props;
+  const progress = stage === GameStage.START_ANSWER ? 100 : 0;
+  const transitionTime = progress === 0 ? 0 : intervalMs;
+  return (
+    <button
+      style={{ paddingLeft: '0px', paddingRight: '0px', paddingBottom: '0px' }}
+      className="list-group-item list-group-item-info"
+      onClick={revealAnswer}
+      disabled={stage !== GameStage.START_ANSWER}>
+      <i className="far fa-clock"></i>{' 結束作答'}
+      <div className="progress" style={{ height: '1px', marginTop: '.75rem' }}>
+        <div
+          className="progress-bar"
+          style={{ width: `${progress}%`, transition: `width ${transitionTime}ms linear` }}>
+        </div>
+      </div>
+    </button>
+  )
+}
+
 function GameButton(props) {
   const {
     startQuestion,
     startAnswer,
     revealAnswer,
     showScore,
-    stage
+    stage,
+    intervalMs
   } = props;
   return (
     <div className="list-group">
@@ -80,12 +102,11 @@ function GameButton(props) {
         disabled={stage !== GameStage.START_QUESTION}>
         <i className="far fa-edit"></i>{' 開始作答'}
       </button>
-      <button
-        className="list-group-item list-group-item-info"
-        onClick={revealAnswer}
-        disabled={stage !== GameStage.START_ANSWER}>
-        <i className="far fa-clock"></i>{' 結束作答'}
-      </button>
+      <RevealAnswerButton
+        revealAnswer={revealAnswer}
+        stage={stage}
+        intervalMs={intervalMs}
+      />
       <button
         className="list-group-item list-group-item-info"
         onClick={showScore}
@@ -144,7 +165,8 @@ class GameMgr extends React.Component {
       revealAnswer,
       showScore,
       selectedTab,
-      rank
+      rank,
+      intervalMs
     } = this.props;
     if (selectedTab === 'rank') {
       return <Rank rank={rank} />;
@@ -153,6 +175,7 @@ class GameMgr extends React.Component {
       <div>
         <GameButton
           stage={stage}
+          intervalMs={intervalMs}
           startQuestion={startQuestion}
           startAnswer={startAnswer}
           revealAnswer={revealAnswer}

@@ -52,12 +52,12 @@ class Nav extends React.Component {
             }
           </div>
         }
-        <button
-          style={{ width: 'unset', display: 'flex', alignItems: 'center' }}
+        <span
+          style={{ cursor: 'pointer', width: 'unset', display: 'flex', alignItems: 'center' }}
           onClick={() => this.onSwitchMode(mode === 1 ? 0 : 1)}>
           <small>遊戲/輪播</small>
           <i className={mode === 0 ? "fas fa-toggle-on" : "fas fa-toggle-off"}></i>
-        </button>
+        </span>
       </nav>
     )
   }

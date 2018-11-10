@@ -16,6 +16,7 @@ const mapStateToProps = (state) => {
     rank: state.game.rank,
     playerAnswers: state.admin.playerAnswers,
     vote: state.game.vote,
+    intervalMs: state.game.intervalMs
   };
 };
 
