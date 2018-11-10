@@ -43,3 +43,5 @@ src/config.ts
 
 !public/images/sample1.jpg
 !public/images/sample2.jpg
+
+.env
