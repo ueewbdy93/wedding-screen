@@ -38,7 +38,7 @@ We manage *wedding-screen-frontend* as a git submodule of *wedding-screen*.
 
 # Prerequisite
 
-- Nodejs 8
+- Nodejs 10
 
 # Start
 
