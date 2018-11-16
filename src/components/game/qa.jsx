@@ -14,7 +14,7 @@ function Option(props) {
   const { order, text, isSelect, isAnswer, onClick, disabled, showAnswer } = props;
   return (
     <div className={`${ORDER[order]} ${isSelect ? styles.selected2 : ''} ${disabled ? 'disabled' : ''}`}
-      style={{ cursor: 'pointer', flex: 1, margin: '5px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      style={{ cursor: 'pointer', flex: 1, margin: '5px', display: 'flex', alignItems: 'center', justifyContent: 'center', whiteSpace: 'initial' }}
       disabled={disabled}
       onClick={onClick}>
       <h4>
