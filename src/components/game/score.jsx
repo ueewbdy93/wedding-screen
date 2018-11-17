@@ -14,7 +14,7 @@ function score(props) {
           {` 排行榜 `}
           <small><i className="fas fa-trophy"></i></small>
         </h3>
-        <small>您的大名: {player.name} | 分數: {myRank ? myRank.score : 0} | 名次: {myRankIndex ? 'N/A' : myRankIndex + 1}</small>
+        <small>您的大名: {player.name} | 分數: {myRank ? myRank.score : 0} | 名次: {myRankIndex ? myRankIndex + 1 : 'N/A'}</small>
       </Header>
       <Content>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>

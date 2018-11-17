@@ -132,7 +132,7 @@ function QA(props) {
           {` 題目 `}
           <small><i className="fas fa-question-circle"></i></small>
         </h3>
-        <small>您的大名: {player.name} | 分數: {myRankIndex === -1 ? 0 : rank[myRankIndex].score} | 目前名次: {myRankIndex ? 'N/A' : myRankIndex + 1}</small>
+        <small>您的大名: {player.name} | 分數: {myRankIndex === -1 ? 0 : rank[myRankIndex].score} | 目前名次: {myRankIndex ? myRankIndex + 1 : 'N/A'}</small>
       </Header>
       <ProgressBar stage={stage} intervalMs={intervalMs} />
       <Content fullHeight>
