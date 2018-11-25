@@ -31,7 +31,7 @@ function score(props) {
                 top10.map((playerScore, i) => (
                   <tr key={i} className={i === myRankIndex ? 'bg-info' : ''}>
                     <th scope="row">{i + 1}</th>
-                    <td>{playerScore.name.length > 8 ? `${playerScore.name.slice(0, 8)}...` : playerScore.name}</td>
+                    <td>{playerScore.name}</td>
                     <td>{playerScore.score}</td>
                   </tr>
                 ))
