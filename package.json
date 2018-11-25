@@ -10,7 +10,7 @@
     "debug": "node --nolazy --inspect-brk=9229 dist/server",
     "test": "mocha --recursive",
     "build": "tsc",
-    "heroku-prebuild": "npm install --prefix frontend/",
+    "heroku-prebuild": "git submodule update --init && npm install --prefix frontend/",
     "heroku-postbuild": "cp src/config.sample.ts src/config.ts && npm run build --prefix frontend/ && npm run build"
   },
   "cacheDirectories": ["frontend/node_modules"],
