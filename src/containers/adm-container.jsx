@@ -5,6 +5,7 @@ import { Actions } from '../reducers/adm';
 
 const mapStateToProps = (state) => {
   return {
+    comments: state.admin.comments,
     login: state.admin.login,
     mode: state.common.mode,
     players: state.game.players,
@@ -16,7 +17,7 @@ const mapStateToProps = (state) => {
     rank: state.game.rank,
     playerAnswers: state.admin.playerAnswers,
     vote: state.game.vote,
-    intervalMs: state.game.intervalMs
+    intervalMs: state.game.intervalMs,
   };
 };
 
@@ -28,6 +29,8 @@ const mapDispatchToProps = dispatch => {
     revealAnswer: bindActionCreators(Actions.revealAnswer, dispatch),
     showScore: bindActionCreators(Actions.showScore, dispatch),
     adminLogin: bindActionCreators(Actions.adminLogin, dispatch),
+    onClearComment: bindActionCreators(Actions.onClearComment, dispatch),
+    onInsertComment: bindActionCreators(Actions.onInsertComment, dispatch),
   };
 };
 

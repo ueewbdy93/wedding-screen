@@ -19,7 +19,10 @@ class Adm extends React.Component {
   render() {
     const {
       mode,
-      changeMode
+      changeMode,
+      comments,
+      onClearComment,
+      onInsertComment
     } = this.props;
     const { selectedTab } = this.state;
     const onTabClick = this.onTabClick;
@@ -35,10 +38,10 @@ class Adm extends React.Component {
             onSwitchMode={changeMode}
             onSwitchTab={onTabClick} />
         </Header>
-        <Content>
+        <Content fullHeight>
           <div style={{ padding: '10px' }}>
             {mode === 0 && <GameMgr {...this.props} selectedTab={selectedTab} />}
-            {mode === 1 && <SlideMgr {...this.props} />}
+            {mode === 1 && <SlideMgr comments={comments} onClearComment={onClearComment} onInsertComment={onInsertComment} />}
           </div>
         </Content>
       </Container>
