@@ -25,7 +25,7 @@ export const removeComments = createAction(
 );
 
 
-export const setCurrentRoundStartOffset = createAction(
+export const setCurrentRoundStartTime = createAction(
   SET_CURRENT_ROUND_START_OFFSET,
   (offset:number) => ({
     type: SET_CURRENT_ROUND_START_OFFSET,

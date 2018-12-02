@@ -30,11 +30,11 @@ export type Player = Readonly<{
 }>;
 export enum Stage { JOIN, START_QUESTION, START_ANSWER, REVEAL_ANSWER, SCORE, FINAL }
 export type Option = Readonly<{
-  id: string,
+  id: number,
   text: string,
 }>;
 export type Question = Readonly<{
-  id: string,
+  id: number,
   text: string,
   options: ReadonlyArray<Option>,
   answer: Option,
@@ -42,7 +42,7 @@ export type Question = Readonly<{
 
 export type PlayerAnswer = Readonly<{
   playerID: string,
-  optionID: string,
+  optionID: number,
   questionIndex: number,
   createTime: number,
 }>;

@@ -1,11 +1,10 @@
 import lodash from 'lodash';
-import { delay, eventChannel, takeEvery } from 'redux-saga';
+import { delay, eventChannel, takeEvery, takeLatest } from 'redux-saga';
 import { call, fork, put, race, select, take } from 'redux-saga/effects';
 import { createAction, getType } from 'typesafe-actions';
 import uuid from 'uuid';
 import { config } from '../config';
-import { addComment, removeComments, setCurrentRoundStartOffset } from './comments/actions';
-import { Comment } from './comments/types';
+import { setCurrentRoundStartTime } from './comments/actions';
 import {
   addPlayer,
   nextQuestion,
@@ -22,6 +21,24 @@ import { setMode } from './root-action';
 import { RootState } from './root-reducer';
 import { Mode } from './root-types';
 import { nextSlide } from './slide/actions';
+import {
+  insertComment,
+  listComment,
+  clearComment,
+  insertQuestions,
+  insertVote,
+  listVote,
+} from '../db';
+import { start } from 'repl';
+
+const ROOM_ADM = 'ADM';
+
+/**
+ * Get process start time in milli-sencond
+ */
+function getProcessUptime() {
+  return process.uptime() * 1000;
+}
 
 const CLIENT_CHECK_PLAYER = '@@CLIENT_CHECK_PLAYER';
 const clientCheckPlayer = createAction(
@@ -46,6 +63,9 @@ const clientAddPlayer = createAction(
   }),
 );
 
+/**
+ * A new comment from client
+ */
 const CLIENT_ADD_COMMENT = '@@CLIENT_ADD_COMMENT';
 const clientAddComment = createAction(
   CLIENT_ADD_COMMENT,
@@ -57,45 +77,76 @@ const clientAddComment = createAction(
   }),
 );
 
+/**
+ * A new comment from admin
+ */
+const ADMIN_INSERT_COMMENT = '@@ADMIN_INSERT_COMMENT';
+const adminAddComment = createAction(
+  ADMIN_INSERT_COMMENT,
+  (content: string) => ({
+    type: ADMIN_INSERT_COMMENT,
+    payload: {
+      content,
+    },
+  }),
+);
+
+function* handleNewCommentSaga(io: SocketIO.Server, content: string) {
+  const curRoundStartTime = yield select<RootState>(
+    (s) => s.comment.currentRoundStartTime);
+  const newComment = {
+    id: uuid.v1(),
+    content: content,
+    offset: getProcessUptime() - curRoundStartTime,
+    createAt: Date.now()
+  };
+  // broadcast to all client
+  io.local.emit('SLIDE_CHANGE', { newComment });
+  io.to(ROOM_ADM).emit('ADMIN_CHANGE', { newComment });
+  // save into db
+  yield call(insertComment, newComment.content, newComment.offset, newComment.createAt)
+}
+
+/**
+ * Receive new comment from client
+ * @param io 
+ */
 function* handleClientCommentSaga(io: SocketIO.Server) {
-  const ADD_COMMENT = getType(addComment);
   yield takeEvery<$Call<typeof clientAddComment>>(CLIENT_ADD_COMMENT, function* (clientAction) {
-    const currentRoundStartOffset = yield select<RootState>(
-      (s) => s.comment.currentRoundStartOffset);
-    const action = addComment(
-      uuid.v1(),
-      clientAction.payload.content,
-      process.uptime() - currentRoundStartOffset);
-    io.local.emit('SLIDE_CHANGE', { newComment: action.payload }); // broadcast to all client
-    yield put(action);
+    yield call(handleNewCommentSaga, io, clientAction.payload.content);
   });
 }
 
-function* commentWorkerSaga() {
+/**
+ * Replay comments every slideshow round
+ * @param io 
+ */
+function* commentWorkerSaga(io: SocketIO.Server) {
   while (true) {
-    yield put(setCurrentRoundStartOffset(process.uptime()));
-
-    const allComment: ReadonlyArray<Comment> = yield select<RootState>((s) => s.comment.comments);
+    const curRoundStartTime = getProcessUptime();
+    yield put(setCurrentRoundStartTime(curRoundStartTime));
+    const allComment: ResolvedType<typeof listComment> = yield call(listComment);
     if (allComment.length === 0) {
-      // delay for next round
+      // wait until next round
       yield delay(config.slide.oneRoundMs);
     } else {
-      yield put(removeComments());
-      const currRoundStartOffsetSec = yield select<RootState>(
-        (s) => s.comment.currentRoundStartOffset);
       for (const comment of allComment) {
-        const d = (currRoundStartOffsetSec + comment.offsetSec - process.uptime()) * 1000;
-        yield delay(d);
-        yield put(clientAddComment(comment.content));
+        // Calculate time to show next comment
+        const d = comment.offset - (getProcessUptime() - curRoundStartTime);
+        yield delay(Math.max(0, d));
+        // Broadcast comment to clients
+        io.local.emit('SLIDE_CHANGE', { newComment: { ...comment, id: uuid.v1() } });
       }
-
-      // (currRoundStartOffsetSec + config.slide.oneRoundMs / 1000 - process.uptime()) * 1000
-      const d = (currRoundStartOffsetSec - process.uptime()) * 1000 + config.slide.oneRoundMs;
-      yield delay(d);
+      // Calculate the rest time to next round
+      const d = config.slide.oneRoundMs - (getProcessUptime() - curRoundStartTime);
+      yield delay(Math.max(0, d));
     }
   }
 }
 
+/**
+ * Tell client to show next picture every <config.slide.intervalMS> milliseconds
+ */
 function* slideWorkerSaga(io: SocketIO.Server) {
   while (true) {
     yield delay(config.slide.intervalMs);
@@ -110,6 +161,22 @@ const adminChangeMode = createAction(
   ADMIN_CHANGE_MODE,
   () => ({
     type: ADMIN_CHANGE_MODE,
+  }),
+);
+
+const ADMIN_LIST_COMMENT = '@@ADMIN_LIST_COMMENT';
+const adminListComment = createAction(
+  ADMIN_LIST_COMMENT,
+  () => ({
+    type: ADMIN_LIST_COMMENT,
+  }),
+);
+
+const ADMIN_CLEAR_COMMENT = '@@ADMIN_CLEAR_COMMENT';
+const adminClearComment = createAction(
+  ADMIN_CLEAR_COMMENT,
+  () => ({
+    type: ADMIN_CLEAR_COMMENT,
   }),
 );
 
@@ -365,6 +432,27 @@ const playerAnswer = createAction(
   }),
 );
 
+function* handleAdminCommandSaga(io: SocketIO.Server) {
+  yield fork(function* () {
+    // clear comments
+    yield takeLatest(ADMIN_CLEAR_COMMENT, function* () {
+      yield call(clearComment);
+      const comments = yield call(listComment);
+      io.to(ROOM_ADM).emit('ADMIN_CHANGE', {
+        comments
+      });
+    })
+  }, io);
+
+  yield fork(function* () {
+    // insert new comments
+    yield takeEvery<$Call<typeof adminAddComment>>(ADMIN_INSERT_COMMENT, function* (action) {
+      yield call(handleNewCommentSaga, io, action.payload.content);
+    });
+  }, io);
+
+}
+
 function* handleAdminLogin() {
   yield takeEvery('@@ADMIN_LOGIN', function* (action: any) {
     const {
@@ -385,19 +473,23 @@ function* handleAdminLogin() {
       options: question.options,
       answer: question.answer,
     });
+    const comments = yield call(listComment);
     action.socket.emit('ADMIN_CHANGE', {
-      playerAnswers: playerAnswers[questionIndex] || {}
+      playerAnswers: playerAnswers[questionIndex] || {},
+      comments
     });
   });
 }
 
 export default function createRootSaga(io: SocketIO.Server) {
   return function* rootSaga() {
+    // yield call(insertQuestions, config.game.questions);
     yield fork(handleClientCommentSaga, io);
-    yield fork(commentWorkerSaga);
+    yield fork(commentWorkerSaga, io);
     yield fork(slideWorkerSaga, io);
     yield fork(gameSaga, io);
     yield fork(handleAdminLogin);
+    yield fork(handleAdminCommandSaga, io);
 
     const channel = createChannel(io);
     while (true) {
@@ -433,6 +525,7 @@ function createChannel(io: SocketIO.Server) {
       });
 
       socket.on('admin', (action) => {
+        socket.join(ROOM_ADM);
         const { password, type, payload } = action;
         const isValid = password === config.admin.password;
         socket.emit('ADMIN_CHANGE', { login: isValid });

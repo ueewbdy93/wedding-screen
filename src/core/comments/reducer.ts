@@ -1,12 +1,12 @@
 import lodash from 'lodash';
 import { combineReducers } from 'redux';
 import { getType } from 'typesafe-actions';
-import { addComment, removeComments, setCurrentRoundStartOffset } from './actions';
+import { addComment, removeComments, setCurrentRoundStartTime } from './actions';
 import { ActionTypes, Comment } from './types';
 
 export type CommentState = {
   readonly comments: ReadonlyArray<Comment>,
-  readonly currentRoundStartOffset: number,
+  readonly currentRoundStartTime: number,
 };
 
 export const commentsReducer = combineReducers<CommentState, ActionTypes>({
@@ -20,9 +20,9 @@ export const commentsReducer = combineReducers<CommentState, ActionTypes>({
         return state;
     }
   },
-  currentRoundStartOffset: (state = 0, action) => {
+  currentRoundStartTime: (state = 0, action) => {
     switch (action.type) {
-      case getType(setCurrentRoundStartOffset):
+      case getType(setCurrentRoundStartTime):
         return action.payload.offset;
       default:
         return state;

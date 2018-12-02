@@ -1,9 +1,9 @@
-import { addComment, removeComments, setCurrentRoundStartOffset } from './actions';
+import { addComment, removeComments, setCurrentRoundStartTime } from './actions';
 
 export type ActionTypes = $Call<
   typeof addComment |
   typeof removeComments |
-  typeof setCurrentRoundStartOffset
+  typeof setCurrentRoundStartTime
 >;
 
 
