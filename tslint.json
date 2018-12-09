@@ -14,6 +14,7 @@
         "sourceType": "module"
     },
     "rules": {
+        "no-trailing-whitespace": true,
         "no-unused-variable": [
             true
         ],
