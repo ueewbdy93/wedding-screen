@@ -4,32 +4,27 @@ import { call, fork, put, race, select, take } from 'redux-saga/effects';
 import { createAction, getType } from 'typesafe-actions';
 import uuid from 'uuid';
 import { config } from '../config';
+import db from '../db';
 import { setCurrentRoundStartTime } from './comments/actions';
 import {
   addPlayer,
-  nextQuestion,
-  resetPlayerAnswers,
+  resetPlayerVote,
+  setPlayers,
   setQuestionIndex,
-  setRank,
   setStage,
-  updatePlayerAnswer,
-  updatePlayerScore,
+  updatePlayerVote,
 } from './game/actions';
-import { GameState, Player, PlayerAnswers, Question, Stage } from './game/types';
+import {
+  Player,
+  PlayerState,
+  PlayerVote,
+  Stage,
+} from './game/types';
 import logger from './logger';
 import { setMode } from './root-action';
 import { RootState } from './root-reducer';
 import { Mode } from './root-types';
 import { nextSlide } from './slide/actions';
-import {
-  insertComment,
-  listComment,
-  clearComment,
-  insertQuestions,
-  insertVote,
-  listVote,
-} from '../db';
-import { start } from 'repl';
 
 const ROOM_ADM = 'ADM';
 
@@ -40,28 +35,6 @@ function getProcessUptime() {
   return process.uptime() * 1000;
 }
 
-const CLIENT_CHECK_PLAYER = '@@CLIENT_CHECK_PLAYER';
-const clientCheckPlayer = createAction(
-  CLIENT_CHECK_PLAYER,
-  (id: string, name: string) => ({
-    type: CLIENT_CHECK_PLAYER,
-    payload: {
-      id,
-      name,
-    },
-  }),
-);
-
-const CLIENT_ADD_PLAYER = '@@CLIENT_ADD_PLAYER';
-const clientAddPlayer = createAction(
-  CLIENT_ADD_PLAYER,
-  (name: string) => ({
-    type: CLIENT_ADD_PLAYER,
-    payload: {
-      name,
-    },
-  }),
-);
 
 /**
  * A new comment from client
@@ -95,21 +68,26 @@ function* handleNewCommentSaga(io: SocketIO.Server, content: string) {
   const curRoundStartTime = yield select<RootState>(
     (s) => s.comment.currentRoundStartTime);
   const newComment = {
+    content,
     id: uuid.v1(),
-    content: content,
     offset: getProcessUptime() - curRoundStartTime,
-    createAt: Date.now()
+    createAt: Date.now(),
   };
   // broadcast to all client
   io.local.emit('SLIDE_CHANGE', { newComment });
   io.to(ROOM_ADM).emit('ADMIN_CHANGE', { newComment });
   // save into db
-  yield call(insertComment, newComment.content, newComment.offset, newComment.createAt)
+  yield call(
+    db.insertComment,
+    newComment.content,
+    newComment.offset,
+    newComment.createAt,
+  );
 }
 
 /**
  * Receive new comment from client
- * @param io 
+ * @param io
  */
 function* handleClientCommentSaga(io: SocketIO.Server) {
   yield takeEvery<$Call<typeof clientAddComment>>(CLIENT_ADD_COMMENT, function* (clientAction) {
@@ -119,13 +97,13 @@ function* handleClientCommentSaga(io: SocketIO.Server) {
 
 /**
  * Replay comments every slideshow round
- * @param io 
+ * @param io
  */
 function* commentWorkerSaga(io: SocketIO.Server) {
   while (true) {
     const curRoundStartTime = getProcessUptime();
     yield put(setCurrentRoundStartTime(curRoundStartTime));
-    const allComment: ResolvedType<typeof listComment> = yield call(listComment);
+    const allComment: ResolvedType<typeof db.listComment> = yield call(db.listComment);
     if (allComment.length === 0) {
       // wait until next round
       yield delay(config.slide.oneRoundMs);
@@ -209,69 +187,65 @@ const adminShowScore = createAction(
   }),
 );
 
-function* calculateScoreSaga(io: SocketIO.Server, questionIndex: number, startAnswerTime: number) {
-  const { players, answer, playerAnswers } = yield select<RootState>((s) => ({
-    players: s.game.players,
-    answer: s.game.questions[questionIndex].answer,
-    playerAnswers: s.game.playerAnswers[questionIndex],
-  }));
-
-  const newPlayers: Player[] = players.map((player: Player) => {
-    if (!playerAnswers || !playerAnswers[player.id]) {
-      return player;
-    }
-    const { optionID, createTime } = playerAnswers[player.id];
-    if (optionID !== answer.id) {
-      return player;
-    }
-    const weight = Math.min(config.game.intervalMs, Math.max(0, createTime - startAnswerTime));
-    const newScore = Math.floor((config.game.intervalMs - weight) / 10);
-    return { ...player, score: player.score + newScore };
-  });
-  yield put(updatePlayerScore(newPlayers));
-  yield put(setRank(newPlayers.sort((a, b) => b.score - a.score)));
+function* syncPlayerVotes(io: SocketIO.Server) {
+  while (true) {
+    yield delay(800);
+    const playerVotes = yield select<RootState>((s) => s.game.playerVotes);
+    io.to(ROOM_ADM).emit('ADMIN_CHANGE', { playerVotes });
+  }
 }
 
 function* gameRound(io: SocketIO.Server) {
   for (let i = 0; i < config.game.questions.length; i += 1) {
+    const question = config.game.questions[i];
     yield take(getType(adminNextQuestion));
-    yield put(nextQuestion());
+    yield put(setQuestionIndex(i));
     yield put(setStage(Stage.START_QUESTION));
+    yield put(resetPlayerVote());
 
-    const { questions, questionIndex } = yield select<RootState>((s) => s.game);
     io.local.emit('GAME_CHANGE', {
       stage: Stage.START_QUESTION,
       selectedOption: null,
       answer: null,
       options: [],
       question: {
-        text: questions[questionIndex].text,
-        id: questions[questionIndex].id,
+        text: question.text,
+        id: question.id,
       },
-      vote: null
+      vote: null,
+      curVote: null,
     });
+
+    io.to(ROOM_ADM).emit('ADMIN_CHANGE', { question });
 
     yield take(getType(adminStartAnswer));
     yield put(setStage(Stage.START_ANSWER));
 
     io.local.emit('GAME_CHANGE', {
       stage: Stage.START_ANSWER,
-      options: questions[questionIndex].options,
+      options: question.options,
     });
 
     const startAnswerTime = Date.now();
+    const gameInterval = config.game.intervalMs;
     yield race({
-      timeout: delay(config.game.intervalMs),
+      timeout: delay(gameInterval),
       forceTimeout: take(getType(adminRevealAnswer)),
+      syncPlayerVotes: call(syncPlayerVotes, io),
       playerAnswer: call(function* () {
         while (true) {
           const action = yield take(getType(playerAnswer));
 
           const { playerID, answerID } = action.payload;
-          // add score for player
-          yield put(updatePlayerAnswer(playerID, answerID, questionIndex, Date.now()));
-          action.socket.emit('GAME_CHANGE', { selectedOption: answerID });
-          io.local.emit('GAME_CHANGE', { vote: { optionId: answerID, playerID: playerID } });
+          const playerVote = {
+            playerId: playerID,
+            questionId: question.id,
+            optionId: answerID,
+            time: Math.max(0, Date.now() - startAnswerTime),
+            isAnswer: question.answer.id === answerID,
+          };
+          yield put(updatePlayerVote(playerVote));
+          action.socket.emit('GAME_CHANGE', { curVote: playerVote });
         }
       }),
     });
@@ -280,57 +254,92 @@ function* gameRound(io: SocketIO.Server) {
 
     io.local.emit('GAME_CHANGE', {
       stage: Stage.REVEAL_ANSWER,
-      answer: questions[questionIndex].answer,
+      answer: question.answer,
     });
 
-    const playerAnswers: PlayerAnswers[]
-      = yield select<RootState>((s) => (s.game.playerAnswers[questionIndex]));
-    io.local.emit('ADMIN_CHANGE', { playerAnswers });
+    const [playerVotes, players]: [{ [key: string]: PlayerVote }, ReadonlyArray<Player>]
+      = yield select<RootState>((s) => ([s.game.playerVotes, s.game.players]));
+    io.to(ROOM_ADM).emit('ADMIN_CHANGE', { playerVotes });
 
-    yield call(calculateScoreSaga, io, questionIndex, startAnswerTime);
+    // calculate score
+    const newPlayers = players.map((player: Readonly<Player>) => {
+      const playerVote = playerVotes[player.id];
+      const newPlayer = { ...player };
+      if (playerVote === undefined) {
+        newPlayer.incorrectCount = (i + 1) - newPlayer.correctCount;
+        newPlayer.correctRate = newPlayer.correctCount / (i + 1);
+        return newPlayer;
+      }
+      if (playerVote.isAnswer === true) {
+        const score = Math.max(Math.round((gameInterval - playerVote.time) / 10), 0);
+        newPlayer.score += score;
+        newPlayer.correctCount += 1;
+      }
+      newPlayer.incorrectCount = (i + 1) - newPlayer.correctCount;
+      newPlayer.time = playerVote.time;
+      newPlayer.correctRate = newPlayer.correctCount / (i + 1);
+      return newPlayer;
+    });
+    newPlayers.sort((a, b) => b.score - a.score);
+    newPlayers.forEach((player, i) => {
+      const rank = i + 1;
+      if (rank > player.rank) {
+        player.state = PlayerState.DOWN;
+      } else if (rank < player.rank) {
+        player.state = PlayerState.UP;
+      } else {
+        player.state = PlayerState.EQUAL;
+      }
+      player.rank = rank;
+    });
+    yield fork(
+      db.insertPlayerVotes,
+      Object.keys(playerVotes).map((key) => playerVotes[key]));
+    yield fork(db.updatePlayers, newPlayers);
+    yield put(setPlayers(newPlayers));
+    io.local.emit('GAME_CHANGE', { players: newPlayers });
 
     yield take(getType(adminShowScore));
     yield put(setStage(Stage.SCORE));
-
-    const [players, rank]: [Player[], Player[]]
-      = yield select<RootState>((s) => ([
-        s.game.players,
-        s.game.rank,
-      ]));
-    io.local.emit('GAME_CHANGE', {
-      rank,
-      players,
-      stage: Stage.SCORE,
-    });
+    io.local.emit('GAME_CHANGE', { stage: Stage.SCORE });
   }
-  const game: GameState = yield select<RootState>((s) => s.game);
-  logger.info('The final game state', JSON.stringify(game));
 }
 
+type addPlayerAction = {
+  type: '@@CLIENT_ADD_PLAYER',
+  socket: any;
+  payload: string;
+};
 function* addPlayerSaga(io: SocketIO.Server) {
-  yield takeEvery('@@CLIENT_ADD_PLAYER', function* (action: any) {
+  yield takeEvery('@@CLIENT_ADD_PLAYER', function* (action: addPlayerAction) {
     const { payload: name, socket } = action;
-    const id = uuid.v1();
-    yield put(addPlayer(id, name));
+    const id: string = uuid.v4();
+    const player: Player = {
+      name,
+      id,
+      score: 0,
+      rank: 999,
+      correctCount: 0,
+      incorrectCount: 0,
+      correctRate: 0,
+      time: 0,
+      state: PlayerState.NEW,
+      createAt: Date.now(),
+    };
+    yield put(addPlayer(player));
     const {
       players,
       stage,
-      questions,
       questionIndex,
-      rank,
-      playerAnswers,
+      playerVotes,
     } = yield select<RootState>((s) => s.game);
     io.local.emit('GAME_CHANGE', { players });
-    const question = questionIndex === -1 ? {} : questions[questionIndex];
-    const selectedOption = questionIndex !== -1 &&
-      playerAnswers[questionIndex] &&
-      playerAnswers[questionIndex][id] ?
-      playerAnswers[questionIndex][id].optionID : null;
+    const question = config.game.questions[questionIndex] || {};
     socket.emit('GAME_CHANGE', {
       stage,
       players,
-      rank,
-      selectedOption,
+      curVote: playerVotes[id] || null,
+      vote: null,
       player: players.find((p: Player) => p.id === id),
       question: { text: question.text, id: question.id },
       options: question.options,
@@ -341,31 +350,26 @@ function* addPlayerSaga(io: SocketIO.Server) {
 
 function* checkPlayerSaga() {
   yield takeEvery('@@CLIENT_CHECK_PLAYER', function* (action: any) {
-    const { payload: { name, id }, socket } = action;
+    const { payload: { id }, socket } = action;
     const players: ReadonlyArray<Player> = yield select<RootState>((s) => s.game.players);
-    if (players.find((player) => player.id === id)) {
+    const player = players.find((player) => player.id === id);
+    if (player !== undefined) {
       const {
         players,
         stage,
-        questions,
         questionIndex,
-        rank,
-        playerAnswers,
+        playerVotes,
       } = yield select<RootState>((s) => s.game);
-      const question = questionIndex === -1 ? {} : questions[questionIndex];
-      const selectedOption = questionIndex !== -1 &&
-        playerAnswers[questionIndex] &&
-        playerAnswers[questionIndex][id] ?
-        playerAnswers[questionIndex][id].optionID : null;
+      const question = config.game.questions[questionIndex] || {};
       socket.emit('GAME_CHANGE', {
         stage,
         players,
-        rank,
-        selectedOption,
-        player: players.find((p: Player) => p.id === id),
+        player,
         question: { text: question.text, id: question.id },
         options: question.options,
         answer: question.answer,
+        vote: null,
+        curVote: playerVotes[id] || null,
       });
     } else {
       socket.emit('GAME_CHANGE', { player: null });
@@ -375,26 +379,28 @@ function* checkPlayerSaga() {
 
 function* resetGameSaga(io: SocketIO.Server) {
   const [players]: [Player[]] = yield select<RootState>((s) => ([s.game.players]));
-  const newPlayers = players.map((player) => ({ ...player, score: 0 }));
-  yield put(updatePlayerScore(newPlayers));
-  yield put(setRank(newPlayers.sort((a, b) => b.score - a.score)));
-  yield put(resetPlayerAnswers());
+  const newPlayers: Player[] = players.map((player) => ({
+    ...player, score: 0, rank: 999, correctCount: 0,
+    time: 0, correctRate: 0, state: PlayerState.NEW,
+  }));
+  yield put(setPlayers(newPlayers));
+  yield put(resetPlayerVote());
+  yield fork(db.clearPlayerVotes);
+  yield fork(db.clearPlayers);
   yield put(setQuestionIndex(-1));
   yield put(setStage(Stage.JOIN));
 
   io.local.emit('GAME_CHANGE', {
-    players,
+    players: newPlayers,
     stage: Stage.JOIN,
-    rank: [],
     question: null,
     options: null,
     answer: null,
-    vote: null
+    vote: null,
+    curVote: null,
   });
 
-  io.local.emit('ADMIN_CHANGE', {
-    playerAnswers: {}
-  })
+  io.to(ROOM_ADM).emit('ADMIN_CHANGE', { playerVotes: {} });
 }
 
 function* gameSaga(io: SocketIO.Server) {
@@ -402,8 +408,8 @@ function* gameSaga(io: SocketIO.Server) {
   yield fork(checkPlayerSaga, io);
   while (true) {
     yield take(getType(adminChangeMode));
-    yield put(setMode(Mode.Game));
     yield call(resetGameSaga, io);
+    yield put(setMode(Mode.Game));
     io.local.emit('MODE_CHANGE', { mode: Mode.Game });
     const { changeMode } = yield race({
       changeMode: take(getType(adminChangeMode)),
@@ -420,7 +426,7 @@ function* gameSaga(io: SocketIO.Server) {
   }
 }
 
-const PLAYER_ANSWER = '@@PLAYER_ANSWER';
+const PLAYER_ANSWER = '@@CLIENT_PLAYER_ANSWER';
 const playerAnswer = createAction(
   PLAYER_ANSWER,
   (playerID: string, answerID: string) => ({
@@ -436,20 +442,20 @@ function* handleAdminCommandSaga(io: SocketIO.Server) {
   yield fork(function* () {
     // clear comments
     yield takeLatest(ADMIN_CLEAR_COMMENT, function* () {
-      yield call(clearComment);
-      const comments = yield call(listComment);
+      yield call(db.clearComment);
+      const comments = yield call(db.listComment);
       io.to(ROOM_ADM).emit('ADMIN_CHANGE', {
-        comments
+        comments,
       });
-    })
-  }, io);
+    });
+  },         io);
 
   yield fork(function* () {
     // insert new comments
     yield takeEvery<$Call<typeof adminAddComment>>(ADMIN_INSERT_COMMENT, function* (action) {
       yield call(handleNewCommentSaga, io, action.payload.content);
     });
-  }, io);
+  },         io);
 
 }
 
@@ -458,32 +464,30 @@ function* handleAdminLogin() {
     const {
       players,
       stage,
-      questions,
       questionIndex,
-      rank,
-      playerAnswers,
+      playerVotes,
     } = yield select<RootState>((s) => s.game);
-    const question = questions[questionIndex] || {};
+    const question = config.game.questions[questionIndex] || {};
     action.socket.emit('GAME_CHANGE', {
       stage,
       players,
-      rank,
-      selectedOption: null,
+      vote: null,
+      curVote: null,
       question: { text: question.text, id: question.id },
       options: question.options,
       answer: question.answer,
     });
-    const comments = yield call(listComment);
+    const comments = yield call(db.listComment);
     action.socket.emit('ADMIN_CHANGE', {
-      playerAnswers: playerAnswers[questionIndex] || {},
-      comments
+      comments,
+      playerVotes,
     });
   });
 }
 
 export default function createRootSaga(io: SocketIO.Server) {
   return function* rootSaga() {
-    // yield call(insertQuestions, config.game.questions);
+    yield call(db.insertQuestions, config.game.questions);
     yield fork(handleClientCommentSaga, io);
     yield fork(commentWorkerSaga, io);
     yield fork(slideWorkerSaga, io);
@@ -497,10 +501,11 @@ export default function createRootSaga(io: SocketIO.Server) {
         = yield take(channel);
       if (type === 'NEW_PLAYER') {
         // 新的connection
-        const subState = yield select<RootState>((s) => {
-          const ret = lodash.pick(s, ['mode', 'slide', 'game']);
-          return ret;
-        });
+        const subState: Pick<RootState, 'mode' | 'slide' | 'game'> =
+          yield select<RootState>((s) => {
+            const ret = lodash.pick(s, ['mode', 'slide', 'game']);
+            return ret;
+          });
         socket.emit('SLIDE_CHANGE', subState.slide);
         socket.emit('GAME_CHANGE', { intervalMs: subState.game.intervalMs });
         socket.emit('MODE_CHANGE', { mode: subState.mode });
@@ -521,15 +526,19 @@ function createChannel(io: SocketIO.Server) {
         if (action.type === CLIENT_ADD_COMMENT) {
           logger.info('client add comment', action.payload.content);
         }
-        emit({ ...action, socket });
+
+        if (action.type.startsWith('@@CLIENT_')) {
+          emit({ ...action, socket });
+        }
+
       });
 
       socket.on('admin', (action) => {
-        socket.join(ROOM_ADM);
         const { password, type, payload } = action;
         const isValid = password === config.admin.password;
         socket.emit('ADMIN_CHANGE', { login: isValid });
         if (isValid) {
+          socket.join(ROOM_ADM);
           emit({ type, payload, socket });
         }
       });

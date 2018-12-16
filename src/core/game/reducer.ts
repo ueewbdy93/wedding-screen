@@ -1,35 +1,30 @@
-import lodash from 'lodash';
 import { combineReducers } from 'redux';
 import { getType } from 'typesafe-actions';
 import { config } from '../../config';
 import {
   addPlayer,
-  nextQuestion,
-  resetPlayerAnswers,
+  resetPlayerVote,
+  setPlayers,
   setQuestionIndex,
-  setRank,
   setStage,
-  updatePlayerAnswer,
-  updatePlayerScore,
+  updatePlayerVote,
 } from './actions';
-import { ActionTypes, GameState, PlayerAnswer, PlayerAnswers, Stage } from './types';
+import { ActionTypes, GameState, Stage } from './types';
 
 export const gameReducer = combineReducers<GameState, ActionTypes>({
   intervalMs: (state = config.game.intervalMs, action) => {
     return state;
   },
-  playerAnswers: (state = Array(config.game.questions.length).fill({}), action) => {
+  playerVotes: (state = {}, action) => {
     switch (action.type) {
-      case getType(resetPlayerAnswers):
-        return Array(config.game.questions.length).fill({});
-      case getType(updatePlayerAnswer): {
-        const { questionIndex, playerID } = action.payload;
-        const playerAnswers = state[questionIndex];
-        return [
-          ...state.slice(0, questionIndex),
-          { ...playerAnswers, [playerID]: action.payload },
-          ...state.slice(questionIndex + 1),
-        ];
+      case getType(updatePlayerVote): {
+        return {
+          ...state,
+          [action.payload.playerId]: action.payload,
+        };
+      }
+      case getType(resetPlayerVote): {
+        return {};
       }
       default:
         return state;
@@ -39,7 +34,7 @@ export const gameReducer = combineReducers<GameState, ActionTypes>({
     switch (action.type) {
       case getType(addPlayer):
         return state.concat(action.payload);
-      case getType(updatePlayerScore):
+      case getType(setPlayers):
         return action.payload;
       default:
         return state;
@@ -53,24 +48,12 @@ export const gameReducer = combineReducers<GameState, ActionTypes>({
         return state;
     }
   },
-  questions: (state = config.game.questions, action) => {
-    return state;
-  },
   questionIndex: (state = 0, action) => {
     switch (action.type) {
-      case getType(nextQuestion):
-        return (state + 1) % config.game.questions.length;
       case getType(setQuestionIndex):
         return action.payload.index;
       default:
         return state;
     }
-  },
-  rank: (state = [], action) => {
-    switch (action.type) {
-      case getType(setRank):
-        return action.payload.rank;
-    }
-    return state;
   },
 });

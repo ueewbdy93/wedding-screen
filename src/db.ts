@@ -1,9 +1,9 @@
 
-import sqlite3 from 'sqlite3';
 import path from 'path';
+import sqlite3 from 'sqlite3';
 import util from 'util';
 import { config } from './config';
-import { resolve } from 'url';
+import { Player, PlayerVote } from './core/game/types';
 
 const FILENAME = path.resolve(__dirname, '..', `db-${Date.now()}`);
 
@@ -16,20 +16,59 @@ const db = new sqlite3.Database(
       console.error(err);
       process.exit(-1);
     }
-    db.exec("CREATE TABLE comment (content TEXT, offset INT, createAt INT)")
-    db.exec("CREATE TABLE player (id TEXT, name TEXT, createAt INT)")
-    db.exec("CREATE TABLE vote (playerId TEXT, questionId INT, optionId INT, time INT, isAnswer INT)")
-    db.exec("CREATE TABLE rank (rank INT, playerId TEXT, rate NUMBER, avgTime INT)")
-    db.exec("CREATE TABLE question (id INT, content TEXT)")
-    db.exec("CREATE TABLE option (id INT, questionId INT, content TEXT, isAnswer INT)")
-  }
+    db.exec('CREATE TABLE comment (content TEXT, offset INT, createAt INT)');
+    db.exec(`CREATE TABLE player (
+              id TEXT, name TEXT, score INT, rank INT,
+              correctCount INT, incorrectCount INT, correctRate REAL, createAt INT)`);
+    db.exec(`CREATE TABLE vote (
+              playerId TEXT, questionId INT, optionId INT, time INT, isAnswer INT)`);
+    db.exec('CREATE TABLE rank (rank INT, playerId TEXT, rate NUMBER, avgTime INT)');
+    db.exec('CREATE TABLE question (id INT, content TEXT)');
+    db.exec('CREATE TABLE option (id INT, questionId INT, content TEXT, isAnswer INT)');
+  },
 );
+
+function insertPlayers(players: ReadonlyArray<Player>) {
+  return new Promise((resolve, reject) => {
+    const stmt = db.prepare(
+      `INSERT INTO player (
+        id, name, score, rank, correctCount,
+        incorrectCount, correctRate, createAt
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    );
+    for (const player of players) {
+      stmt.run(
+        player.id, player.name, player.score, player.rank,
+        player.correctCount, player.incorrectCount,
+        player.correctRate, player.createAt,
+      );
+    }
+    stmt.finalize((err) => err ? reject(err) : resolve());
+  });
+}
+
+function clearPlayers() {
+  return new Promise((resolve, reject) => {
+    db.run(`DELETE FROM player`, (err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
+}
+
+async function updatePlayers(players: Player[]) {
+  await clearPlayers();
+  await insertPlayers(players);
+}
 
 function insertComment(content: string, offsetTime: number, createAt: number) {
   return new Promise((resolve, reject) => {
     const stmt = db.prepare(
-      "INSERT INTO comment VALUES (?, ?, ?)",
-      [content, offsetTime, createAt]
+      'INSERT INTO comment VALUES (?, ?, ?)',
+      [content, offsetTime, createAt],
     );
     stmt.run((err) => {
       if (err) {
@@ -37,8 +76,8 @@ function insertComment(content: string, offsetTime: number, createAt: number) {
       } else {
         resolve();
       }
-    })
-  })
+    });
+  });
 }
 
 function clearComment() {
@@ -50,63 +89,35 @@ function clearComment() {
         resolve();
       }
     });
-  })
+  });
 }
 
 interface IComment {
   content: string;
   offset: number;
-  createAt: number
+  createAt: number;
 }
 function listComment() {
   const dbAll = util.promisify<IComment[]>(
-    db.all.bind(db, `SELECT content, offset, createAt FROM comment ORDER BY offset ASC`)
+    db.all.bind(
+      db,
+      'SELECT content, offset, createAt FROM comment ORDER BY offset ASC'),
   );
   return dbAll();
 }
 
-function insertVote(playerId: string, questionId: number, optionId: number, time: number, isAnswer: boolean) {
-  return new Promise((resolve, reject) => {
-    const stmt = db.prepare(
-      "INSERT INTO vote VALUES (?, ?, ?, ?, ?)",
-      [playerId, questionId, optionId, time, isAnswer]
-    );
-    stmt.run((err) => err ? reject(err) : resolve());
-  });
-}
-
-interface IVote {
-  playerId: string;
-  questionId: number;
-  optionId: number;
-  time: number;
-  isAnswer: boolean;
-}
-function listVote() {
-  const stmt = db.prepare("SELECT playerId, questionId, optionId, time, isAnswer");
-  const list = util.promisify<IVote[]>(stmt.all);
-  return list();
-}
-
-interface OpParams {
-  questionId: number;
-  id: number;
-  content: string;
-  isAnswer: boolean;
-}
-
 function insertQuestions(questions: typeof config.game.questions) {
   const insertQuestions = new Promise((resolve, reject) => {
-    const stmt = db.prepare("INSERT INTO question VALUES (?, ?)");
-    for (let question of questions) {
+    const stmt = db.prepare('INSERT INTO question VALUES (?, ?)');
+    for (const question of questions) {
       stmt.run(question.id, question.text);
     }
     stmt.finalize((err) => err ? reject(err) : resolve());
   });
   const insertOptions = new Promise((resolve, reject) => {
-    const stmt = db.prepare("INSERT INTO option VALUES (?, ?, ?, ?)");
-    for (let question of questions) {
-      for (let option of question.options) {
+    const stmt = db.prepare('INSERT INTO option VALUES (?, ?, ?, ?)');
+    for (const question of questions) {
+      for (const option of question.options) {
         const isAnswer = question.answer.id === option.id;
         stmt.run(option.id, question.id, option.text, isAnswer);
       }
@@ -116,12 +127,40 @@ function insertQuestions(questions: typeof config.game.questions) {
   return Promise.all([insertQuestions, insertOptions]);
 }
 
-export {
+function insertPlayerVotes(votes: ReadonlyArray<PlayerVote>) {
+  return new Promise((resolve, reject) => {
+    const stmt = db.prepare('INSERT INTO vote VALUES (?, ?, ?, ?, ?)');
+    for (const vote of votes) {
+      stmt.run(
+        vote.playerId, vote.questionId, vote.optionId,
+        vote.time, (vote.isAnswer ? 1 : 0),
+      );
+    }
+    stmt.finalize((err) => err ? reject(err) : resolve());
+  });
+}
+
+function clearPlayerVotes() {
+  return new Promise((resolve, reject) => {
+    db.run(`DELETE FROM vote`, (err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
+}
+
+export default {
+  clearPlayers,
+  insertPlayers,
+  updatePlayers,
   insertComment,
   clearComment,
   listComment,
-  insertVote,
   insertQuestions,
-  listVote
+  insertPlayerVotes,
+  clearPlayerVotes,
 };
 

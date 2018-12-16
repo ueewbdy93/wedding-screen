@@ -1,33 +1,36 @@
 import {
   addPlayer,
-  nextQuestion,
-  resetPlayerAnswers,
+  resetPlayerVote,
+  setPlayers,
   setQuestionIndex,
-  setRank,
   setStage,
-  updatePlayerAnswer,
-  updatePlayerScore,
+  updatePlayerVote,
 } from './actions';
 
 export type ActionTypes = $Call<
-  typeof nextQuestion |
   typeof setQuestionIndex |
 
   typeof addPlayer |
-  typeof resetPlayerAnswers |
-  typeof updatePlayerScore |
-  typeof updatePlayerAnswer |
+  typeof updatePlayerVote |
+  typeof resetPlayerVote |
+  typeof setPlayers |
 
-  typeof setStage |
-
-  typeof setRank
+  typeof setStage
   >;
 
-export type Player = Readonly<{
-  name: string,
+export enum PlayerState { NEW, UP, DOWN, EQUAL }
+export type Player = {
   id: string,
+  name: string,
   score: number,
-}>;
+  rank: number,
+  correctCount: number,
+  incorrectCount: number,
+  correctRate: number,
+  time: number,
+  state: PlayerState,
+  createAt: number,
+};
 export enum Stage { JOIN, START_QUESTION, START_ANSWER, REVEAL_ANSWER, SCORE, FINAL }
 export type Option = Readonly<{
   id: number,
@@ -51,12 +54,18 @@ export type PlayerAnswers = Readonly<{
   [playerID: string]: PlayerAnswer,
 }>;
 
+export type PlayerVote = Readonly<{
+  playerId: string,
+  questionId: number,
+  optionId: number,
+  time: number,
+  isAnswer: boolean,
+}>;
+
 export type GameState = Readonly<{
   intervalMs: Readonly<Number>,
   players: ReadonlyArray<Player>,
   stage: Stage,
-  questions: ReadonlyArray<Question>,
   questionIndex: number,
-  rank: ReadonlyArray<Player>,
-  playerAnswers: ReadonlyArray<PlayerAnswers>,
+  playerVotes: { [key: string]: PlayerVote },
 }>;
