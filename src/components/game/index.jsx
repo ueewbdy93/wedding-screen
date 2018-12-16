@@ -18,8 +18,7 @@ class Game extends React.Component {
       question,
       options,
       answer,
-      rank,
-      selectedOption,
+      curVote,
       selectOption,
       addPlayer,
       intervalMs
@@ -35,16 +34,16 @@ class Game extends React.Component {
       case GameStage.REVEAL_ANSWER:
         return <QA
           intervalMs={intervalMs}
-          rank={rank}
+          players={players}
           player={player}
           stage={stage}
           question={question}
           options={options}
-          selectedOption={selectedOption}
+          curVote={curVote}
           selectOption={selectOption}
           answer={answer} />
       case GameStage.SCORE:
-        return <Score rank={rank} player={player} />
+        return <Score players={players} player={player} />
       default:
         return null;
     }

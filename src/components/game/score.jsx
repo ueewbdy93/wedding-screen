@@ -1,49 +1,72 @@
 import React from 'react';
 import { Container, Header, Content } from './common';
+import Profile from './profile';
 
-function score(props) {
-  const { player, rank } = props;
-  const myRankIndex = rank.findIndex(entry => entry.id === player.id);
-  const myRank = rank[myRankIndex];
-  const top10 = rank.slice(0, 10);
+const PlayerState = { NEW: 0, UP: 1, DOWN: 2, EQUAL: 3 }
+
+function PlayerStateIcon(props) {
+  const { state } = props;
+  switch (state) {
+    case PlayerState.UP:
+      return <i className="fas fa-caret-up"></i>;
+    case PlayerState.DOWN:
+      return <i className="fas fa-caret-down"></i>;
+    default:
+      return <i className="invisible fas fa-caret-down"></i>;
+  }
+}
+
+function ScoreItem(props) {
+  const { player, isCurrentPlayer } = props;
+  return (
+    <li
+      key={player.id}
+      className={isCurrentPlayer ? 'border-bottom bg-info media' : 'border-bottom media'}
+      style={{ padding: '5px' }}>
+      <h2
+        className="mr-1 mb-0 align-self-center"
+        style={{ minWidth: '65px', textAlign: 'center' }}>
+        {player.rank === 999 ? 'N/A' : player.rank}
+        <small className="ml-1">
+          <PlayerStateIcon state={player.state} />
+        </small>
+      </h2>
+      <div className="media-body" style={{ textAlign: 'left' }}>
+        <h3 className="mt-0 mb-0">{player.name}</h3>
+        <Profile short={true} player={player} />
+      </div>
+    </li>
+  )
+}
+
+function Score(props) {
+  const { players, player: { id } } = props;
+  const player = players.find(p => p.id === id);
+  if (player === undefined) {
+    return window.location.reload();
+  }
+  const top10 = players.filter(p => p.rank <= 10);
   return (
     <Container>
       <Header>
-        <h3 className="masthead-brand">
+        <h2 className="masthead-brand">
           <small><i className="fas fa-trophy"></i></small>
           {` 排行榜 `}
           <small><i className="fas fa-trophy"></i></small>
-        </h3>
-        <small>您的大名: {player.name} | 分數: {myRank ? myRank.score : 0} | 名次: {myRankIndex ? myRankIndex + 1 : 'N/A'}</small>
+        </h2>
+        <Profile player={player} />
       </Header>
       <Content>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <table className="table table-striped table-lg" style={{ maxWidth: '42em' }}>
-            <thead>
-              <tr>
-                <th scope="col">名次</th>
-                <th scope="col">名字</th>
-                <th scope="col">分數</th>
-              </tr>
-            </thead>
-            <tbody>
-              {
-                top10.map((playerScore, i) => (
-                  <tr key={i} className={i === myRankIndex ? 'bg-info' : ''}>
-                    <th scope="row">{i + 1}</th>
-                    <td>{playerScore.name}</td>
-                    <td>{playerScore.score}</td>
-                  </tr>
-                ))
-              }
-              {myRankIndex > 10 && <tr><td colSpan={3}>...</td></tr>}
-              {myRankIndex >= 10 && <tr className="bg-info"><th scope="row">{myRankIndex + 1}</th><td>{myRank.name}</td><td>{myRank.score}</td></tr>}
-            </tbody>
-          </table>
+        <div className="ml-auto mr-auto col-md-6 col-sm-12">
+          <ul className="list-unstyled">
+            {top10.map(p => <ScoreItem player={p} isCurrentPlayer={p.id === id} />)}
+            {player.rank > 11 && <li><i className="fas fa-ellipsis-v"></i></li>}
+            {player.rank > 10 && <ScoreItem player={player} isCurrentPlayer={true} />}
+          </ul>
         </div>
       </Content>
     </Container>
   )
 }
 
-export default score;
+export default Score;
