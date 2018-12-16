@@ -3,7 +3,6 @@ import fs from 'fs';
 import lodash from 'lodash';
 import path from 'path';
 import { Omit } from 'utility-types';
-import uuid from 'uuid';
 
 /***************************
  * configuration starts here
@@ -28,6 +27,7 @@ const baseConfig = {
     urls: pics,
   },
   game: {
+    playMusic: false,
     /* The time interval for client to answering questions */
     intervalMs: 8 * 1000,
     /* An array of questions */
@@ -79,27 +79,37 @@ const baseConfig = {
     // ],
   },
 };
+
+const questions = baseConfig.game.questions.map((q, i) => {
+  const options = q.options.map((o, j) => ({ id: i * 4 + j, text: o }));
+  const answer = options.find((o) => o.text === q.answer)!;
+  if (!answer) {
+    console.error(`No answer for question: ${q.text}`);
+    throw new Error(`No answer for question: ${q.text}`);
+  }
+  const omitted: Omit<typeof q, 'options' | 'answer'> = lodash.omit(q, ['options', 'answer']);
+
+  return Object.assign(
+    omitted,
+    {
+      answer,
+      options,
+      id: i,
+    });
+});
+
 /***************************
  * configuration ends here
  ***************************/
 
-export const config = lodash.merge(baseConfig, {
+export const config = {
+  ...baseConfig,
   slide: {
+    ...baseConfig.slide,
     oneRoundMs: baseConfig.slide.intervalMs * baseConfig.slide.urls.length,
   },
   game: {
-    questions: baseConfig.game.questions.map((q) => {
-      const options = q.options.map((o) => ({ id: uuid.v1(), text: o }));
-      const answer = options.find((o) => o.text === q.answer)!;
-      const omitted: Omit<typeof q, 'options' | 'answer'> = lodash.omit(q, ['options', 'answer']);
-
-      return Object.assign(
-        omitted,
-        {
-          answer,
-          options,
-          id: uuid.v1(),
-        });
-    }),
+    ...baseConfig.game,
+    questions,
   },
-});
+};
