@@ -8,7 +8,7 @@
   },
   "tslint.autoFixOnSave": true,
   "tslint.enable": true,
-  "eslint.enable": false,
+  "eslint.enable": true,
   "eslint.autoFixOnSave": false,
   "cSpell.words": [
     "typesafe"
