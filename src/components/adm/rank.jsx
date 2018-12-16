@@ -1,7 +1,7 @@
 import React from 'react';
 
 function Rank(props) {
-  const { rank } = props;
+  const { players } = props;
   return (
     <div>
       <div>
@@ -9,9 +9,9 @@ function Rank(props) {
           <table>
             <thead><tr><th colSpan={3}>排行榜</th></tr></thead>
             <tbody>{
-              rank.map((player, i) => (
-                <tr key={i}>
-                  <td>{i + 1}</td>
+              players.map((player) => (
+                <tr key={player.id}>
+                  <td>{player.rank}</td>
                   <td>{player.name}</td>
                   <td>{player.score}</td>
                 </tr>

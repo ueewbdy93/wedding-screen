@@ -7,15 +7,11 @@ const mapStateToProps = (state) => {
   return {
     comments: state.admin.comments,
     login: state.admin.login,
+    question: state.admin.question,
+    playerVotes: state.admin.playerVotes,
     mode: state.common.mode,
     players: state.game.players,
     stage: state.game.stage,
-    question: state.game.question,
-    options: state.game.options,
-    answer: state.game.answer,
-    score: state.game.score,
-    rank: state.game.rank,
-    playerAnswers: state.admin.playerAnswers,
     vote: state.game.vote,
     intervalMs: state.game.intervalMs,
   };

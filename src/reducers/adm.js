@@ -16,8 +16,9 @@ export const ActionTypes = {
 const initialState = {
     password: null,
     login: false,
-    playerAnswers: {},
-    comments: []
+    playerVotes: {},
+    comments: [],
+    question: null
 };
 
 export const Actions = {
@@ -70,17 +71,15 @@ export default function reducer(state = initialState, action) {
     }
     if (action.payload.newComment) {
         const { newComment } = action.payload;
-        const comments = [{
+        state.comments = [{
             ...newComment, datetime: dateToString(newComment.createAt)
         }, ...state.comments];
-        return { ...state, comments }
     }
     if (action.payload.comments) {
-        const comments = action.payload.comments.map(c => {
+        state.comments = action.payload.comments.map(c => {
             c.datetime = dateToString(c.createAt);
             return c;
         }).reverse();
-        return { ...state, comments };
     }
     return { ...state, ...action.payload };
 }
