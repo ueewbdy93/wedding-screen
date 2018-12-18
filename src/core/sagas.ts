@@ -5,7 +5,9 @@ import { createAction, getType } from 'typesafe-actions';
 import uuid from 'uuid';
 import { config } from '../config';
 import db from '../db';
-import { setCurrentRoundStartTime } from './comments/actions';
+import { CommentState } from './comments';
+import { addComment, removeComments, setCurrentRoundStartTime } from './comments/actions';
+import { Comment } from './comments/types';
 import {
   addPlayer,
   resetPlayerVote,
@@ -20,7 +22,6 @@ import {
   PlayerVote,
   Stage,
 } from './game/types';
-import logger from './logger';
 import { setMode } from './root-action';
 import { RootState } from './root-reducer';
 import { Mode } from './root-types';
@@ -67,22 +68,17 @@ const adminAddComment = createAction(
 function* handleNewCommentSaga(io: SocketIO.Server, content: string) {
   const curRoundStartTime = yield select<RootState>(
     (s) => s.comment.currentRoundStartTime);
-  const newComment = {
+  const comment: Comment = {
     content,
-    id: uuid.v1(),
     offset: getProcessUptime() - curRoundStartTime,
     createAt: Date.now(),
   };
   // broadcast to all client
-  io.local.emit('SLIDE_CHANGE', { newComment });
-  io.to(ROOM_ADM).emit('ADMIN_CHANGE', { newComment });
+  io.local.emit('SLIDE_CHANGE', { newComment: { ...comment, id: uuid.v1() } });
+  io.to(ROOM_ADM).emit('ADMIN_CHANGE', { newComment: { ...comment, id: uuid.v1() } });
+  yield put(addComment(comment));
   // save into db
-  yield call(
-    db.insertComment,
-    newComment.content,
-    newComment.offset,
-    newComment.createAt,
-  );
+  yield fork(db.insertComment, comment);
 }
 
 /**
@@ -95,42 +91,44 @@ function* handleClientCommentSaga(io: SocketIO.Server) {
   });
 }
 
-/**
- * Replay comments every slideshow round
- * @param io
- */
 function* commentWorkerSaga(io: SocketIO.Server) {
-  while (true) {
-    const curRoundStartTime = getProcessUptime();
-    yield put(setCurrentRoundStartTime(curRoundStartTime));
-    const allComment: ResolvedType<typeof db.listComment> = yield call(db.listComment);
-    if (allComment.length === 0) {
-      // wait until next round
-      yield delay(config.slide.oneRoundMs);
-    } else {
-      for (const comment of allComment) {
+  const commentState: CommentState = yield select<RootState>((s) => s.comment);
+  const { currentRoundStartTime, comments } = commentState;
+  if (comments.length === 0) {
+    return;
+  }
+  const sortedComment = [...comments].sort((a, b) => a.offset - b.offset);
+  sortedComment.sort((a, b) => a.offset - b.offset);
+  yield race({
+    clearComments: take('@@ADMIN_CLEAR_COMMENT'),
+    sendComments: call(function* () {
+      for (const comment of sortedComment) {
         // Calculate time to show next comment
-        const d = comment.offset - (getProcessUptime() - curRoundStartTime);
+        const now = getProcessUptime();
+        const d = comment.offset - (now - currentRoundStartTime);
         yield delay(Math.max(0, d));
         // Broadcast comment to clients
         io.local.emit('SLIDE_CHANGE', { newComment: { ...comment, id: uuid.v1() } });
       }
-      // Calculate the rest time to next round
-      const d = config.slide.oneRoundMs - (getProcessUptime() - curRoundStartTime);
-      yield delay(Math.max(0, d));
-    }
-  }
+    }),
+  });
 }
 
 /**
  * Tell client to show next picture every <config.slide.intervalMS> milliseconds
  */
 function* slideWorkerSaga(io: SocketIO.Server) {
+  const total: number = yield select<RootState>((s) => s.slide.pictures.length);
   while (true) {
-    yield delay(config.slide.intervalMs);
-    yield put(nextSlide());
-    const currentSlideIndex = yield select<RootState>((s) => s.slide.index);
-    io.local.emit('SLIDE_CHANGE', { index: currentSlideIndex });
+    const curRoundStartTime = getProcessUptime();
+    yield put(setCurrentRoundStartTime(curRoundStartTime));
+    yield fork(commentWorkerSaga, io);
+    for (let i = 0; i < total; i += 1) {
+      yield delay(config.slide.intervalMs);
+      yield put(nextSlide());
+      const currentSlideIndex = yield select<RootState>((s) => s.slide.index);
+      io.local.emit('SLIDE_CHANGE', { index: currentSlideIndex });
+    }
   }
 }
 
@@ -139,22 +137,6 @@ const adminChangeMode = createAction(
   ADMIN_CHANGE_MODE,
   () => ({
     type: ADMIN_CHANGE_MODE,
-  }),
-);
-
-const ADMIN_LIST_COMMENT = '@@ADMIN_LIST_COMMENT';
-const adminListComment = createAction(
-  ADMIN_LIST_COMMENT,
-  () => ({
-    type: ADMIN_LIST_COMMENT,
-  }),
-);
-
-const ADMIN_CLEAR_COMMENT = '@@ADMIN_CLEAR_COMMENT';
-const adminClearComment = createAction(
-  ADMIN_CLEAR_COMMENT,
-  () => ({
-    type: ADMIN_CLEAR_COMMENT,
   }),
 );
 
@@ -270,7 +252,7 @@ function* gameRound(io: SocketIO.Server) {
         newPlayer.correctRate = newPlayer.correctCount / (i + 1);
         return newPlayer;
       }
-      if (playerVote.isAnswer === true) {
+      if (playerVote.isAnswer) {
         const score = Math.max(Math.round((gameInterval - playerVote.time) / 10), 0);
         newPlayer.score += score;
         newPlayer.correctCount += 1;
@@ -439,23 +421,27 @@ const playerAnswer = createAction(
 );
 
 function* handleAdminCommandSaga(io: SocketIO.Server) {
-  yield fork(function* () {
-    // clear comments
-    yield takeLatest(ADMIN_CLEAR_COMMENT, function* () {
-      yield call(db.clearComment);
-      const comments = yield call(db.listComment);
-      io.to(ROOM_ADM).emit('ADMIN_CHANGE', {
-        comments,
+  yield fork(
+    function* (io) {
+      // clear comments
+      yield takeLatest('@@ADMIN_CLEAR_COMMENT', function* () {
+        yield fork(db.clearComment);
+        yield put(removeComments());
+        io.to(ROOM_ADM).emit('ADMIN_CHANGE', { comments: [] });
       });
-    });
-  },         io);
+    },
+    io,
+  );
 
-  yield fork(function* () {
-    // insert new comments
-    yield takeEvery<$Call<typeof adminAddComment>>(ADMIN_INSERT_COMMENT, function* (action) {
-      yield call(handleNewCommentSaga, io, action.payload.content);
-    });
-  },         io);
+  yield fork(
+    function* (io) {
+      // insert new comments
+      yield takeEvery<$Call<typeof adminAddComment>>(ADMIN_INSERT_COMMENT, function* (action) {
+        yield call(handleNewCommentSaga, io, action.payload.content);
+      });
+    },
+    io,
+  );
 
 }
 
@@ -477,7 +463,7 @@ function* handleAdminLogin() {
       options: question.options,
       answer: question.answer,
     });
-    const comments = yield call(db.listComment);
+    const { comments } = yield select<RootState>((s) => s.comment);
     action.socket.emit('ADMIN_CHANGE', {
       comments,
       playerVotes,
@@ -489,7 +475,6 @@ export default function createRootSaga(io: SocketIO.Server) {
   return function* rootSaga() {
     yield call(db.insertQuestions, config.game.questions);
     yield fork(handleClientCommentSaga, io);
-    yield fork(commentWorkerSaga, io);
     yield fork(slideWorkerSaga, io);
     yield fork(gameSaga, io);
     yield fork(handleAdminLogin);
@@ -523,14 +508,9 @@ function createChannel(io: SocketIO.Server) {
       emit({ socket, type: 'NEW_PLAYER' });
 
       socket.on('action', (action) => {
-        if (action.type === CLIENT_ADD_COMMENT) {
-          logger.info('client add comment', action.payload.content);
-        }
-
         if (action.type.startsWith('@@CLIENT_')) {
           emit({ ...action, socket });
         }
-
       });
 
       socket.on('admin', (action) => {
