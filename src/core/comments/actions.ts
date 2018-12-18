@@ -1,5 +1,5 @@
 import { createAction } from 'typesafe-actions';
-
+import { Comment } from './types';
 
 const ADD_COMMENT = 'ADD_COMMENT';
 const REMOVE_COMMENTS = 'REMOVE_COMMENTS';
@@ -7,13 +7,9 @@ const SET_CURRENT_ROUND_START_OFFSET = 'SET_CURRENT_ROUND_START_TIME';
 
 export const addComment = createAction(
   ADD_COMMENT,
-  (id: string, content: string, offsetSec: number) => ({
+  (comment: Comment) => ({
     type: ADD_COMMENT,
-    payload: {
-      id,
-      content,
-      offsetSec,
-    },
+    payload: comment,
   }),
 );
 
@@ -27,7 +23,7 @@ export const removeComments = createAction(
 
 export const setCurrentRoundStartTime = createAction(
   SET_CURRENT_ROUND_START_OFFSET,
-  (offset:number) => ({
+  (offset: number) => ({
     type: SET_CURRENT_ROUND_START_OFFSET,
     payload: {
       offset,

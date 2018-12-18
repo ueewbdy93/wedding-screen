@@ -8,7 +8,7 @@ export type ActionTypes = $Call<
 
 
 export interface Comment {
-  id: string;
-  offsetSec: number;
   content: string;
+  offset: number;
+  createAt: number;
 }

@@ -1,8 +1,8 @@
 
 import path from 'path';
 import sqlite3 from 'sqlite3';
-import util from 'util';
 import { config } from './config';
+import { Comment } from './core/comments/types';
 import { Player, PlayerVote } from './core/game/types';
 
 const FILENAME = path.resolve(__dirname, '..', `db-${Date.now()}`);
@@ -64,11 +64,11 @@ async function updatePlayers(players: Player[]) {
   await insertPlayers(players);
 }
 
-function insertComment(content: string, offsetTime: number, createAt: number) {
+function insertComment(comment: Comment) {
   return new Promise((resolve, reject) => {
     const stmt = db.prepare(
       'INSERT INTO comment VALUES (?, ?, ?)',
-      [content, offsetTime, createAt],
+      [comment.content, comment.offset, comment.createAt],
     );
     stmt.run((err) => {
       if (err) {
@@ -92,19 +92,6 @@ function clearComment() {
   });
 }
 
-interface IComment {
-  content: string;
-  offset: number;
-  createAt: number;
-}
-function listComment() {
-  const dbAll = util.promisify<IComment[]>(
-    db.all.bind(
-      db,
-      'SELECT content, offset, createAt FROM comment ORDER BY offset ASC'),
-  );
-  return dbAll();
-}
 
 function insertQuestions(questions: typeof config.game.questions) {
   const insertQuestions = new Promise((resolve, reject) => {
@@ -158,7 +145,6 @@ export default {
   updatePlayers,
   insertComment,
   clearComment,
-  listComment,
   insertQuestions,
   insertPlayerVotes,
   clearPlayerVotes,
