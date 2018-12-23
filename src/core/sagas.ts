@@ -132,14 +132,6 @@ function* slideWorkerSaga(io: SocketIO.Server) {
   }
 }
 
-const ADMIN_CHANGE_MODE = '@@ADMIN_CHANGE_MODE';
-const adminChangeMode = createAction(
-  ADMIN_CHANGE_MODE,
-  () => ({
-    type: ADMIN_CHANGE_MODE,
-  }),
-);
-
 const ADMIN_NEXT_QUESTION = '@@ADMIN_START_QUESTION';
 const adminNextQuestion = createAction(
   ADMIN_NEXT_QUESTION,
@@ -178,7 +170,8 @@ function* syncPlayerVotes(io: SocketIO.Server) {
 }
 
 function* gameRound(io: SocketIO.Server) {
-  for (let i = 0; i < config.game.questions.length; i += 1) {
+  const questionLength = config.game.questions.length;
+  for (let i = 0; i < questionLength; i += 1) {
     const question = config.game.questions[i];
     yield take(getType(adminNextQuestion));
     yield put(setQuestionIndex(i));
@@ -285,6 +278,7 @@ function* gameRound(io: SocketIO.Server) {
     yield put(setStage(Stage.SCORE));
     io.local.emit('GAME_CHANGE', { stage: Stage.SCORE });
   }
+  return true;
 }
 
 type addPlayerAction = {
@@ -360,20 +354,15 @@ function* checkPlayerSaga() {
 }
 
 function* resetGameSaga(io: SocketIO.Server) {
-  const [players]: [Player[]] = yield select<RootState>((s) => ([s.game.players]));
-  const newPlayers: Player[] = players.map((player) => ({
-    ...player, score: 0, rank: 999, correctCount: 0,
-    time: 0, correctRate: 0, state: PlayerState.NEW,
-  }));
-  yield put(setPlayers(newPlayers));
+  yield put(setPlayers([]));
   yield put(resetPlayerVote());
   yield fork(db.clearPlayerVotes);
   yield fork(db.clearPlayers);
-  yield put(setQuestionIndex(-1));
+  yield put(setQuestionIndex(0));
   yield put(setStage(Stage.JOIN));
 
   io.local.emit('GAME_CHANGE', {
-    players: newPlayers,
+    players: [],
     stage: Stage.JOIN,
     question: null,
     options: null,
@@ -389,21 +378,13 @@ function* gameSaga(io: SocketIO.Server) {
   yield fork(addPlayerSaga, io);
   yield fork(checkPlayerSaga, io);
   while (true) {
-    yield take(getType(adminChangeMode));
     yield call(resetGameSaga, io);
-    yield put(setMode(Mode.Game));
-    io.local.emit('MODE_CHANGE', { mode: Mode.Game });
-    const { changeMode } = yield race({
-      changeMode: take(getType(adminChangeMode)),
+    const result = yield race({
       game: call(gameRound, io),
+      resetGame: take('@@ADMIN_RESET_GAME'),
     });
-    if (changeMode) {
-      yield put(setMode(Mode.Slide));
-      io.local.emit('MODE_CHANGE', { mode: Mode.Slide });
-    } else {
-      yield take(getType(adminChangeMode));
-      yield put(setMode(Mode.Slide));
-      io.local.emit('MODE_CHANGE', { mode: Mode.Slide });
+    if (result.game) {
+      yield take('@@ADMIN_RESET_GAME');
     }
   }
 }
@@ -439,6 +420,18 @@ function* handleAdminCommandSaga(io: SocketIO.Server) {
       yield takeEvery<$Call<typeof adminAddComment>>(ADMIN_INSERT_COMMENT, function* (action) {
         yield call(handleNewCommentSaga, io, action.payload.content);
       });
+    },
+    io,
+  );
+
+  yield fork(
+    function* (io) {
+      yield takeLatest(
+        '@@ADMIN_CHANGE_MODE',
+        function* (action: { type: any, payload: Mode }) {
+          yield put(setMode(action.payload));
+          io.local.emit('MODE_CHANGE', { mode: action.payload });
+        });
     },
     io,
   );
