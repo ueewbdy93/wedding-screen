@@ -5,7 +5,7 @@ import { GameStage } from '../constants';
 // action types
 const CLIENT_ADD_PLAYER = '@@CLIENT_ADD_PLAYER';
 const CLIENT_CHECK_PLAYER = '@@CLIENT_CHECK_PLAYER';
-const CLIENT_SELECT_OPTION = '@@PLAYER_ANSWER';
+const CLIENT_SELECT_OPTION = '@@CLIENT_PLAYER_ANSWER';
 
 // reducer with initial state
 const initialState = {
@@ -14,11 +14,10 @@ const initialState = {
   players: [],
   question: null,
   options: [],
-  rank: [],
   answer: null,
-  selectedOption: null,
   intervalMs: 8000,
   vote: null,
+  curVote: null,
 };
 
 export const Actions = {

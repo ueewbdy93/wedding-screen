@@ -11,8 +11,7 @@ const mapStateToProps = (state) => {
     question: state.game.question,
     options: state.game.options,
     answer: state.game.answer,
-    rank: state.game.rank,
-    selectedOption: state.game.selectedOption,
+    curVote: state.game.curVote,
     intervalMs: state.game.intervalMs,
   };
 };

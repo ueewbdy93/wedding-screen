@@ -2,6 +2,7 @@ import React from 'react';
 import { Container, Header, Content } from './common';
 import { GameStage } from '../../constants';
 import styles from './game.css';
+import Profile from './profile';
 
 const ORDER = [
   'btn btn-lg btn-info',
@@ -102,14 +103,14 @@ function QA(props) {
     stage,
     question,
     options,
-    selectedOption,
+    curVote,
     answer,
-    rank,
-    player,
+    player: { id },
+    players,
     selectOption,
     intervalMs
   } = props;
-  const myRankIndex = rank.findIndex(entry => entry.id === player.id);
+  const player = players.find(p => p.id === id);
   if (options.length === 0) {
     options.push(
       { id: 0, text: '' },
@@ -120,7 +121,7 @@ function QA(props) {
   }
   const disabled =
     (stage === GameStage.START_QUESTION) ||
-    (stage === GameStage.START_ANSWER && selectedOption) ||
+    (stage === GameStage.START_ANSWER && curVote) ||
     (stage === GameStage.REVEAL_ANSWER);
   const showAnswer = stage === GameStage.REVEAL_ANSWER;
   const showOption = stage !== GameStage.START_QUESTION;
@@ -132,7 +133,7 @@ function QA(props) {
           {` 題目 `}
           <small><i className="fas fa-question-circle"></i></small>
         </h3>
-        <small>您的大名: {player.name} | 分數: {myRankIndex === -1 ? 0 : rank[myRankIndex].score} | 目前名次: {myRankIndex ? myRankIndex + 1 : 'N/A'}</small>
+        <Profile player={player} />
       </Header>
       <ProgressBar stage={stage} intervalMs={intervalMs} />
       <Content fullHeight>
@@ -148,7 +149,7 @@ function QA(props) {
                     key={option.id}
                     showAnswer={showAnswer}
                     isAnswer={showAnswer ? answer.id === option.id : false}
-                    isSelect={selectedOption === option.id}
+                    isSelect={curVote && curVote.optionId === option.id}
                     disabled={disabled}
                     onClick={() => disabled ? null : selectOption(option.id)}
                     text={showOption ? option.text : ''}>
@@ -164,7 +165,7 @@ function QA(props) {
                     key={option.id}
                     showAnswer={showAnswer}
                     isAnswer={showAnswer ? answer.id === option.id : false}
-                    isSelect={selectedOption === option.id}
+                    isSelect={curVote && curVote.optionId === option.id}
                     disabled={disabled}
                     onClick={() => disabled ? null : selectOption(option.id)}
                     text={showOption ? option.text : ''}>
