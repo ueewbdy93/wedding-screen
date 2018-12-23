@@ -129,6 +129,15 @@ function GameButton(props) {
 
 
 class GameMgr extends React.Component {
+  constructor(props) {
+    super(props);
+    this.onResetGame = this.onResetGame.bind(this);
+  }
+  onResetGame() {
+    if (window.confirm("確定要重置遊戲？")) {
+      this.props.onResetGame()
+    }
+  }
   render() {
     const {
       stage,
@@ -160,6 +169,8 @@ class GameMgr extends React.Component {
           players={players}
           question={question}
           playerVotes={playerVotes} />
+        <hr />
+        <button className="btn btn-link btn-sm" onClick={this.onResetGame}>重置遊戲</button>
       </div>
     );
   }

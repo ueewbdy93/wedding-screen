@@ -10,6 +10,7 @@ export const ActionTypes = {
     ADMIN_SHOW_SCORE: '@@ADMIN_SHOW_SCORE',
     ADMIN_CLEAR_COMMENT: '@@ADMIN_CLEAR_COMMENT',
     ADMIN_INSERT_COMMENT: '@@ADMIN_INSERT_COMMENT',
+    ADMIN_RESET_GAME: '@@ADMIN_RESET_GAME',
 };
 
 // reducer with initial state
@@ -22,6 +23,10 @@ const initialState = {
 };
 
 export const Actions = {
+    onResetGame: () => (dispatch, getState) => {
+        const password = getState().admin.password;
+        adminEmit({ type: ActionTypes.ADMIN_RESET_GAME, password });
+    },
     onInsertComment: (content) => (dispatch, getState) => {
         const password = getState().admin.password;
         adminEmit({ type: ActionTypes.ADMIN_INSERT_COMMENT, password, payload: { content } });

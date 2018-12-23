@@ -41,6 +41,11 @@ export default function reducer(state = initialState, action) {
   if (type === 'GAME_CHANGE' && payload.player) {
     Cookies.set('player', payload.player);
   }
+  if (type === 'GAME_CHANGE' && payload.players !== undefined) {
+    const { id } = Cookies.getJSON('player') || { id: null };
+    const player = payload.players.find(p => p.id === id);
+    payload.player = player;
+  }
   switch (type) {
     case 'GAME_CHANGE':
       return { ...state, ...action.payload };
