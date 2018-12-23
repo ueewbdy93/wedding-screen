@@ -41,8 +41,8 @@ const baseConfig = {
         options: [
           'Orange',
           'Apple',
-          'Cherry',
-          'Strawberry',
+          'Lemon',
+          'Grape',
         ],
         /* The answer MUST be equal to one of the options */
         answer: 'Apple',
