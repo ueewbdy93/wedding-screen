@@ -46,6 +46,18 @@ function Score(props) {
     return window.location.reload();
   }
   const top10 = players.filter(p => p.rank <= 10);
+  for (let i = top10.length + 1; i < 11; i += 1) {
+    top10.push({
+      id: i,
+      rank: i,
+      score: 0,
+      name: '-',
+      state: PlayerState.NEW,
+      correctCount: 0,
+      incorrectCount: 0,
+      time: 0,
+    });
+  }
   return (
     <Container>
       <Header>
@@ -57,12 +69,25 @@ function Score(props) {
         <Profile player={player} />
       </Header>
       <Content>
-        <div className="ml-auto mr-auto col-md-6 col-sm-12">
-          <ul className="list-unstyled">
-            {top10.map(p => <ScoreItem player={p} isCurrentPlayer={p.id === id} />)}
-            {player.rank > 11 && <li><i className="fas fa-ellipsis-v"></i></li>}
-            {player.rank > 10 && <ScoreItem player={player} isCurrentPlayer={true} />}
-          </ul>
+        <div className="ml-auto mr-auto col-sm-12 mt-1 mb-1">
+          <div className="row">
+          <div className="col-md-6 col-sm-12">
+            <ul className="list-unstyled mb-0">
+              {top10.slice(0, 5).map(p => <ScoreItem key={p.id} player={p} isCurrentPlayer={p.id === id} />)}
+            </ul>
+          </div>
+          <div className="col-md-6 col-sm-12">
+            <ul className="list-unstyled mb-0">
+              {top10.slice(5, 10).map(p => <ScoreItem key={p.id} player={p} isCurrentPlayer={p.id === id} />)}
+            </ul>
+          </div>
+          <div className="col-sm-12">
+            <ul className="list-unstyled mb-0">
+              {player.rank > 11 && <li><i className="fas fa-ellipsis-v"></i></li>}
+              {player.rank > 10 && <ScoreItem player={player} isCurrentPlayer={true} />}
+            </ul>
+          </div>
+          </div>
         </div>
       </Content>
     </Container>
