@@ -1,6 +1,5 @@
 import io from 'socket.io-client';
 import Cookies from 'js-cookie';
-import { GameStage } from './constants';
 
 let socket = null;
 let store = null;
@@ -15,17 +14,6 @@ function init(reduxStore) {
     'ADMIN_CHANGE'
   ].forEach(event => {
     socket.on(event, (payload) => store.dispatch({ type: event, payload }))
-  });
-
-  socket.on('GAME_CHANGE', (payload) => {
-    if (payload.stage === GameStage.START_ANSWER) {
-      const myAuto = document.getElementById('myaudio');
-      myAuto.play();
-    } else if (payload.stage === GameStage.REVEAL_ANSWER) {
-      const myAuto = document.getElementById('myaudio');
-      myAuto.pause();
-      myAuto.load();
-    }
   });
 
   [
