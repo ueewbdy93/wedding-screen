@@ -27,7 +27,6 @@ const baseConfig = {
     urls: pics,
   },
   game: {
-    playMusic: false,
     /* The time interval for client to answering questions */
     intervalMs: 8 * 1000,
     /* An array of questions */
