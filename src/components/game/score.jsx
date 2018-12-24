@@ -71,12 +71,12 @@ function Score(props) {
       <Content>
         <div className="ml-auto mr-auto col-sm-12 mt-1 mb-1">
           <div className="row">
-          <div className="col-md-6 col-sm-12">
+          <div className="col-md-6 col-sm-12 col-lg-4 offset-lg-2">
             <ul className="list-unstyled mb-0">
               {top10.slice(0, 5).map(p => <ScoreItem key={p.id} player={p} isCurrentPlayer={p.id === id} />)}
             </ul>
           </div>
-          <div className="col-md-6 col-sm-12">
+          <div className="col-md-6 col-sm-12 col-lg-4">
             <ul className="list-unstyled mb-0">
               {top10.slice(5, 10).map(p => <ScoreItem key={p.id} player={p} isCurrentPlayer={p.id === id} />)}
             </ul>
