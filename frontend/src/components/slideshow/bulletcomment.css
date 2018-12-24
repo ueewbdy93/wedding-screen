@@ -1,0 +1,9 @@
+.bulletcomment {
+    font-size: 32px;
+}
+
+@media (max-width: 480px) {
+    .bulletcomment {
+        font-size: 20px;
+    }
+}
