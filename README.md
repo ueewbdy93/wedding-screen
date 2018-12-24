@@ -1,5 +1,10 @@
+## wedding pictures slideshow and bullet comments
 
-![](screenshots/sample.png)
+![](screenshots/slideshow-demo.gif)
+
+## game
+
+![](screenshots/game-demo.gif)
 
 # TL;DR
 
