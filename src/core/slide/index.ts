@@ -1,4 +1,4 @@
-export { slideReducer, SlideState } from './reducer';
+export { slideReducer, ISlideState as SlideState } from './reducer';
 
 import * as Actions from './actions';
 export { Actions };

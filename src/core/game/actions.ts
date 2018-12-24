@@ -1,5 +1,5 @@
 import { createAction } from 'typesafe-actions';
-import { Player, PlayerVote, Stage } from './types';
+import { IPlayer, PlayerVote, Stage } from './types';
 
 const SET_QUESTION_INDEX = 'SET_QUESTION_INDEX';
 export const setQuestionIndex = createAction(
@@ -24,7 +24,7 @@ export const addPlayer = createAction(
 const SET_PLAYERS = 'SET_PLAYERS';
 export const setPlayers = createAction(
   SET_PLAYERS,
-  (players: Player[]) => ({
+  (players: IPlayer[]) => ({
     type: SET_PLAYERS,
     payload: players,
   }),

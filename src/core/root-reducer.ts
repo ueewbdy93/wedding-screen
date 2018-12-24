@@ -2,31 +2,31 @@
 import { combineReducers, Reducer } from 'redux';
 import { getType } from 'typesafe-actions';
 import { $Call } from 'utility-types';
-import { commentsReducer, ActionTypes as CommentsActionTypes, CommentState } from './comments';
-import { gameReducer, ActionTypes as GameActionTypes, GameState } from './game';
+import { ActionTypes as CommentsActionTypes, commentsReducer, ICommentState } from './comments';
+import { ActionTypes as GameActionTypes, gameReducer, GameState } from './game';
 import { setMode } from './root-action';
 import { Mode } from './root-types';
 import {
-  slideReducer,
-  Actions as SlideAction,
   ActionTypes as SlideActionTypes,
+  slideReducer,
   SlideState,
 } from './slide';
 
-interface StoreEnhancerState { }
+// tslint:disable-next-line:no-empty-interface
+interface IStoreEnhancerState { }
 export type RootAction = CommentsActionTypes |
   SlideActionTypes |
   GameActionTypes |
   $Call<typeof setMode>;
 
-export interface RootState extends StoreEnhancerState {
-  comment: CommentState;
+export interface IRootState extends IStoreEnhancerState {
+  comment: ICommentState;
   slide: SlideState;
   game: GameState;
   mode: Mode;
 }
 
-export const rootReducer: Reducer<RootState, RootAction> = combineReducers<RootState, any>({
+export const rootReducer: Reducer<IRootState, RootAction> = combineReducers<IRootState, any>({
   comment: commentsReducer,
   slide: slideReducer,
   game: gameReducer,
@@ -39,4 +39,3 @@ export const rootReducer: Reducer<RootState, RootAction> = combineReducers<RootS
     }
   },
 });
-

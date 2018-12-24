@@ -11,7 +11,7 @@ import { Omit } from 'utility-types';
 /*
  * The pictures location, we place pictures at public/images
  */
-const pics = fs.readdirSync(path.resolve(__dirname, '../public/images'))
+const pics = fs.readdirSync(path.resolve(__dirname, 'public/images'))
   .filter((f) => f.indexOf('.jpg') !== -1)
   .map((f) => `/images/${f}`);
 
@@ -83,7 +83,7 @@ const questions = baseConfig.game.questions.map((q, i) => {
   const options = q.options.map((o, j) => ({ id: i * 4 + j, text: o }));
   const answer = options.find((o) => o.text === q.answer)!;
   if (!answer) {
-    console.error(`No answer for question: ${q.text}`);
+    // console.error(`No answer for question: ${q.text}`);
     throw new Error(`No answer for question: ${q.text}`);
   }
   const omitted: Omit<typeof q, 'options' | 'answer'> = lodash.omit(q, ['options', 'answer']);

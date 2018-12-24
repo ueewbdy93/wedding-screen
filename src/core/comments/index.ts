@@ -1,4 +1,4 @@
-export { commentsReducer, CommentState } from './reducer';
+export { commentsReducer, ICommentState } from './reducer';
 
 import * as Actions from './actions';
 export { Actions };

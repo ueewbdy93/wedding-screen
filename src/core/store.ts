@@ -1,14 +1,13 @@
 
 import { applyMiddleware, compose, createStore, Middleware } from 'redux';
 import reduxSaga from 'redux-saga';
-import { Actions as GameActions } from './game';
-import { rootReducer, RootState } from './root-reducer';
+import { IRootState, rootReducer } from './root-reducer';
 import { default as createRootSaga } from './sagas';
 
 export function configureStore({
   initialState,
   io }: {
-    initialState?: RootState,
+    initialState?: IRootState,
     io?: SocketIO.Server,
   } = {},
 ) {
@@ -22,13 +21,11 @@ export function configureStore({
     applyMiddleware(...middlewares),
   );
   // create store
-  const store = createStore(
+  const reduxStore = createStore(
     rootReducer,
     initialState!,
     enhancer,
   );
-
-
 
   if (io) {
     sagaMiddleware.run(createRootSaga(io));
@@ -39,7 +36,7 @@ export function configureStore({
     //   });
     // });
   }
-  return store;
+  return reduxStore;
 }
 
 // pass an optional param to rehydrate state on app start

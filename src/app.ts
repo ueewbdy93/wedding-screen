@@ -18,18 +18,18 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(join(__dirname, '../public'),  {
+app.use(express.static(join(__dirname, 'public'),  {
   maxAge: '2h',
 }));
 app.use(express.static(join(__dirname, '../frontend/build')));
 
 // catch 404 and forward to error handler
-app.use((req, res, next) => {
-  next(httpErrors(404));
+app.use((_req, _res, next) => {
+  return next(httpErrors(404));
 });
 
 // error handler
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = app.get('env') === 'development' ? err : {};

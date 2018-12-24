@@ -12,7 +12,8 @@ import {
 import { ActionTypes, GameState, Stage } from './types';
 
 export const gameReducer = combineReducers<GameState, ActionTypes>({
-  intervalMs: (state = config.game.intervalMs, action) => {
+  // tslint:disable-next-line:variable-name
+  intervalMs: (state = config.game.intervalMs, _action) => {
     return state;
   },
   playerVotes: (state = {}, action) => {

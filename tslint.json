@@ -1,45 +1,20 @@
 {
-    "parser": "babel-eslint",
-    "env": {
-        "browser": true,
-        "commonjs": true,
-        "es6": true,
-        "node": true,
-        "mocha": true
-    },
-    "parserOptions": {
-        "ecmaFeatures": {
-            "jsx": true
-        },
-        "sourceType": "module"
-    },
-    "rules": {
-        "no-trailing-whitespace": true,
-        "no-unused-variable": [
-            true
-        ],
-        "valid-typeof": "warn",
-        "comma-dangle": [
-            "error",
-            {
-                "arrays": "never",
-                "objects": "never",
-                "imports": "never",
-                "exports": "never",
-                "functions": "ignore"
-            }
-        ],
-        "ordered-imports": [
-            true,
-            {
-                "import-sources-order": "lowercase-last",
-                "named-imports-order": "lowercase-first"
-            }
-        ],
-        "ter-arrow-parens": [true, "always"]
-    },
+    "defaultSeverity": "error",
     "extends": [
-        "tslint-eslint-rules",
-        "tslint-config-airbnb"
-    ]
+        "tslint:recommended"
+    ],
+    "jsRules": {},
+    "rules": {
+        "quotemark": [
+            true,
+            "single",
+            "jsx-double"
+        ],
+        "variable-name": [
+            true,
+            "allow-leading-underscore"
+        ],
+        "object-literal-sort-keys": false
+    },
+    "rulesDirectory": []
 }

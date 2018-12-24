@@ -1,15 +1,14 @@
-import lodash from 'lodash';
 import { combineReducers } from 'redux';
 import { getType } from 'typesafe-actions';
 import { addComment, removeComments, setCurrentRoundStartTime } from './actions';
-import { ActionTypes, Comment } from './types';
+import { ActionTypes, IComment } from './types';
 
-export type CommentState = {
-  readonly comments: ReadonlyArray<Comment>,
-  readonly currentRoundStartTime: number,
-};
+export interface ICommentState {
+  readonly comments: ReadonlyArray<IComment>;
+  readonly currentRoundStartTime: number;
+}
 
-export const commentsReducer = combineReducers<CommentState, ActionTypes>({
+export const commentsReducer = combineReducers<ICommentState, ActionTypes>({
   comments: (state = [], action) => {
     switch (action.type) {
       case getType(addComment):
@@ -29,7 +28,6 @@ export const commentsReducer = combineReducers<CommentState, ActionTypes>({
     }
   },
 });
-
 
 // class CoreReducer {
 //   /**
