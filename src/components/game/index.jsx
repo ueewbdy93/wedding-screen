@@ -23,7 +23,7 @@ class Game extends React.Component {
       addPlayer,
       intervalMs
     } = this.props;
-    if (player === null) {
+    if (player === null || player === undefined) {
       return <NameInput addPlayer={addPlayer} />;
     }
     switch (stage) {

@@ -27,6 +27,7 @@ const mapDispatchToProps = dispatch => {
     adminLogin: bindActionCreators(Actions.adminLogin, dispatch),
     onClearComment: bindActionCreators(Actions.onClearComment, dispatch),
     onInsertComment: bindActionCreators(Actions.onInsertComment, dispatch),
+    onResetGame: bindActionCreators(Actions.onResetGame, dispatch),
   };
 };
 

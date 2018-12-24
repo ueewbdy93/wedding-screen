@@ -17,11 +17,6 @@ class Nav extends React.Component {
   }
   onSwitchMode(mode) {
     const { onSwitchMode, onSwitchTab } = this.props;
-    if (mode === 1) {
-      if (!window.confirm("確定要離開？離開後遊戲將會重置")) {
-        return;
-      }
-    }
     onSwitchMode(mode);
     onSwitchTab(TABS.find(tab => tab.mode === mode).id);
   }
