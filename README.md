@@ -129,6 +129,12 @@ see [config.sample.ts](src/config.sample.ts) for more detail.
 | game.intervalMs | Answer time |
 | game.questions | Array of questions.<br/> The format of question:<br/> `{ text: <string>, options: [<string>], answer: <string>}` |
 
+# Database
+
+Use sqlite.
+DB file name is in the format of `db-<timestamp>` which is created on server starting.
+To view the data, download the file and open it with any sqlite viewer.
+
 # How to develop
 
 ## Back-end
