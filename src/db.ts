@@ -5,7 +5,7 @@ import { config } from './config';
 import { Comment } from './core/comments/types';
 import { Player, PlayerVote } from './core/game/types';
 
-const FILENAME = path.resolve(__dirname, '..', `db-${Date.now()}`);
+const FILENAME = path.resolve(__dirname, '..', `db-wedding.sqlite`);
 
 const db = new sqlite3.Database(
   FILENAME,
@@ -16,15 +16,19 @@ const db = new sqlite3.Database(
       console.error(err);
       process.exit(-1);
     }
-    db.exec('CREATE TABLE comment (content TEXT, offset INT, createAt INT)');
-    db.exec(`CREATE TABLE player (
+		db.exec(`
+		BEGIN;
+		CREATE TABLE IF NOT EXISTS comment (content TEXT, offset INT, createAt INT);
+    CREATE TABLE IF NOT EXISTS player (
               id TEXT, name TEXT, score INT, rank INT,
-              correctCount INT, incorrectCount INT, correctRate REAL, createAt INT)`);
-    db.exec(`CREATE TABLE vote (
-              playerId TEXT, questionId INT, optionId INT, time INT, isAnswer INT)`);
-    db.exec('CREATE TABLE rank (rank INT, playerId TEXT, rate NUMBER, avgTime INT)');
-    db.exec('CREATE TABLE question (id INT, content TEXT)');
-    db.exec('CREATE TABLE option (id INT, questionId INT, content TEXT, isAnswer INT)');
+              correctCount INT, incorrectCount INT, correctRate REAL, createAt INT);
+    CREATE TABLE IF NOT EXISTS vote (
+              playerId TEXT, questionId INT, optionId INT, time INT, isAnswer INT);
+    CREATE TABLE IF NOT EXISTS rank (rank INT, playerId TEXT, rate NUMBER, avgTime INT);
+    CREATE TABLE IF NOT EXISTS question (id INT, content TEXT);
+		CREATE TABLE IF NOT EXISTS option (id INT, questionId INT, content TEXT, isAnswer INT);
+		COMMIT;
+		`);
   },
 );
 

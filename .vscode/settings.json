@@ -1,17 +1,18 @@
 {
-  "files.exclude": {
-    "**/.git": true,
-    "**/.svn": true,
-    "**/.hg": true,
-    "**/CVS": true,
-    "**/.DS_Store": true,
-  },
-  "tslint.autoFixOnSave": true,
-  "tslint.enable": true,
-  "eslint.enable": true,
-  "eslint.autoFixOnSave": false,
-  "cSpell.words": [
-    "typesafe"
-  ],
-  "editor.tabSize": 2
+	"files.exclude": {
+		"**/.git": true,
+		"**/.svn": true,
+		"**/.hg": true,
+		"**/CVS": true,
+		"**/.DS_Store": true,
+	},
+	"tslint.autoFixOnSave": true,
+	"tslint.enable": true,
+	"eslint.enable": true,
+	"eslint.autoFixOnSave": false,
+	"cSpell.words": [
+		"typesafe"
+	],
+	"editor.tabSize": 2,
+	"editor.formatOnSave": false
 }
