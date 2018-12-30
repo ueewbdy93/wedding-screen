@@ -6,7 +6,13 @@
 
 ![](screenshots/game-demo.gif)
 
-# TL;DR
+# TL;DR (docker)
+1. `git clone {WEDDING_SCRREN_REPO} && cd wedding-screen`
+2. `docker build -t wedding-screen:latest .`
+3. `cp src/config.sample.ts src/config.ts`
+4. `docker run --name wedding-screen -v .:/usr/src/app -d -p 5566:5566 wedding-screen`
+
+# TL;DR (without docker)
 
 1. `git clone https://github.com/ueewbdy93/wedding-screen.git && cd wedding-screen && git submodule update --init`
 2. Build backend: `cp src/config.sample.ts src/config.ts && npm install && npm run build`
@@ -161,7 +167,7 @@ Followings are the steps to develop.
     cd wedding-screen
     npm run start
     ```
-    Although **CRA** will run webpack-dev-server to host static files in development mode. However, we need to connect to back-end server to deal with actions (ex: add comment). 
+    Although **CRA** will run webpack-dev-server to host static files in development mode. However, we need to connect to back-end server to deal with actions (ex: add comment).
     We proxy some uris (*/socket*, */images/* and */resources/*) to the back-end server.
     See [Proxy API Requests in Development](https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md#proxying-api-requests-in-development).
 2. cd into *frontend/*
