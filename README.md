@@ -155,7 +155,7 @@ If you encounter perfomance issues. The tips below could help.
 
 - Compress images to a reasonable size. There are lots of tools can do that (ex: https://tinypng.com/).
 - Use the production build for front-end. See [React document](https://reactjs.org/docs/optimizing-performance.html#use-the-production-build) for more detailed information.
-- It's recommand to use 4G since the WiFi offered by the wedding venue may be slow.
+- It's recommend to use 4G since the WiFi offered by the wedding venue may be slow.
 
 # How to develop
 
