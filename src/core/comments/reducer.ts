@@ -1,4 +1,3 @@
-import lodash from 'lodash';
 import { combineReducers } from 'redux';
 import { getType } from 'typesafe-actions';
 import { addComment, removeComments, setCurrentRoundStartTime } from './actions';

@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 import { getType } from 'typesafe-actions';
-import { config } from '../../config';
+import { config } from '../../config-helper';
 import {
   addPlayer,
   resetPlayerVote,
