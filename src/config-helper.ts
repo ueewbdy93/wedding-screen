@@ -1,7 +1,7 @@
 import bunyan from 'bunyan';
 import fs from 'fs';
 import path from 'path';
-import configJson from './data/config.json';
+import configJson from './config/config.json';
 
 /**
  * The pictures location, we place pictures at public/images

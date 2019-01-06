@@ -1,6 +1,8 @@
 import lodash from 'lodash';
-import { delay, eventChannel, takeEvery, takeLatest } from 'redux-saga';
-import { call, fork, put, race, select, take } from 'redux-saga/effects';
+import { delay, eventChannel } from 'redux-saga';
+import {
+  call, fork, put, race, select, take, takeEvery, takeLatest,
+} from 'redux-saga/effects';
 import { createAction, getType } from 'typesafe-actions';
 import uuid from 'uuid';
 import { config } from '../config-helper';

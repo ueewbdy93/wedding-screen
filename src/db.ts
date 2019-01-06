@@ -5,7 +5,7 @@ import { config } from './config-helper';
 import { Comment } from './core/comments/types';
 import { Player, PlayerVote } from './core/game/types';
 
-const FILENAME = path.resolve(__dirname, 'data', `db-${Date.now()}.sqlite`);
+const FILENAME = path.resolve(__dirname, '..', 'db', `db-${Date.now()}.sqlite`);
 
 const db = new sqlite3.Database(
   FILENAME,

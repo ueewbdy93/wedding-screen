@@ -1,0 +1,9 @@
+node_modules
+frontend/node_modules
+
+.vscode
+dist
+screenshots
+db
+
+.git

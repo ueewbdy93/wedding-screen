@@ -5,6 +5,7 @@
 # Table of contents
 
 - [TL;DR](#tldr)
+- [TL;DR with Docker](#tldr-with-docker)
 - [About](#about)
   - [Demo](#demo)
 - [Prerequisite](#prerequisite)
@@ -27,6 +28,16 @@
 3. Build frontend: `npm install --prefix frontend/ && npm run build --prefix frontend/`
 4. Start server: `npm run start`
 5. Now you can browse the service with your favorite browser at http://localhost:5566 as user and, http://localhost:5566/admin-index.html (password: happy) as admin.
+
+# TL;DR with Docker
+
+1. `docker pull dy93/wedding-screen:latest`
+2. Prepare 3 folders:
+  - `images`: put your images into it
+  - `config`: put `config.json` into it
+  - `db`: empty folder
+3. `docker run -d -p 5566:5566 -v /path/to/config:/usr/src/app/dist/config -v /path/to/db:/usr/src/app/db -v /path/to/images/:/usr/src/app/public/images wedding-screen`
+4. Now you can browse the service with your favorite browser at http://localhost:5566 as user and, http://localhost:5566/admin-index.html as admin.
 
 # About
 
