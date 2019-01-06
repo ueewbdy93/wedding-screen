@@ -16,8 +16,12 @@ const db = new sqlite3.Database(
       console.error(err);
       process.exit(-1);
     }
+  },
+);
 
-    db.exec(`
+function init() {
+  return new Promise((resolve, reject) => {
+    const sql = `
       BEGIN;
       CREATE TABLE IF NOT EXISTS comment (
         content TEXT, offset INT, createAt INT);
@@ -30,9 +34,16 @@ const db = new sqlite3.Database(
       CREATE TABLE IF NOT EXISTS option (
         id INT, questionId INT, content TEXT, isAnswer INT);
       COMMIT;
-    `);
-  },
-);
+    `;
+    db.exec(sql, (err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
+}
 
 function insertPlayers(players: ReadonlyArray<Player>) {
   return new Promise((resolve, reject) => {
@@ -146,6 +157,7 @@ function clearPlayerVotes() {
 }
 
 export default {
+  init,
   clearPlayers,
   insertPlayers,
   updatePlayers,
