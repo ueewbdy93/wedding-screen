@@ -24,8 +24,8 @@
 # TL;DR
 
 1. `git clone https://github.com/ueewbdy93/wedding-screen.git && cd wedding-screen && git submodule update --init`
-2. Build backend: `cp src/config.sample.ts src/config.ts && npm install && npm run build`
-3. Build frontend: `npm install --prefix frontend/ && npm run build --prefix frontend/`
+2. Build back-end: `cp src/config/config.sample.json src/config/config.json && npm install && npm run build`
+3. Build front-end: `npm install --prefix frontend/ && npm run build --prefix frontend/`
 4. Start server: `npm run start`
 5. Now you can browse the service with your favorite browser at http://localhost:5566 as user and, http://localhost:5566/admin-index.html (password: happy) as admin.
 
@@ -34,16 +34,16 @@
 1. `docker pull dy93/wedding-screen:latest`
 2. Prepare 3 folders:
   - `images`: put your images into it
-  - `config`: put `config.json` into it
-  - `db`: empty folder
-3. `docker run -d -p 5566:5566 -v /path/to/config:/usr/src/app/dist/config -v /path/to/db:/usr/src/app/db -v /path/to/images/:/usr/src/app/public/images wedding-screen`
+  - `config`: put `config.json` into it. See [Configuration](#configuration) for detailed information.
+  - `db`: empty folder which the db files will created in
+3. `docker run -d -p 5566:5566 -v /PATH/TO/config:/usr/src/app/dist/config -v /PATH/TO/db:/usr/src/app/db -v /PATH/TO/images/:/usr/src/app/public/images dy93/wedding-screen`
 4. Now you can browse the service with your favorite browser at http://localhost:5566 as user and, http://localhost:5566/admin-index.html as admin.
 
 # About
 
 A wedding activity web app implemented by a happy programmer couple [dy93](https://github.com/dy93) and [ueewbd](https://github.com/ueewbd) ❤️.
 
-There are two modes and a admin page
+There are two modes and an admin page
 
 1. _slideshow_ mode:
 
@@ -93,10 +93,10 @@ We manage *wedding-screen-frontend* as a git submodule of *wedding-screen*.
 4. Set up configurations.
 
     ```
-    cp src/config.sample.ts src/config.ts
+    cp src/config/config.sample.json src/config/config.json
     ```
 
-5. Compile **typescript** into **javascript**.
+5. Compile **typescript** to **javascript**.
 
     ```
     npm run build
@@ -142,27 +142,68 @@ Visit http://localhost:5566/admin-index.html and login(default password:happy) t
 
 ## Configuration
 
-Edit *wedding-screen/src/config.ts*
-(If not exists, copy from *wedding-screen/src/config.sample.ts*),
-see [config.sample.ts](src/config.sample.ts) for more detail.
+Put your images into `wedding-screen/public/images/`
 
+Edit *wedding-screen/src/config/config.json*
+(If not exists, copy from *wedding-screen/src/config/config.sample.json*)
+
+Configuration options:
 | property  | description  |
 |---|---|
-| admin.password | Admin login password. |
-| slide.intervalMs | Slideshow interval.  |
-| slide.urls | Paths of slideshow pictures, auto generate by scanning *wedding-screen/public/images/\*.jpg* |
+| admin.password | Admin login password |
+| slide.intervalMs | Slideshow interval |
 | game.intervalMs | Answer time |
-| game.questions | Array of questions.<br/> The format of question:<br/> `{ text: <string>, options: [<string>], answer: <string>}` |
+| game.questions | List of question objects |
+| game.questions[].text | Question text |
+| game.questions[].options | List of option objects. Each question **must** have 4 options |
+| game.questions[].options[].text | Option text |
+| game.questions[].options[].isAnswer | (boolean) Indicate whether this option is correct. Allow multiple answers |
+
+Following is the example of `config.json`:
+
+```json
+{
+  "admin": {
+    "password": "happy"
+  },
+  "slide": {
+    "intervalMs": 3000
+  },
+  "game": {
+    "intervalMs": 8000,
+    "questions": [
+      {
+        "text": "Q1. Something is small, red, round and sweet?",
+        "options": [
+          { "text": "Orange", "isAnswer": false },
+          { "text": "Apple", "isAnswer": true },
+          { "text": "Lemon", "isAnswer": false },
+          { "text": "Grape", "isAnswer": false }
+        ]
+      },
+      {
+        "text": "Q2. Something starts with an H and ends with an oof?",
+        "options": [
+          { "text": "Bokoblin", "isAnswer": false },
+          { "text": "Moblin", "isAnswer": false },
+          { "text": "Lynel Hoof", "isAnswer": true },
+          { "text": "Lynel Hoof", "isAnswer": true }
+        ]
+      }
+    ]
+  }
+}
+```
 
 ## Database
 
 Use sqlite.
-DB file name is in the format of `db-<timestamp>` which is created on server starting.
+DB file name is in the format of `db/db-<timestamp>.sqlite` which is created on server starting.
 To view the data, download the file and open it with any sqlite viewer.
 
 ## Optimize
 
-If you encounter perfomance issues. The tips below could help.
+If you encounter performance issues. The tips below could help.
 
 - Compress images to a reasonable size. There are lots of tools can do that (ex: https://tinypng.com/).
 - Use the production build for front-end. See [React document](https://reactjs.org/docs/optimizing-performance.html#use-the-production-build) for more detailed information.
