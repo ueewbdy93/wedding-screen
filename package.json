@@ -11,7 +11,7 @@
     "test": "mocha --recursive",
     "build": "tsc",
     "heroku-prebuild": "rm -f db-* && npm install --prefix frontend/",
-    "heroku-postbuild": "cp src/config.sample.ts src/config.ts && npm run build --prefix frontend/ && npm run build",
+    "heroku-postbuild": "cp src/config/config.sample.json src/config/config.json && npm run build --prefix frontend/ && npm run build",
     "docker-build": "docker build -t dy93/wedding-screen:latest .",
     "docker-publish": "docker push dy93/wedding-screen:latest"
   },
