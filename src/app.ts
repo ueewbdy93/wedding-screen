@@ -11,7 +11,7 @@ import { join } from 'path';
 const app = express();
 
 // view engine setup
-app.set('views', join(__dirname, '../views'));
+app.set('views', join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.use(morgan('dev'));
@@ -21,7 +21,6 @@ app.use(cookieParser());
 app.use(express.static(join(__dirname, 'public'),  {
   maxAge: '2h',
 }));
-app.use(express.static(join(__dirname, '../frontend/build')));
 
 // catch 404 and forward to error handler
 app.use((_req, _res, next) => {

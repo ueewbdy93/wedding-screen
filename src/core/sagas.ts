@@ -469,6 +469,7 @@ function* handleAdminLogin() {
 
 export default function createRootSaga(io: SocketIO.Server) {
   return function* rootSaga() {
+    yield call(db.init);
     yield call(db.insertQuestions, config.game.questions);
     yield fork(handleClientCommentSaga, io);
     yield fork(slideWorkerSaga, io);

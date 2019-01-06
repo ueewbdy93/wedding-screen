@@ -19,17 +19,34 @@ const db = new sqlite3.Database(
       console.error(err);
       process.exit(-1);
     }
-    db.exec('CREATE TABLE comment (content TEXT, offset INT, createAt INT)');
-    db.exec(`CREATE TABLE player (
-              id TEXT, name TEXT, score INT, rank INT,
-              correctCount INT, incorrectCount INT, correctRate REAL, createAt INT)`);
-    db.exec(`CREATE TABLE vote (
-              playerId TEXT, questionId INT, optionId INT, time INT, isAnswer INT)`);
-    db.exec('CREATE TABLE rank (rank INT, playerId TEXT, rate NUMBER, avgTime INT)');
-    db.exec('CREATE TABLE question (id INT, content TEXT)');
-    db.exec('CREATE TABLE option (id INT, questionId INT, content TEXT, isAnswer INT)');
   },
 );
+
+function init() {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      BEGIN;
+      CREATE TABLE IF NOT EXISTS comment (
+        content TEXT, offset INT, createAt INT);
+      CREATE TABLE IF NOT EXISTS player (
+        id TEXT, name TEXT, score INT, rank INT,
+        correctCount INT, incorrectCount INT, correctRate REAL, createAt INT);
+      CREATE TABLE IF NOT EXISTS vote (
+        playerId TEXT, questionId INT, optionId INT, time INT, isAnswer INT);
+      CREATE TABLE IF NOT EXISTS question (id INT, content TEXT);
+      CREATE TABLE IF NOT EXISTS option (
+        id INT, questionId INT, content TEXT, isAnswer INT);
+      COMMIT;
+    `;
+    db.exec(sql, (err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
+}
 
 function insertPlayers(players: ReadonlyArray<IPlayer>) {
   return new Promise((resolve, reject) => {
@@ -142,6 +159,7 @@ function clearPlayerVotes() {
 }
 
 export default {
+  init,
   clearPlayers,
   insertPlayers,
   updatePlayers,
