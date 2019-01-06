@@ -111,6 +111,7 @@ Edit *src/config/config.json*
 (If not exists, copy from *src/config/config.sample.json*)
 
 Configuration options:
+
 | property  | description  |
 |---|---|
 | admin.password | Admin login password |
