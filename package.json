@@ -8,15 +8,41 @@
   "scripts": {
     "start": "node dist/server",
     "debug": "node --nolazy --inspect-brk=9229 dist/server",
-    "test": "mocha --recursive",
-    "build": "tsc",
-    "heroku-prebuild": "rm -f db-* && npm install --prefix frontend/",
-    "heroku-postbuild": "cp src/config/config.sample.json src/config/config.json && npm run build --prefix frontend/ && npm run build",
+    "prebuild": "tslint --project .",
+    "build": "concurrently --kill-others-on-fail -p '[{name}]' -n 'Node,Web' -c 'cyan.bold,green.bold' 'bnr build:server' 'bnr build:web'",
+    "dev": "concurrently --kill-others-on-fail -p '[{name}]' -n 'TypeScript,Build,Node,Web' -c 'cyan.bold,green.bold,white.bold' 'bnr build:server --watch' 'bnr dev:nodemon' 'bnr dev:web'",
+    
+    "heroku-prebuild": "rm -f db/*",
+    "heroku-postbuild": "cp src/config/config.sample.json src/config/config.json && npm run build",
     "docker-build": "docker build -t dy93/wedding-screen:latest .",
     "docker-publish": "docker push dy93/wedding-screen:latest"
   },
+  "betterScripts": {
+    "build:server": "babel --copy-files --out-dir dist --source-maps --extensions '.ts,.tsx' --ignore \"@types\",\"frontend\" src",
+    "build:web": {
+      "command": "webpack --config webpack/prod.config.babel.js",
+      "env": {
+        "NODE_ENV": "production",
+        "BABEL_ENV": "web:production"
+      }
+    },
+    "dev:nodemon": {
+      "command": "nodemon --delay 1.5 --ignore dist/public --ignore dist/types --inspect --watch dist dist/server.js",
+      "env": {
+        "PORT": "4000"
+      }
+    },
+    "dev:web": {
+      "command": "webpack-dev-server --config webpack/dev.config.babel.js",
+      "env": {
+        "NODE_ENV": "development",
+        "BABEL_ENV": "web"
+      }
+    }
+  },
   "dependencies": {
-    "@types/sqlite3": "3.1.3",
+    "@babel/polyfill": "^7.2.5",
+    "better-npm-run": "^0.1.1",
     "bunyan": "^1.8.12",
     "cookie-parser": "~1.4.3",
     "debug": "^2.6.3",
@@ -24,17 +50,33 @@
     "errorhandler": "^1.5.0",
     "express": "~4.16.0",
     "http-errors": "~1.6.2",
+    "js-cookie": "^2.2.0",
     "lodash": "^4.17.10",
-    "morgan": "~1.9.0",
-    "redux": "^3.7.2",
-    "redux-saga": "^0.16.0",
+    "morgan": "^1.9.1",
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0",
+    "react-redux": "^6.0.0",
+    "react-transition-group": "^2.5.2",
+    "redux": "^4.0.1",
+    "redux-logger": "^3.0.6",
+    "redux-saga": "^0.16.1",
+    "redux-thunk": "^2.3.0",
     "socket.io": "^2.1.1",
     "sqlite3": "4.0.4",
+    "tslib": "^1.9.3",
     "typesafe-actions": "^1.1.3",
     "utility-types": "^2.0.0",
     "uuid": "^3.2.1"
   },
   "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "@babel/plugin-proposal-class-properties": "^7.2.3",
+    "@babel/preset-env": "^7.2.3",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/preset-typescript": "^7.1.0",
+    "@babel/register": "^7.0.0",
+    "@types/babel__core": "^7.0.4",
     "@types/bunyan": "^1.8.4",
     "@types/cookie-parser": "^1.4.1",
     "@types/errorhandler": "0.0.32",
@@ -44,13 +86,32 @@
     "@types/morgan": "^1.7.35",
     "@types/node": "^10.0.4",
     "@types/socket.io": "^1.4.33",
+    "@types/sqlite3": "3.1.3",
     "@types/uuid": "^3.4.3",
-    "chai": "^4.1.2",
+    "ajv": "^6.6.2",
+    "autoprefixer": "^9.4.3",
+    "awesome-typescript-loader": "^5.2.1",
+    "babel-loader": "^8.0.4",
+    "concurrently": "^4.1.0",
+    "copyfiles": "^2.1.0",
+    "css-loader": "^2.1.0",
+    "favicons-webpack-plugin": "0.0.9",
+    "html-webpack-harddisk-plugin": "^1.0.1",
+    "html-webpack-plugin": "^3.2.0",
     "mocha": "^5.0.5",
+    "node-sass": "^4.11.0",
+    "nodemon": "^1.18.9",
+    "postcss-loader": "^3.0.0",
+    "sass-loader": "^7.1.0",
     "sinon": "^4.5.0",
-    "tslint": "^5.10.0",
-    "tslint-config-airbnb": "^5.8.0",
-    "tslint-eslint-rules": "^5.2.0",
-    "typescript": "3.1.6"
+    "source-map-loader": "^0.2.4",
+    "style-loader": "^0.23.1",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.12.0",
+    "typescript": "^3.2.2",
+    "uglifyjs-webpack-plugin": "^2.1.1",
+    "webpack": "^4.28.3",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.14"
   }
 }

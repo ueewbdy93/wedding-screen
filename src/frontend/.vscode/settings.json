@@ -1,0 +1,13 @@
+{
+  "window.zoomLevel": 1,
+  "editor.renderControlCharacters": true,
+  "editor.renderWhitespace": "all",
+  "extensions.ignoreRecommendations": false,
+  "files.eol": "\n",
+  "eslint.enable": true,
+  "eslint.autoFixOnSave": true,
+  "javascript.format.enable": true,
+  "editor.minimap.enabled": false,
+  "editor.formatOnSave": true,
+  "editor.tabSize": 2,
+}

@@ -4,16 +4,16 @@ import { config } from '../../config-helper';
 import { nextSlide } from './actions';
 import { ActionTypes } from './types';
 
-export type SlideState = {
-  readonly pictures: ReadonlyArray<string>,
-  readonly index: number,
-};
+export interface ISlideState {
+  readonly pictures: ReadonlyArray<string>;
+  readonly index: number;
+}
 
 const initPictures: ReadonlyArray<string> = config.slide.urls;
 
-
-export const slideReducer = combineReducers<SlideState, ActionTypes>({
-  pictures: (state = initPictures, action) => {
+export const slideReducer = combineReducers<ISlideState, ActionTypes>({
+  // tslint:disable-next-line:variable-name
+  pictures: (state = initPictures, _action) => {
     return state;
   },
   index: (state = 0, action) => {

@@ -19,18 +19,18 @@ export type ActionTypes = $Call<
   >;
 
 export enum PlayerState { NEW, UP, DOWN, EQUAL }
-export type Player = {
-  id: string,
-  name: string,
-  score: number,
-  rank: number,
-  correctCount: number,
-  incorrectCount: number,
-  correctRate: number,
-  time: number,
-  state: PlayerState,
-  createAt: number,
-};
+export interface IPlayer {
+  id: string;
+  name: string;
+  score: number;
+  rank: number;
+  correctCount: number;
+  incorrectCount: number;
+  correctRate: number;
+  time: number;
+  state: PlayerState;
+  createAt: number;
+}
 export enum Stage { JOIN, START_QUESTION, START_ANSWER, REVEAL_ANSWER, SCORE, FINAL }
 export type Option = Readonly<{
   id: number,
@@ -63,8 +63,8 @@ export type PlayerVote = Readonly<{
 }>;
 
 export type GameState = Readonly<{
-  intervalMs: Readonly<Number>,
-  players: ReadonlyArray<Player>,
+  intervalMs: number,
+  players: ReadonlyArray<IPlayer>,
   stage: Stage,
   questionIndex: number,
   playerVotes: { [key: string]: PlayerVote },

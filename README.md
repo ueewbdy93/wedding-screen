@@ -15,19 +15,14 @@
   - [Database](#database)
   - [Optimize](#optimize)
 - [How To Develop](#how-to-develop)
-  - [Back-end](#back-end)
-  - [Front-end](#front-end)
 - [Test](#test)
-  - [Back-end](#back-end-1)
-  - [Front-end](#front-end-1)
 
 # TL;DR
 
-1. `git clone https://github.com/ueewbdy93/wedding-screen.git && cd wedding-screen && git submodule update --init`
-2. Build back-end: `cp src/config/config.sample.json src/config/config.json && npm install && npm run build`
-3. Build front-end: `npm install --prefix frontend/ && npm run build --prefix frontend/`
-4. Start server: `npm run start`
-5. Now you can browse the service with your favorite browser at http://localhost:5566 as user and, http://localhost:5566/admin-index.html (password: happy) as admin.
+1. `git clone https://github.com/ueewbdy93/wedding-screen.git && cd wedding-screen`
+2. Build: `cp src/config/config.sample.json src/config/config.json && npm install && npm run build`
+3. Start server: `npm run start`
+4. Now you can browse the service with your favorite browser at http://localhost:5566 as user and, http://localhost:5566/admin-index.html (password: happy) as admin.
 
 # TL;DR with Docker
 
@@ -36,7 +31,7 @@
   - `images`: put your images into it
   - `config`: put `config.json` into it. See [Configuration](#configuration) for detailed information.
   - `db`: empty folder which the db files will created in
-3. `docker run -d -p 5566:5566 -v /PATH/TO/config:/usr/src/app/dist/config -v /PATH/TO/db:/usr/src/app/db -v /PATH/TO/images/:/usr/src/app/public/images dy93/wedding-screen`
+3. `docker run -d -p 5566:5566 -v /PATH/TO/config:/usr/src/app/dist/config -v /PATH/TO/db:/usr/src/app/db -v /PATH/TO/images/:/usr/src/app/dist/public/images dy93/wedding-screen`
 4. Now you can browse the service with your favorite browser at http://localhost:5566 as user and, http://localhost:5566/admin-index.html as admin.
 
 # About
@@ -54,10 +49,6 @@ There are two modes and an admin page
 3. _admin_ page:
 
     Admin can switch between modes and control the game state.
-
-The whole web app consists of two projects: [wedding-screen](https://github.com/ueewbdy93/wedding-screen) and [wedding-screen-frontend](https://github.com/ueewbdy93/wedding-screen-frontend).
-The former is responsible for back-end and the other is for front-end.
-We manage *wedding-screen-frontend* as a git submodule of *wedding-screen*.
 
 ## Demo
 
@@ -102,37 +93,9 @@ We manage *wedding-screen-frontend* as a git submodule of *wedding-screen*.
     npm run build
     ```
 
-Now, the back-end work is done.
-Follow the steps below to prepare front-end.
-
-6. Check out `wedding-screen-frontend`.
+6. Start server.
 
     ```
-    git submodule update --init
-    ```
-
-7. cd into frontend folder.
-
-    ```
-    cd frontend
-    ```
-
-8. Install dependency of *wedding-screen-frontend*.
-
-    ```
-    npm install
-    ```
-
-9. Build code.
-
-    ```
-    npm run build
-    ```
-
-10. Start server.
-
-    ```
-    cd ../
     npm run start
     ```
 
@@ -142,10 +105,10 @@ Visit http://localhost:5566/admin-index.html and login(default password:happy) t
 
 ## Configuration
 
-Put your images into `wedding-screen/public/images/`
+Put your images into `src/public/images/`
 
-Edit *wedding-screen/src/config/config.json*
-(If not exists, copy from *wedding-screen/src/config/config.sample.json*)
+Edit *src/config/config.json*
+(If not exists, copy from *src/config/config.sample.json*)
 
 Configuration options:
 | property  | description  |
@@ -210,66 +173,9 @@ If you encounter performance issues. The tips below could help.
 - It's recommend to use 4G since the WiFi offered by the wedding venue may be slow.
 
 # How to develop
-
-## Back-end
-
-1. Compile typescript in watch mode: `npm run build -- --watch`
+1. Compile typescript in watch mode: `npm run dev`
 2. Modify the code under *src*
-3. Whenever you modify the code, restart the server
-
-## Front-end
-
-*wedding-screen-frontend* is a submodule of *wedding-screen* and link to *frontend/* folder.
-
-The project is initiated by [create-react-app (CRA)](https://github.com/facebook/create-react-app).
-Base on **CRA**, we integrated it with *redux*, *redux-thunk*, *websocket*, *css-module* and *storybook*(for test).
-
-We [ejected CRA configurations](https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md#npm-run-eject) and made some changes:
-1. Allow multiple entry points. One for user page the other for admin page.
-2. Enable css module.
-
-Followings are the steps to develop.
-
-1. Run the back-end server
-    ```
-    cd wedding-screen
-    npm run start
-    ```
-    Although **CRA** will run webpack-dev-server to host static files in development mode. However, we need to connect to back-end server to deal with actions (ex: add comment).
-    We proxy some uris (*/socket*, */images/* and */resources/*) to the back-end server.
-    See [Proxy API Requests in Development](https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md#proxying-api-requests-in-development).
-2. cd into *frontend/*
-3. Modify code under *frontend/src/* to meet your need.
-4. Runs the app in development mode.
-
-    ```
-    npm run start
-    ```
-    This command will open `http://localhost:3000` in browser.
-    And page will automatically reload if you make changes to the code.
+3. Every time you modify the code, the server will auto hot-reload :)
 
 # Test
-
-## Back-end
-
-dy93: You barely have errors when you are writing **typescript**.
-
-## Front-end
-
-**To be fix.**
-
-We use [storybook](https://storybook.js.org/basics/guide-react/) to have a quick demo of react components.
-
-Just run `npm run storybook` and visit http://localhost:9009.
-
-### Component coverage
-
-```
-[x] slideshow
-[x] game/score
-[ ] game/final
-[ ] game/joinList
-[ ] game/qa
-[ ] game/nameInput
-[ ] adm
-```
+To be completed

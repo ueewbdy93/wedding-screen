@@ -1,18 +1,22 @@
 
 import path from 'path';
 import sqlite3 from 'sqlite3';
+
 import { config } from './config-helper';
-import { Comment } from './core/comments/types';
-import { Player, PlayerVote } from './core/game/types';
+import { IComment } from './core/comments/types';
+import { IPlayer, PlayerVote } from './core/game/types';
 
 const FILENAME = path.resolve(__dirname, '..', 'db', `db-${Date.now()}.sqlite`);
 
 const db = new sqlite3.Database(
   FILENAME,
+  // tslint:disable-next-line:no-bitwise
   sqlite3.OPEN_CREATE | sqlite3.OPEN_READWRITE,
   (err) => {
     if (err) {
+      // tslint:disable-next-line:no-console
       console.error('Create/Open database fail.');
+      // tslint:disable-next-line:no-console
       console.error(err);
       process.exit(-1);
     }
@@ -45,7 +49,7 @@ function init() {
   });
 }
 
-function insertPlayers(players: ReadonlyArray<Player>) {
+function insertPlayers(players: ReadonlyArray<IPlayer>) {
   return new Promise((resolve, reject) => {
     const stmt = db.prepare(
       `INSERT INTO player (
@@ -76,12 +80,12 @@ function clearPlayers() {
   });
 }
 
-async function updatePlayers(players: Player[]) {
+async function updatePlayers(players: IPlayer[]) {
   await clearPlayers();
   await insertPlayers(players);
 }
 
-function insertComment(comment: Comment) {
+function insertComment(comment: IComment) {
   return new Promise((resolve, reject) => {
     const stmt = db.prepare(
       'INSERT INTO comment VALUES (?, ?, ?)',
@@ -109,9 +113,8 @@ function clearComment() {
   });
 }
 
-
 function insertQuestions(questions: typeof config.game.questions) {
-  const insertQuestions = new Promise((resolve, reject) => {
+  const insertQuestionsPromise = new Promise((resolve, reject) => {
     const stmt = db.prepare('INSERT INTO question VALUES (?, ?)');
     for (const question of questions) {
       stmt.run(question.id, question.text);
@@ -128,7 +131,7 @@ function insertQuestions(questions: typeof config.game.questions) {
     }
     stmt.finalize((err) => err ? reject(err) : resolve());
   });
-  return Promise.all([insertQuestions, insertOptions]);
+  return Promise.all([insertQuestionsPromise, insertOptions]);
 }
 
 function insertPlayerVotes(votes: ReadonlyArray<PlayerVote>) {
@@ -167,4 +170,3 @@ export default {
   insertPlayerVotes,
   clearPlayerVotes,
 };
-

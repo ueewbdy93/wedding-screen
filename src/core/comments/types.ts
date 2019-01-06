@@ -6,8 +6,7 @@ export type ActionTypes = $Call<
   typeof setCurrentRoundStartTime
 >;
 
-
-export interface Comment {
+export interface IComment {
   content: string;
   offset: number;
   createAt: number;

@@ -45,4 +45,4 @@ src/config/config.json
 !public/images/sample2.jpg
 
 .env
-db/
+db/*

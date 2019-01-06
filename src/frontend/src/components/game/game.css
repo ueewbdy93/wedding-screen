@@ -1,0 +1,27 @@
+.selected2 {
+    background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+    background-size: 1rem 1rem;
+}
+
+.optionBlock {
+    display: flex;
+    flex: 1 1 0%;
+    flex-direction: column;
+}
+
+.option {
+    cursor: pointer;
+    flex: 1 1 0%;
+    margin: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (min-width: 48em) {
+    .optionBlock {
+        display: flex;
+        flex: 1 1 0%;
+        flex-direction: row;
+    }
+}
