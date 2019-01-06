@@ -1,0 +1,55 @@
+{
+  "admin": {
+    "password": "happy"
+  },
+  "slide": {
+    "intervalMs": 3000
+  },
+  "game": {
+    "intervalMs": 8000,
+    "questions": [
+      {
+        "text": "Something is small, red, round and sweet?",
+        "options": [
+          {
+            "text": "Orange",
+            "isAnswer": false
+          },
+          {
+            "text": "Apple",
+            "isAnswer": true
+          },
+          {
+            "text": "Lemon",
+            "isAnswer": false
+          },
+          {
+            "text": "Grape",
+            "isAnswer": false
+          }
+        ]
+      },
+      {
+        "text": "Something starts with an H and ends with an oof?",
+        "options": [
+          {
+            "text": "Bokoblin",
+            "isAnswer": false
+          },
+          {
+            "text": "Moblin",
+            "isAnswer": false
+          },
+          {
+            "text": "Lynel Hoof",
+            "isAnswer": true
+          },
+          {
+            "text": "Lynel Hoof",
+            "isAnswer": true
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,11 +1,12 @@
 
 import path from 'path';
 import sqlite3 from 'sqlite3';
-import { config } from './config';
+
+import { config } from './config-helper';
 import { IComment } from './core/comments/types';
 import { IPlayer, PlayerVote } from './core/game/types';
 
-const FILENAME = path.resolve(__dirname, '..', `db-${Date.now()}`);
+const FILENAME = path.resolve(__dirname, '..', 'db', `db-${Date.now()}.sqlite`);
 
 const db = new sqlite3.Database(
   FILENAME,
@@ -124,7 +125,7 @@ function insertQuestions(questions: typeof config.game.questions) {
     const stmt = db.prepare('INSERT INTO option VALUES (?, ?, ?, ?)');
     for (const question of questions) {
       for (const option of question.options) {
-        const isAnswer = question.answer.id === option.id;
+        const isAnswer = question.answers.indexOf(option.id) !== -1;
         stmt.run(option.id, question.id, option.text, isAnswer);
       }
     }

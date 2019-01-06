@@ -1,31 +1,49 @@
-## wedding pictures slideshow and bullet comments
-
 ![](screenshots/slideshow-demo.gif)
 
-## game
-
 ![](screenshots/game-demo.gif)
+
+# Table of contents
+
+- [TL;DR](#tldr)
+- [TL;DR with Docker](#tldr-with-docker)
+- [About](#about)
+  - [Demo](#demo)
+- [Prerequisite](#prerequisite)
+- [Usage](#usage)
+  - [Start](#start)
+  - [Configuration](#configuration)
+  - [Database](#database)
+  - [Optimize](#optimize)
+- [How To Develop](#how-to-develop)
+  - [Back-end](#back-end)
+  - [Front-end](#front-end)
+- [Test](#test)
+  - [Back-end](#back-end-1)
+  - [Front-end](#front-end-1)
 
 # TL;DR
 
 1. `git clone https://github.com/ueewbdy93/wedding-screen.git && cd wedding-screen && git submodule update --init`
-2. Build backend: `cp src/config.sample.ts src/config.ts && npm install && npm run build`
-3. Build frontend: `npm install --prefix frontend/ && npm run build --prefix frontend/`
+2. Build back-end: `cp src/config/config.sample.json src/config/config.json && npm install && npm run build`
+3. Build front-end: `npm install --prefix frontend/ && npm run build --prefix frontend/`
 4. Start server: `npm run start`
 5. Now you can browse the service with your favorite browser at http://localhost:5566 as user and, http://localhost:5566/admin-index.html (password: happy) as admin.
 
-# Demo
+# TL;DR with Docker
 
-- User:
-https://wedding-screen.herokuapp.com/
-- Admin (password: happy):
-https://wedding-screen.herokuapp.com/admin-index.html
+1. `docker pull dy93/wedding-screen:latest`
+2. Prepare 3 folders:
+  - `images`: put your images into it
+  - `config`: put `config.json` into it. See [Configuration](#configuration) for detailed information.
+  - `db`: empty folder which the db files will created in
+3. `docker run -d -p 5566:5566 -v /PATH/TO/config:/usr/src/app/dist/config -v /PATH/TO/db:/usr/src/app/db -v /PATH/TO/images/:/usr/src/app/public/images dy93/wedding-screen`
+4. Now you can browse the service with your favorite browser at http://localhost:5566 as user and, http://localhost:5566/admin-index.html as admin.
 
 # About
 
 A wedding activity web app implemented by a happy programmer couple [dy93](https://github.com/dy93) and [ueewbd](https://github.com/ueewbd) ❤️.
 
-There are two modes and a admin page
+There are two modes and an admin page
 
 1. _slideshow_ mode:
 
@@ -41,11 +59,18 @@ The whole web app consists of two projects: [wedding-screen](https://github.com/
 The former is responsible for back-end and the other is for front-end.
 We manage *wedding-screen-frontend* as a git submodule of *wedding-screen*.
 
+## Demo
+
+- https://wedding-screen.herokuapp.com/
+- Admin (password: happy): https://wedding-screen.herokuapp.com/admin-index.html
+
 # Prerequisite
 
 - Nodejs 10
 
-# Start
+# Usage
+
+## Start
 
 1. Clone the project from github.
 
@@ -68,10 +93,10 @@ We manage *wedding-screen-frontend* as a git submodule of *wedding-screen*.
 4. Set up configurations.
 
     ```
-    cp src/config.sample.ts src/config.ts
+    cp src/config/config.sample.json src/config/config.json
     ```
 
-5. Compile **typescript** into **javascript**.
+5. Compile **typescript** to **javascript**.
 
     ```
     npm run build
@@ -115,19 +140,74 @@ OK! Now you can visit http://localhost:5566 to watch slideshow or play game.
 
 Visit http://localhost:5566/admin-index.html and login(default password:happy) to control the state.
 
-# Config
+## Configuration
 
-Edit *wedding-screen/src/config.ts*
-(If not exists, copy from *wedding-screen/src/config.sample.ts*),
-see [config.sample.ts](src/config.sample.ts) for more detail.
+Put your images into `wedding-screen/public/images/`
 
+Edit *wedding-screen/src/config/config.json*
+(If not exists, copy from *wedding-screen/src/config/config.sample.json*)
+
+Configuration options:
 | property  | description  |
 |---|---|
-| admin.password | Admin login password. |
-| slide.intervalMs | Slideshow interval.  |
-| slide.urls | Paths of slideshow pictures, auto generate by scanning *wedding-screen/public/images/\*.jpg* |
+| admin.password | Admin login password |
+| slide.intervalMs | Slideshow interval |
 | game.intervalMs | Answer time |
-| game.questions | Array of questions.<br/> The format of question:<br/> `{ text: <string>, options: [<string>], answer: <string>}` |
+| game.questions | List of question objects |
+| game.questions[].text | Question text |
+| game.questions[].options | List of option objects. Each question **must** have 4 options |
+| game.questions[].options[].text | Option text |
+| game.questions[].options[].isAnswer | (boolean) Indicate whether this option is correct. Allow multiple answers |
+
+Following is the example of `config.json`:
+
+```json
+{
+  "admin": {
+    "password": "happy"
+  },
+  "slide": {
+    "intervalMs": 3000
+  },
+  "game": {
+    "intervalMs": 8000,
+    "questions": [
+      {
+        "text": "Q1. Something is small, red, round and sweet?",
+        "options": [
+          { "text": "Orange", "isAnswer": false },
+          { "text": "Apple", "isAnswer": true },
+          { "text": "Lemon", "isAnswer": false },
+          { "text": "Grape", "isAnswer": false }
+        ]
+      },
+      {
+        "text": "Q2. Something starts with an H and ends with an oof?",
+        "options": [
+          { "text": "Bokoblin", "isAnswer": false },
+          { "text": "Moblin", "isAnswer": false },
+          { "text": "Lynel Hoof", "isAnswer": true },
+          { "text": "Lynel Hoof", "isAnswer": true }
+        ]
+      }
+    ]
+  }
+}
+```
+
+## Database
+
+Use sqlite.
+DB file name is in the format of `db/db-<timestamp>.sqlite` which is created on server starting.
+To view the data, download the file and open it with any sqlite viewer.
+
+## Optimize
+
+If you encounter performance issues. The tips below could help.
+
+- Compress images to a reasonable size. There are lots of tools can do that (ex: https://tinypng.com/).
+- Use the production build for front-end. See [React document](https://reactjs.org/docs/optimizing-performance.html#use-the-production-build) for more detailed information.
+- It's recommend to use 4G since the WiFi offered by the wedding venue may be slow.
 
 # How to develop
 
@@ -155,7 +235,7 @@ Followings are the steps to develop.
     cd wedding-screen
     npm run start
     ```
-    Although **CRA** will run webpack-dev-server to host static files in development mode. However, we need to connect to back-end server to deal with actions (ex: add comment). 
+    Although **CRA** will run webpack-dev-server to host static files in development mode. However, we need to connect to back-end server to deal with actions (ex: add comment).
     We proxy some uris (*/socket*, */images/* and */resources/*) to the back-end server.
     See [Proxy API Requests in Development](https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md#proxying-api-requests-in-development).
 2. cd into *frontend/*

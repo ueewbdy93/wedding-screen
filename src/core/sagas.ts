@@ -1,9 +1,11 @@
 import lodash from 'lodash';
-import { delay, eventChannel, takeEvery, takeLatest } from 'redux-saga';
-import { call, fork, put, race, select, take } from 'redux-saga/effects';
+import { delay, eventChannel } from 'redux-saga';
+import {
+  call, fork, put, race, select, take, takeEvery, takeLatest,
+} from 'redux-saga/effects';
 import { createAction, getType } from 'typesafe-actions';
 import uuid from 'uuid';
-import { config } from '../config';
+import { config } from '../config-helper';
 import db from '../db';
 import { ICommentState } from './comments';
 import { addComment, removeComments, setCurrentRoundStartTime } from './comments/actions';
@@ -180,7 +182,7 @@ function* gameRound(io: SocketIO.Server) {
     io.local.emit('GAME_CHANGE', {
       stage: Stage.START_QUESTION,
       selectedOption: null,
-      answer: null,
+      answers: null,
       options: [],
       question: {
         text: question.text,
@@ -216,7 +218,7 @@ function* gameRound(io: SocketIO.Server) {
             questionId: question.id,
             optionId: answerID,
             time: Math.max(0, Date.now() - startAnswerTime),
-            isAnswer: question.answer.id === answerID,
+            isAnswer: question.answers.indexOf(answerID) !== -1,
           };
           yield put(updatePlayerVote(playerVote));
           action.socket.emit('GAME_CHANGE', { curVote: playerVote });
@@ -228,7 +230,7 @@ function* gameRound(io: SocketIO.Server) {
 
     io.local.emit('GAME_CHANGE', {
       stage: Stage.REVEAL_ANSWER,
-      answer: question.answer,
+      answers: question.answers,
     });
 
     const [playerVotes, players]: [{ [key: string]: PlayerVote }, ReadonlyArray<IPlayer>]
@@ -318,7 +320,7 @@ function* addPlayerSaga(io: SocketIO.Server) {
       player: players.find((p: IPlayer) => p.id === id),
       question: { text: question.text, id: question.id },
       options: question.options,
-      answer: question.answer,
+      answers: question.answers,
     });
   });
 }
@@ -343,7 +345,7 @@ function* checkPlayerSaga() {
         player,
         question: { text: question.text, id: question.id },
         options: question.options,
-        answer: question.answer,
+        answers: question.answers,
         vote: null,
         curVote: playerVotes[id] || null,
       });
@@ -366,7 +368,7 @@ function* resetGameSaga(io: SocketIO.Server) {
     stage: Stage.JOIN,
     question: null,
     options: null,
-    answer: null,
+    answers: null,
     vote: null,
     curVote: null,
   });
@@ -457,7 +459,7 @@ function* handleAdminLogin() {
       curVote: null,
       question: { text: question.text, id: question.id },
       options: question.options,
-      answer: question.answer,
+      answers: question.answers,
     });
     const { comments } = yield select<IRootState>((s) => s.comment);
     action.socket.emit('ADMIN_CHANGE', {

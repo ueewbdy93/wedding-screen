@@ -39,10 +39,10 @@ public/images/**/*.jpeg
 public/blur/**/*.jpg
 public/blur/**/*.jpeg
 log.json*
-src/config.ts
+src/config/config.json
 
 !public/images/sample1.jpg
 !public/images/sample2.jpg
 
 .env
-db-*
+db/
