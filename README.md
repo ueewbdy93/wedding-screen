@@ -1,18 +1,27 @@
-## wedding pictures slideshow and bullet comments
-
 ![](screenshots/slideshow-demo.gif)
-
-## game
 
 ![](screenshots/game-demo.gif)
 
-# TL;DR (docker)
-1. `git clone {WEDDING_SCRREN_REPO} && cd wedding-screen`
-2. `docker build -t wedding-screen:latest .`
-3. `cp src/config.sample.ts src/config.ts`
-4. `docker run --name wedding-screen -v .:/usr/src/app -d -p 5566:5566 wedding-screen`
+# Table of contents
 
-# TL;DR (without docker)
+- [TL;DR](#tldr)
+- [TL;DR with Docker](#tldr-with-docker)
+- [About](#about)
+  - [Demo](#demo)
+- [Prerequisite](#prerequisite)
+- [Usage](#usage)
+  - [Start](#start)
+  - [Configuration](#configuration)
+  - [Database](#database)
+  - [Optimize](#optimize)
+- [How To Develop](#how-to-develop)
+  - [Back-end](#back-end)
+  - [Front-end](#front-end)
+- [Test](#test)
+  - [Back-end](#back-end-1)
+  - [Front-end](#front-end-1)
+
+# TL;DR
 
 1. `git clone https://github.com/ueewbdy93/wedding-screen.git && cd wedding-screen && git submodule update --init`
 2. Build backend: `cp src/config.sample.ts src/config.ts && npm install && npm run build`
@@ -20,12 +29,15 @@
 4. Start server: `npm run start`
 5. Now you can browse the service with your favorite browser at http://localhost:5566 as user and, http://localhost:5566/admin-index.html (password: happy) as admin.
 
-# Demo
+# TL;DR with Docker
 
-- User:
-https://wedding-screen.herokuapp.com/
-- Admin (password: happy):
-https://wedding-screen.herokuapp.com/admin-index.html
+1. `docker pull dy93/wedding-screen:latest`
+2. Prepare 3 folders:
+  - `images`: put your images into it
+  - `config`: put `config.json` into it
+  - `db`: empty folder
+3. `docker run -d -p 5566:5566 -v /path/to/config:/usr/src/app/dist/config -v /path/to/db:/usr/src/app/db -v /path/to/images/:/usr/src/app/public/images wedding-screen`
+4. Now you can browse the service with your favorite browser at http://localhost:5566 as user and, http://localhost:5566/admin-index.html as admin.
 
 # About
 
@@ -47,11 +59,18 @@ The whole web app consists of two projects: [wedding-screen](https://github.com/
 The former is responsible for back-end and the other is for front-end.
 We manage *wedding-screen-frontend* as a git submodule of *wedding-screen*.
 
+## Demo
+
+- https://wedding-screen.herokuapp.com/
+- Admin (password: happy): https://wedding-screen.herokuapp.com/admin-index.html
+
 # Prerequisite
 
 - Nodejs 10
 
-# Start
+# Usage
+
+## Start
 
 1. Clone the project from github.
 
@@ -121,7 +140,7 @@ OK! Now you can visit http://localhost:5566 to watch slideshow or play game.
 
 Visit http://localhost:5566/admin-index.html and login(default password:happy) to control the state.
 
-# Config
+## Configuration
 
 Edit *wedding-screen/src/config.ts*
 (If not exists, copy from *wedding-screen/src/config.sample.ts*),
@@ -135,11 +154,19 @@ see [config.sample.ts](src/config.sample.ts) for more detail.
 | game.intervalMs | Answer time |
 | game.questions | Array of questions.<br/> The format of question:<br/> `{ text: <string>, options: [<string>], answer: <string>}` |
 
-# Database
+## Database
 
 Use sqlite.
 DB file name is in the format of `db-<timestamp>` which is created on server starting.
 To view the data, download the file and open it with any sqlite viewer.
+
+## Optimize
+
+If you encounter perfomance issues. The tips below could help.
+
+- Compress images to a reasonable size. There are lots of tools can do that (ex: https://tinypng.com/).
+- Use the production build for front-end. See [React document](https://reactjs.org/docs/optimizing-performance.html#use-the-production-build) for more detailed information.
+- It's recommend to use 4G since the WiFi offered by the wedding venue may be slow.
 
 # How to develop
 
