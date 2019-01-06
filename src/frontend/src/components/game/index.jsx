@@ -17,7 +17,7 @@ class Game extends React.Component {
       players,
       question,
       options,
-      answer,
+      answers,
       curVote,
       selectOption,
       addPlayer,
@@ -41,7 +41,7 @@ class Game extends React.Component {
           options={options}
           curVote={curVote}
           selectOption={selectOption}
-          answer={answer} />
+          answers={answers} />
       case GameStage.SCORE:
         return <Score players={players} player={player} />
       default:

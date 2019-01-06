@@ -30,7 +30,9 @@ function Option(props) {
 
 function QuestionBlock({ question }) {
   return (
-    <div style={{ flex: 3, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    <div
+      className="d-flex justify-content-center align-items-center mb-0"
+      style={{ flex: 3 }}>
       <h4>{question.text}</h4>
     </div>
   )
@@ -88,8 +90,11 @@ function Overlay(props) {
   const { stage } = props;
   if (stage === GameStage.START_QUESTION || stage === GameStage.REVEAL_ANSWER) {
     return (
-      <div style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, zIndex: 999999, background: '#FFFFF' }}>
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%' }}>
+      <div
+        className="w-100 h-100 position-absolute"
+        style={{ top: 0, left: 0, zIndex: 999999, background: '#FFFFF' }}>
+        <div
+          className="d-flex justify-content-center align-items-center h-100">
           {stage === GameStage.START_QUESTION ? <Ready /> : <h3>Time's up!!</h3>}
         </div>
       </div>
@@ -104,7 +109,7 @@ function QA(props) {
     question,
     options,
     curVote,
-    answer,
+    answers,
     player: { id },
     players,
     selectOption,
@@ -128,50 +133,52 @@ function QA(props) {
   return (
     <Container>
       <Header hideBottomBorder>
-        <h3 className="masthead-brand">
+        <h3 className="mb-0">
           <small><i className="fas fa-question-circle"></i></small>
           {` 題目 `}
           <small><i className="fas fa-question-circle"></i></small>
         </h3>
         <Profile player={player} />
+        <ProgressBar stage={stage} intervalMs={intervalMs} />
       </Header>
-      <ProgressBar stage={stage} intervalMs={intervalMs} />
-      <Content fullHeight>
-        <div style={{ display: 'flex', height: '100%', flexDirection: 'column' }}>
-          <QuestionBlock question={question} />
-          <div style={{ flex: 7, display: 'flex', flexDirection: 'column', position: 'relative' }}>
-            <Overlay stage={stage} />
-            <div className={styles.optionBlock}>
-              {
-                options.slice(0, 2).map((option, i) => (
-                  <Option
-                    order={i}
-                    key={option.id}
-                    showAnswer={showAnswer}
-                    isAnswer={showAnswer ? answer.id === option.id : false}
-                    isSelect={curVote && curVote.optionId === option.id}
-                    disabled={disabled}
-                    onClick={() => disabled ? null : selectOption(option.id)}
-                    text={showOption ? option.text : ''}>
-                  </Option>
-                ))
-              }
-            </div>
-            <div className={styles.optionBlock}>
-              {
-                options.slice(2, 4).map((option, i) => (
-                  <Option
-                    order={i + 2}
-                    key={option.id}
-                    showAnswer={showAnswer}
-                    isAnswer={showAnswer ? answer.id === option.id : false}
-                    isSelect={curVote && curVote.optionId === option.id}
-                    disabled={disabled}
-                    onClick={() => disabled ? null : selectOption(option.id)}
-                    text={showOption ? option.text : ''}>
-                  </Option>
-                ))
-              }
+      <Content>
+        <div className="row h-100 pl-1 pr-1">
+          <div className="offset-md-2 col-md-8 col-sm-12 d-flex flex-column h-100">
+            <QuestionBlock question={question} />
+            <div className="d-flex flex-column position-relative" style={{ flex: 7 }}>
+              <Overlay stage={stage} />
+              <div className={styles.optionBlock}>
+                {
+                  options.slice(0, 2).map((option, i) => (
+                    <Option
+                      order={i}
+                      key={option.id}
+                      showAnswer={showAnswer}
+                      isAnswer={showAnswer && answers.indexOf(option.id) !== -1}
+                      isSelect={curVote && curVote.optionId === option.id}
+                      disabled={disabled}
+                      onClick={() => disabled ? null : selectOption(option.id)}
+                      text={showOption ? option.text : ''}>
+                    </Option>
+                  ))
+                }
+              </div>
+              <div className={styles.optionBlock}>
+                {
+                  options.slice(2, 4).map((option, i) => (
+                    <Option
+                      order={i + 2}
+                      key={option.id}
+                      showAnswer={showAnswer}
+                      isAnswer={showAnswer && answers.indexOf(option.id) !== -1}
+                      isSelect={curVote && curVote.optionId === option.id}
+                      disabled={disabled}
+                      onClick={() => disabled ? null : selectOption(option.id)}
+                      text={showOption ? option.text : ''}>
+                    </Option>
+                  ))
+                }
+              </div>
             </div>
           </div>
         </div>

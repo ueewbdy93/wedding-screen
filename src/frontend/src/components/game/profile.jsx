@@ -30,10 +30,6 @@ function Profile(props) {
         <small><i className="mr-1 fas fa-times-circle"></i></small>
         {player.incorrectCount}
       </span>
-      {/* <span className="mr-2">
-        <small><i className="mr-1 fas fa-bullseye"></i></small>
-        {`${Math.round(player.correctRate * 100)}%`}
-      </span> */}
       <span className="mr-2">
         <small><i className="mr-1 fas fa-clock"></i></small>
         {player.time === 0 ? 'N/A' : `${player.time / 1000}s`}

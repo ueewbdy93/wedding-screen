@@ -29,7 +29,7 @@ class Adm extends React.Component {
     return (
       <Container>
         <Header hideBottomBorder>
-          <h3 className="masthead-brand">
+          <h3 className="mb-0">
             後台
           </h3>
           <Nav
@@ -38,10 +38,12 @@ class Adm extends React.Component {
             onSwitchMode={changeMode}
             onSwitchTab={onTabClick} />
         </Header>
-        <Content fullHeight>
-          <div style={{ padding: '10px' }}>
-            {mode === 0 && <GameMgr {...this.props} selectedTab={selectedTab} />}
-            {mode === 1 && <SlideMgr comments={comments} onClearComment={onClearComment} onInsertComment={onInsertComment} />}
+        <Content>
+          <div className="row p-3 h-100" style={{ overflowY: 'auto' }}>
+            <div className="col-md-6 offset-md-3 col-sm-12">
+              {mode === 0 && <GameMgr {...this.props} selectedTab={selectedTab} />}
+              {mode === 1 && <SlideMgr comments={comments} onClearComment={onClearComment} onInsertComment={onInsertComment} />}
+            </div>
           </div>
         </Content>
       </Container>

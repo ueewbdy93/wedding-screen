@@ -1,24 +1,10 @@
 import React from 'react';
 
 const STYLE = {
-  textAlign: 'center',
-  position: 'absolute',
-  bottom: '0px',
-  height: '100%',
+  position: 'fixed',
+  bottom: '10px',
   width: '100%',
   zIndex: 10,
-}
-
-const INPUT_STYLE = {
-  marginBottom: '20px',
-  boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
-  width: '70%',
-  textAlign: 'center',
-  borderRadius: '20px',
-  border: 'none',
-  backgroundColor: 'whitesmoke',
-  padding: '5px 10px',
-  fontSize: '16px',
 }
 
 class CommentInput extends React.Component {
@@ -55,35 +41,31 @@ class CommentInput extends React.Component {
     const { toggleSilence, silence } = this.props;
     return (
       <div style={STYLE}>
-        <table style={{ position: 'relative', height: '100%', width: '100%', verticalAlign: 'bottom' }}>
-          <tbody>
-            <tr style={{ verticalAlign: 'bottom' }}>
-              <td>
-                <button onClick={toggleSilence} style={{ ...INPUT_STYLE, width: '40px' }}>
-                  <i className={silence ? 'fas fa-comment-slash' : 'fas fa-comment-dots'}></i>
-                </button>
-              </td>
-              <td>
-                <form onSubmit={this.onSubmit}>
-                  <input
-                    style={INPUT_STYLE}
-                    maxLength="64"
-                    type="text"
-                    value={comment}
-                    placeholder="我要留言..."
-                    onChange={this.onChange} />
-                  <input
-                    disabled={disabled}
-                    type="button"
-                    style={{ ...INPUT_STYLE, width: '50px', marginLeft: '1px' }}
-                    value="送出"
-                    onClick={this.onSubmit} />
-                </form>
-              </td>
-              </tr>
-          </tbody>
-        </table>
-      </div>
+        <form onSubmit={this.onSubmit} className="d-flex justify-content-center">
+          <div className="col-auto mr-2">
+            <button onClick={toggleSilence} className="close mt-1 text-white">
+              <i className={silence ? 'fas fa-comment-slash' : 'fas fa-comment-dots'}></i>
+            </button>
+          </div>
+          <div className="col-auto p-0">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="我要留言…"
+              value={comment}
+              onChange={this.onChange} />
+          </div>
+          <div className="col-auto p-0">
+            <button
+              disabled={disabled}
+              onClick={this.onSubmit}
+              type="submit"
+              className="btn">
+              送出
+              </button>
+          </div>
+        </form>
+      </div >
     )
   }
 }

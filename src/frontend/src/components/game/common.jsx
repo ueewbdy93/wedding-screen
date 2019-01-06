@@ -2,44 +2,42 @@ import React from 'react';
 
 export function Container({ children }) {
   return (
-    <div className="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+    <div
+      className="position-fixed w-100 h100"
+      style={{ top: '0px', left: '0px', right: '0px', bottom: '0px' }}>
       {children}
-      <footer className="mastfoot mt-auto">
-        <div className="inner">
-          <small>{`Power by dy93 & ueewbd `}
-            <a href="https://github.com/ueewbdy93/wedding-screen" target="_blank">
-              <i className="fab fa-github" style={{ color: '#6c757d' }}></i>
-            </a>
-          </small>
-        </div>
+      <footer className="position-fixed w-100" style={{ bottom: '0px' }}>
+        <small>Power by dy93 & ueewbd
+          <a
+            href="https://github.com/ueewbdy93/wedding-screen"
+            rel="noopener noreferrer" target="_blank">
+            <i className="text-dark ml-1 fab fa-github"></i>
+          </a>
+        </small>
       </footer>
     </div>
   );
 }
 
 export function Header({ children, hideBottomBorder }) {
-  const style = {};
+  const style = { top: '0px', height: '70px' };
   if (!hideBottomBorder) {
     style.borderBottom = '.4rem solid #e9ecef';
   }
   return (
-    <header className="masthead mb-auto" style={style}>
-      <div className="inner">
-        {
-          children
-        }
-      </div>
+    <header
+      className="align-items-center position-fixed w-100 d-flex justify-content-center"
+      style={style}>
+      <div className="w-100">{children}</div>
     </header>
   );
 }
 
-export function Content({ children, fullHeight }) {
-  const style = {};
-  if (fullHeight) {
-    style.height = '100%';
-  }
+export function Content({ children }) {
   return (
-    <main role="main" className="container" style={style}>
+    <main
+      className="position-fixed w-100 position-fixed w-100 d-flex flex-column justify-content-center"
+      style={{ top: '70px', bottom: '30px' }}>
       {children}
     </main>
   )

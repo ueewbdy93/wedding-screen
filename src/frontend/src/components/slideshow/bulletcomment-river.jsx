@@ -2,25 +2,11 @@ import React from 'react';
 import { Transition } from 'react-transition-group';
 import styles from './bulletcomment.css';
 
-const MAX_DURATION = 94; // second
-
-const defaultStyle = {
-  position: 'absolute',
-  right: '0px',
-  whiteSpace: 'nowrap',
-  width: '0%',
-  transitionTimingFunction: 'linear',
-  transitionProperty: 'width',
-  textShadow: '-1px 0 whitesmoke, 0 1px whitesmoke, 1px 0 whitesmoke, 0 -1px whitesmoke',
-  textAlign: 'left',
-  overflow: 'hidden',
-  color: 'dimgray',
-  zIndex: 100,
-}
+const MAX_DURATION = 84; // second
 
 const transitionStyles = {
-  entering: { width: '0%' },
-  entered: { width: '500%' },
+  entering: { transform: 'translateX(100%)' },
+  entered: { transform: 'translateX(-100%)' },
 };
 
 class Comment extends React.Component {
@@ -30,7 +16,6 @@ class Comment extends React.Component {
       <Transition in appear timeout={100}>
         {(state) => (
           <span className={styles.bulletcomment} style={{
-            ...defaultStyle,
             ...transitionStyles[state],
             top,
             transitionDuration: `${duration}s`

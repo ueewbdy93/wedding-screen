@@ -1,5 +1,16 @@
 .bulletcomment {
     font-size: 32px;
+    position: fixed;
+    right: 0px;
+    left: 0px;
+    width: 100%;
+    transition-timing-function: linear;
+    transition-property: transform;
+    text-shadow: -1px 0 whitesmoke, 0 1px whitesmoke, 1px 0 whitesmoke, 0 -1px whitesmoke;
+    text-align: left;
+    overflow: hidden;
+    color: dimgray;
+    z-index: 100;
 }
 
 @media (max-width: 480px) {

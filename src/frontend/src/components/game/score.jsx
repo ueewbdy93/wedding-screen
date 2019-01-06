@@ -32,7 +32,7 @@ function ScoreItem(props) {
         </small>
       </h2>
       <div className="media-body" style={{ textAlign: 'left' }}>
-        <h3 className="mt-0 mb-0">{player.name}</h3>
+        <h4 className="mt-0 mb-0">{player.name}</h4>
         <Profile short={true} player={player} />
       </div>
     </li>
@@ -61,16 +61,15 @@ function Score(props) {
   return (
     <Container>
       <Header>
-        <h2 className="masthead-brand">
+        <h3 className="mb-0">
           <small><i className="fas fa-trophy"></i></small>
           {` 排行榜 `}
           <small><i className="fas fa-trophy"></i></small>
-        </h2>
+        </h3>
         <Profile player={player} />
       </Header>
       <Content>
-        <div className="ml-auto mr-auto col-sm-12 mt-1 mb-1">
-          <div className="row">
+        <div className="row p-3" style={{ overflowY: 'auto' }}>
           <div className="col-md-6 col-sm-12 col-lg-4 offset-lg-2">
             <ul className="list-unstyled mb-0">
               {top10.slice(0, 5).map(p => <ScoreItem key={p.id} player={p} isCurrentPlayer={p.id === id} />)}
@@ -81,12 +80,11 @@ function Score(props) {
               {top10.slice(5, 10).map(p => <ScoreItem key={p.id} player={p} isCurrentPlayer={p.id === id} />)}
             </ul>
           </div>
-          <div className="col-sm-12">
+          <div className="col-sm-12 col-lg-4 offset-lg-4 col-md-6 offset-md-3">
             <ul className="list-unstyled mb-0">
               {player.rank > 11 && <li><i className="fas fa-ellipsis-v"></i></li>}
               {player.rank > 10 && <ScoreItem player={player} isCurrentPlayer={true} />}
             </ul>
-          </div>
           </div>
         </div>
       </Content>

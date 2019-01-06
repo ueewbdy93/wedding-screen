@@ -44,17 +44,17 @@ function GameStatus(props) {
   if (question === null) {
     return <div></div>
   }
-  const { options, answer } = question;
+  const { options, answers } = question;
   return (
     <div>
-      <h4>Q. {question.text}</h4>
+      <h4>{question.text}</h4>
       <div>
         {
           options.map((option, i) => {
             const { text, id } = option;
             const count = counts[id] || 0;
             const progress = total !== 0 ? Math.round(count / total * 100) : 0;
-            const isAnswer = answer && answer.id === id;
+            const isAnswer = answers.indexOf(id) !== -1;
             return (
               <PlayerVoteBar
                 key={i} order={i} text={text} count={count}

@@ -24,7 +24,7 @@ const transitionStyles = {
   entered: { opacity: 1 },
 };
 
-function JoinUser({ player }) {
+function JoinUser({ player, me }) {
   const hash = Number.parseInt(player.id.substring(0, 8), 16);
   return (
     <Transition in appear timeout={duration}>
@@ -34,6 +34,7 @@ function JoinUser({ player }) {
           ...transitionStyles[state]
         }}>
           <span className={`badge badge-pill ${COLORS[hash % COLORS.length]}`} >
+            {me && <small><i className="mr-1 fas fa-user"></i></small>}
             {player.name}
           </span>
         </h3>
@@ -71,12 +72,16 @@ class JoinList extends React.Component {
     return (
       <Container>
         <Header>
-          <h3 className="masthead-brand">{`等待其它人加入${loading}`}</h3>
-          <small>您的大名: {player.name} | 人數: {players.length}</small>
+          <h3 className="mb-0">{`等待其它人加入${loading}`}</h3>
+          <small>報名人數: {players.length}</small>
         </Header>
         <Content>
-          <div style={{ display: 'flex', justifyContent: 'center', alignContent: 'center', flexWrap: 'wrap' }}>
-            {players.map(player => <JoinUser key={player.id} player={player} />)}
+          <div className="row">
+            <div
+              className="offset-md-2 col-md-8 col-sm-12 d-flex justify-content-center align-items-center"
+              style={{ flexWrap: 'wrap', overflowY: 'auto' }}>
+              {players.map(p => <JoinUser key={p.id} player={p} me={p.id === player.id} />)}
+            </div>
           </div>
         </Content>
       </Container>

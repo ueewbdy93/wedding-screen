@@ -40,8 +40,10 @@ class SlideMgr extends React.Component {
     const { comments } = this.props;
     const { disabled, comment } = this.state;
     return (
-      <div>
-        <div style={{ height: `${HEIGHT}px`, overflow: 'scroll' }}>
+      <div className="h-100 position-relative w-100">
+        <div
+          className="position-absolute w-100"
+          style={{ overflowY: 'auto', top: '0px', bottom: '50px' }}>
           {comments.length === 0 && <small>目前沒有留言</small>}
           {
             comments.length > 0 && comments.map(comment => (
@@ -51,7 +53,10 @@ class SlideMgr extends React.Component {
             ))
           }
         </div>
-        <form onSubmit={this.onSubmit}>
+        <form
+          className="position-absolute w-100"
+          style={{ bottom: '0px', height: '50px' }}
+          onSubmit={this.onSubmit}>
           <div className="form-row align-items-center">
             <div className="col">
               <input

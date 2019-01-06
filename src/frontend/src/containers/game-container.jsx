@@ -10,7 +10,7 @@ const mapStateToProps = (state) => {
     stage: state.game.stage,
     question: state.game.question,
     options: state.game.options,
-    answer: state.game.answer,
+    answers: state.game.answers,
     curVote: state.game.curVote,
     intervalMs: state.game.intervalMs,
   };

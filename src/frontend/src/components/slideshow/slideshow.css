@@ -1,18 +1,15 @@
 .visible {
-    visibility: visible;
     opacity: 1;
     transition: opacity 2s linear;
 }
 
 .hidden {
-    visibility: hidden;
-    display: gone;
     opacity: 0;
-    transition: visibility 0s 2s, opacity 2s linear;
+    transition: opacity 2s linear;
 }
 
 .slide {
-    position: absolute;
+    position: fixed;
     top: 0px;
     bottom: 0px;
     width: 100%;
@@ -23,10 +20,11 @@
 }
 
 .blur {
-    position: absolute;
-    top: 0px;
-    bottom: 0px;
-    width: 100%;
+    position: fixed;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -40,12 +38,6 @@
 
 @media (max-width: 480px) {
     .slide {
-        position: absolute;
-        top: 0px;
-        bottom: 0px;
-        width: 100%;
-        background-position: center;
-        background-repeat: no-repeat;
         background-size: contain;
     }
 }
