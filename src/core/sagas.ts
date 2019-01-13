@@ -75,7 +75,7 @@ function* handleNewCommentSaga(io: SocketIO.Server, content: string) {
     createAt: Date.now(),
   };
   // broadcast to all client
-  io.local.emit('SLIDE_CHANGE', { newComment: { ...comment, id: uuid.v1() } });
+  io.emit('SLIDE_CHANGE', { newComment: { ...comment, id: uuid.v1() } });
   io.to(ROOM_ADM).emit('ADMIN_CHANGE', { newComment: { ...comment, id: uuid.v1() } });
   yield put(addComment(comment));
   // save into db
@@ -109,7 +109,7 @@ function* commentWorkerSaga(io: SocketIO.Server) {
         const d = comment.offset - (now - currentRoundStartTime);
         yield delay(Math.max(0, d));
         // Broadcast comment to clients
-        io.local.emit('SLIDE_CHANGE', { newComment: { ...comment, id: uuid.v1() } });
+        io.emit('SLIDE_CHANGE', { newComment: { ...comment, id: uuid.v1() } });
       }
     }),
   });
@@ -128,7 +128,7 @@ function* slideWorkerSaga(io: SocketIO.Server) {
       yield delay(config.slide.intervalMs);
       yield put(nextSlide());
       const currentSlideIndex = yield select<IRootState>((s) => s.slide.index);
-      io.local.emit('SLIDE_CHANGE', { index: currentSlideIndex });
+      io.emit('SLIDE_CHANGE', { index: currentSlideIndex });
     }
   }
 }
@@ -179,7 +179,7 @@ function* gameRound(io: SocketIO.Server) {
     yield put(setStage(Stage.START_QUESTION));
     yield put(resetPlayerVote());
 
-    io.local.emit('GAME_CHANGE', {
+    io.emit('GAME_CHANGE', {
       stage: Stage.START_QUESTION,
       selectedOption: null,
       answers: null,
@@ -197,7 +197,7 @@ function* gameRound(io: SocketIO.Server) {
     yield take(getType(adminStartAnswer));
     yield put(setStage(Stage.START_ANSWER));
 
-    io.local.emit('GAME_CHANGE', {
+    io.emit('GAME_CHANGE', {
       stage: Stage.START_ANSWER,
       options: question.options,
     });
@@ -228,7 +228,7 @@ function* gameRound(io: SocketIO.Server) {
 
     yield put(setStage(Stage.REVEAL_ANSWER));
 
-    io.local.emit('GAME_CHANGE', {
+    io.emit('GAME_CHANGE', {
       stage: Stage.REVEAL_ANSWER,
       answers: question.answers,
     });
@@ -273,11 +273,11 @@ function* gameRound(io: SocketIO.Server) {
       Object.keys(playerVotes).map((key) => playerVotes[key]));
     yield fork(db.updatePlayers, newPlayers);
     yield put(setPlayers(newPlayers));
-    io.local.emit('GAME_CHANGE', { players: newPlayers });
+    io.emit('GAME_CHANGE', { players: newPlayers });
 
     yield take(getType(adminShowScore));
     yield put(setStage(Stage.SCORE));
-    io.local.emit('GAME_CHANGE', { stage: Stage.SCORE });
+    io.emit('GAME_CHANGE', { stage: Stage.SCORE });
   }
   return true;
 }
@@ -310,7 +310,6 @@ function* addPlayerSaga(io: SocketIO.Server) {
       questionIndex,
       playerVotes,
     } = yield select<IRootState>((s) => s.game);
-    io.local.emit('GAME_CHANGE', { players });
     const question = config.game.questions[questionIndex] || {};
     socket.emit('GAME_CHANGE', {
       stage,
@@ -322,6 +321,7 @@ function* addPlayerSaga(io: SocketIO.Server) {
       options: question.options,
       answers: question.answers,
     });
+    socket.broadcast.emit('GAME_CHANGE', { players });
   });
 }
 
@@ -363,7 +363,7 @@ function* resetGameSaga(io: SocketIO.Server) {
   yield put(setQuestionIndex(0));
   yield put(setStage(Stage.JOIN));
 
-  io.local.emit('GAME_CHANGE', {
+  io.emit('GAME_CHANGE', {
     players: [],
     stage: Stage.JOIN,
     question: null,
@@ -435,7 +435,7 @@ function* handleAdminCommandSaga(io: SocketIO.Server) {
         '@@ADMIN_CHANGE_MODE',
         function*(action: { type: any, payload: Mode }) {
           yield put(setMode(action.payload));
-          io.local.emit('MODE_CHANGE', { mode: action.payload });
+          io.emit('MODE_CHANGE', { mode: action.payload });
         });
     },
     io,
