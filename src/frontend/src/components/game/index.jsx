@@ -21,7 +21,9 @@ class Game extends React.Component {
       curVote,
       selectOption,
       addPlayer,
-      intervalMs
+      intervalMs,
+      questionIndex,
+      playerVotes,
     } = this.props;
     if (player === null || player === undefined) {
       return <NameInput addPlayer={addPlayer} />;
@@ -33,6 +35,8 @@ class Game extends React.Component {
       case GameStage.START_ANSWER:
       case GameStage.REVEAL_ANSWER:
         return <QA
+          playerVotes={playerVotes}
+          questionIndex={questionIndex}
           intervalMs={intervalMs}
           players={players}
           player={player}
@@ -43,7 +47,10 @@ class Game extends React.Component {
           selectOption={selectOption}
           answers={answers} />
       case GameStage.SCORE:
-        return <Score players={players} player={player} />
+        return <Score
+          questionIndex={questionIndex}
+          players={players}
+          player={player} />
       default:
         return null;
     }

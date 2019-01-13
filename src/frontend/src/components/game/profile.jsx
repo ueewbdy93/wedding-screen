@@ -1,9 +1,9 @@
 import React from 'react';
 
 function Profile(props) {
-  const { player, short = false } = props;
+  const { player, short = false, questionIndex } = props;
   return (
-    <small>
+    <span className={`${short ? '' : 'small'}`}>
       {
         !short &&
         <span className="mr-2">
@@ -19,22 +19,18 @@ function Profile(props) {
         </span>
       }
       <span className="mr-2">
-        <small><i className="mr-1 fas fa-star"></i></small>
+        {player.results.map((result, i) => (
+          <span key={i} className={i === questionIndex ? '' : 'small'}>
+            {result === null && <i className="far fa-circle"></i>}
+            {result === false && <i className="fas fa-times-circle"></i>}
+            {result === true && <i className="text-warning fas fa-check-circle"></i>}
+          </span>
+        ))}
+      </span>
+      <span className="mr-2 font-weight-lighter font-italic">
         {player.score}
       </span>
-      <span className="mr-2">
-        <small><i className="mr-1 fas fa-check-circle"></i></small>
-        {player.correctCount}
-      </span>
-      <span className="mr-2">
-        <small><i className="mr-1 fas fa-times-circle"></i></small>
-        {player.incorrectCount}
-      </span>
-      <span className="mr-2">
-        <small><i className="mr-1 fas fa-clock"></i></small>
-        {player.time === 0 ? 'N/A' : `${player.time / 1000}s`}
-      </span>
-    </small>
+    </span>
   );
 }
 

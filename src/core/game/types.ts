@@ -29,6 +29,7 @@ export interface IPlayer {
   correctRate: number;
   time: number;
   state: PlayerState;
+  results: boolean[];
   createAt: number;
 }
 export enum Stage { JOIN, START_QUESTION, START_ANSWER, REVEAL_ANSWER, SCORE, FINAL }

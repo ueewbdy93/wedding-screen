@@ -17,11 +17,11 @@ function PlayerStateIcon(props) {
 }
 
 function ScoreItem(props) {
-  const { player, isCurrentPlayer } = props;
+  const { player, isCurrentPlayer, questionIndex } = props;
   return (
     <li
       key={player.id}
-      className={isCurrentPlayer ? 'border-bottom bg-info media' : 'border-bottom media'}
+      className="border-bottom media"
       style={{ padding: '5px' }}>
       <h2
         className="mr-1 mb-0 align-self-center"
@@ -33,14 +33,15 @@ function ScoreItem(props) {
       </h2>
       <div className="media-body" style={{ textAlign: 'left' }}>
         <h4 className="mt-0 mb-0">{player.name}</h4>
-        <Profile short={true} player={player} />
+        <Profile short={true} player={player} questionIndex={questionIndex} />
+        {isCurrentPlayer && <i className="fas fa-user float-right"></i>}
       </div>
     </li>
   )
 }
 
 function Score(props) {
-  const { players, player: { id } } = props;
+  const { players, player: { id }, questionIndex } = props;
   const player = players.find(p => p.id === id);
   if (player === undefined) {
     return window.location.reload();
@@ -56,6 +57,7 @@ function Score(props) {
       correctCount: 0,
       incorrectCount: 0,
       time: 0,
+      results: []
     });
   }
   return (
@@ -66,24 +68,37 @@ function Score(props) {
           {` 排行榜 `}
           <small><i className="fas fa-trophy"></i></small>
         </h3>
-        <Profile player={player} />
+        <Profile player={player} questionIndex={questionIndex} />
       </Header>
       <Content>
         <div className="row p-3" style={{ overflowY: 'auto' }}>
           <div className="col-md-6 col-sm-12 col-lg-4 offset-lg-2">
             <ul className="list-unstyled mb-0">
-              {top10.slice(0, 5).map(p => <ScoreItem key={p.id} player={p} isCurrentPlayer={p.id === id} />)}
+              {top10.slice(0, 5).map(p => (
+                <ScoreItem
+                  key={p.id} player={p} isCurrentPlayer={p.id === id}
+                  questionIndex={questionIndex} />
+              ))}
             </ul>
           </div>
           <div className="col-md-6 col-sm-12 col-lg-4">
             <ul className="list-unstyled mb-0">
-              {top10.slice(5, 10).map(p => <ScoreItem key={p.id} player={p} isCurrentPlayer={p.id === id} />)}
+              {top10.slice(5, 10).map(p => (
+                <ScoreItem
+                  key={p.id} player={p} isCurrentPlayer={p.id === id}
+                  questionIndex={questionIndex} />
+              ))}
             </ul>
           </div>
           <div className="col-sm-12 col-lg-4 offset-lg-4 col-md-6 offset-md-3">
             <ul className="list-unstyled mb-0">
               {player.rank > 11 && <li><i className="fas fa-ellipsis-v"></i></li>}
-              {player.rank > 10 && <ScoreItem player={player} isCurrentPlayer={true} />}
+              {
+                player.rank > 10 &&
+                <ScoreItem
+                  player={player} isCurrentPlayer={true}
+                  questionIndex={questionIndex} />
+              }
             </ul>
           </div>
         </div>

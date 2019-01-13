@@ -18,6 +18,8 @@ const initialState = {
   intervalMs: 8000,
   vote: null,
   curVote: null,
+  questionIndex: 0,
+  playerVotes: {},
 };
 
 export const Actions = {

@@ -188,8 +188,10 @@ function* gameRound(io: SocketIO.Server) {
         text: question.text,
         id: question.id,
       },
+      questionIndex: i,
       vote: null,
       curVote: null,
+      playerVotes: {},
     });
 
     io.to(ROOM_ADM).emit('ADMIN_CHANGE', { question });
@@ -236,6 +238,7 @@ function* gameRound(io: SocketIO.Server) {
     const [playerVotes, players]: [{ [key: string]: PlayerVote }, ReadonlyArray<IPlayer>]
       = yield select<IRootState>((s) => ([s.game.playerVotes, s.game.players]));
     io.to(ROOM_ADM).emit('ADMIN_CHANGE', { playerVotes });
+    io.emit('GAME_CHANGE', { playerVotes });
 
     // calculate score
     const newPlayers = players.map((player: Readonly<IPlayer>) => {
@@ -244,8 +247,10 @@ function* gameRound(io: SocketIO.Server) {
       if (playerVote === undefined) {
         newPlayer.incorrectCount = (i + 1) - newPlayer.correctCount;
         newPlayer.correctRate = newPlayer.correctCount / (i + 1);
+        newPlayer.results[i] = false;
         return newPlayer;
       }
+      newPlayer.results[i] = playerVote.isAnswer;
       if (playerVote.isAnswer) {
         const score = Math.max(Math.round((gameInterval - playerVote.time) / 10), 0);
         newPlayer.score += score;
@@ -301,6 +306,7 @@ function* addPlayerSaga(io: SocketIO.Server) {
       correctRate: 0,
       time: 0,
       state: PlayerState.NEW,
+      results: Array(config.game.questions.length).fill(null),
       createAt: Date.now(),
     };
     yield put(addPlayer(player));
@@ -314,6 +320,8 @@ function* addPlayerSaga(io: SocketIO.Server) {
     socket.emit('GAME_CHANGE', {
       stage,
       players,
+      questionIndex,
+      playerVotes,
       curVote: playerVotes[id] || null,
       vote: null,
       player: players.find((p: IPlayer) => p.id === id),
@@ -343,6 +351,8 @@ function* checkPlayerSaga() {
         stage,
         players,
         player,
+        questionIndex,
+        playerVotes,
         question: { text: question.text, id: question.id },
         options: question.options,
         answers: question.answers,
@@ -371,6 +381,8 @@ function* resetGameSaga(io: SocketIO.Server) {
     answers: null,
     vote: null,
     curVote: null,
+    questionIndex: 0,
+    playerVotes: {},
   });
 
   io.to(ROOM_ADM).emit('ADMIN_CHANGE', { playerVotes: {} });
@@ -455,11 +467,13 @@ function* handleAdminLogin() {
     action.socket.emit('GAME_CHANGE', {
       stage,
       players,
+      questionIndex,
       vote: null,
       curVote: null,
       question: { text: question.text, id: question.id },
       options: question.options,
       answers: question.answers,
+      playerVotes: {},
     });
     const { comments } = yield select<IRootState>((s) => s.comment);
     action.socket.emit('ADMIN_CHANGE', {

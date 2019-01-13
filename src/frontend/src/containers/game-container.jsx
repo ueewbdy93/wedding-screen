@@ -13,6 +13,8 @@ const mapStateToProps = (state) => {
     answers: state.game.answers,
     curVote: state.game.curVote,
     intervalMs: state.game.intervalMs,
+    questionIndex: state.game.questionIndex,
+    playerVotes: state.game.playerVotes,
   };
 };
 

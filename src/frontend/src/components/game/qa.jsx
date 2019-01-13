@@ -1,31 +1,49 @@
 import React from 'react';
 import { Container, Header, Content } from './common';
 import { GameStage } from '../../constants';
-import styles from './game.css';
 import Profile from './profile';
+import CountUp from 'react-countup';
 
-const ORDER = [
-  'btn btn-lg btn-info',
-  'btn btn-lg btn-success',
-  'btn btn-lg btn-danger',
-  'btn btn-lg btn-warning'
+
+const BG = [
+  'bg-info',
+  'bg-success',
+  'bg-danger',
+  'bg-warning'
 ];
 
 function Option(props) {
-  const { order, text, isSelect, isAnswer, onClick, disabled, showAnswer } = props;
+  const { order, text, isSelect, isAnswer, onClick, showAnswer, total, count } = props;
+  const classes = [showAnswer && !isAnswer ? 'bg-secondary' : BG[order]];
+  if (showAnswer) {
+    classes.push('progress-bar-striped')
+  }
+  const percent = Math.round(count / total * 100);
   return (
-    <div className={`${ORDER[order]} ${isSelect ? styles.selected2 : ''} ${disabled ? 'disabled' : ''}`}
-      style={{ cursor: 'pointer', flex: 1, margin: '5px', display: 'flex', alignItems: 'center', justifyContent: 'center', whiteSpace: 'initial' }}
-      disabled={disabled}
+    <div className="bg-light shadow rounded m-2 position-relative d-flex justify-content-center align-items-center"
+      style={{ cursor: 'pointer', flex: 1, whiteSpace: 'initial' }}
       onClick={onClick}>
-      <h4>
+      <div
+        className={`${classes.join(' ')} btn position-absolute h-100`}
+        style={{
+          opacity: 0.7,
+          left: 0, width: showAnswer ? `${percent || 0}%` : '100%',
+          transition: `width ${showAnswer ? '500ms' : '0ms'} ease-in 900ms, background 200ms ease-in`,
+          transitionDelay: '200ms'
+        }}>
+
+      </div>
+      <h4 className="w-100 mb-0" style={{ zIndex: 1 }}>
+        {!showAnswer && isSelect && <i className="fas fa-hand-point-right mr-1"></i>}
         {
-          showAnswer && <i className={isAnswer ? "far fa-check-circle" : "far fa-times-circle"}></i>
+          showAnswer &&
+          <CountUp className="badge badge-pill"
+            delay={0.9} duration={0.5} end={count} start={total} />
         }
-        {`  ${text}`}
+        {text}
       </h4>
     </div>
-  )
+  );
 }
 
 function QuestionBlock({ question }) {
@@ -44,14 +62,11 @@ function ProgressBar(props) {
   let progress = 0;
   if (stage === GameStage.START_ANSWER) {
     progress = 100;
-  } else if (stage === GameStage.REVEAL_ANSWER) {
-    progress = 101;
   }
   return (
     <div className="progress" style={{ height: '0.4rem' }}>
       <div
         className="progress-bar progress-bar-striped progress-bar-animated"
-        role="progressbar"
         style={{ width: `${progress}%`, transition: `width ${transitionTime}ms linear` }}>
       </div>
     </div>
@@ -88,14 +103,14 @@ class Ready extends React.Component {
 
 function Overlay(props) {
   const { stage } = props;
-  if (stage === GameStage.START_QUESTION || stage === GameStage.REVEAL_ANSWER) {
+  if (stage === GameStage.START_QUESTION) {
     return (
       <div
         className="w-100 h-100 position-absolute"
-        style={{ top: 0, left: 0, zIndex: 999999, background: '#FFFFF' }}>
+        style={{ zIndex: 999999, background: '#FFFFF' }}>
         <div
           className="d-flex justify-content-center align-items-center h-100">
-          {stage === GameStage.START_QUESTION ? <Ready /> : <h3>Time's up!!</h3>}
+          {stage === GameStage.START_QUESTION && <Ready />}
         </div>
       </div>
     );
@@ -113,7 +128,9 @@ function QA(props) {
     player: { id },
     players,
     selectOption,
-    intervalMs
+    intervalMs,
+    questionIndex,
+    playerVotes,
   } = props;
   const player = players.find(p => p.id === id);
   if (options.length === 0) {
@@ -130,6 +147,15 @@ function QA(props) {
     (stage === GameStage.REVEAL_ANSWER);
   const showAnswer = stage === GameStage.REVEAL_ANSWER;
   const showOption = stage !== GameStage.START_QUESTION;
+  const total = players.length;
+  const counts = Object.keys(playerVotes).reduce((count, key) => {
+    const { optionId } = playerVotes[key];
+    if (!count[optionId]) {
+      count[optionId] = 0;
+    }
+    count[optionId]++;
+    return count;
+  }, {});
   return (
     <Container>
       <Header hideBottomBorder>
@@ -138,36 +164,22 @@ function QA(props) {
           {` 題目 `}
           <small><i className="fas fa-question-circle"></i></small>
         </h3>
-        <Profile player={player} />
+        <Profile player={player} questionIndex={questionIndex} />
         <ProgressBar stage={stage} intervalMs={intervalMs} />
       </Header>
       <Content>
         <div className="row h-100 pl-1 pr-1">
-          <div className="offset-md-2 col-md-8 col-sm-12 d-flex flex-column h-100">
+          <div className="offset-md-2 col-md-8 offset-lg-3 col-lg-6 col-sm-12 d-flex flex-column h-100">
             <QuestionBlock question={question} />
-            <div className="d-flex flex-column position-relative" style={{ flex: 7 }}>
+            <div className="position-relative" style={{ flex: 7 }}>
               <Overlay stage={stage} />
-              <div className={styles.optionBlock}>
+              <div className="h-100 w-100 d-flex flex-column">
                 {
-                  options.slice(0, 2).map((option, i) => (
+                  options.map((option, i) => (
                     <Option
+                      total={total}
+                      count={counts[option.id] || 0}
                       order={i}
-                      key={option.id}
-                      showAnswer={showAnswer}
-                      isAnswer={showAnswer && answers.indexOf(option.id) !== -1}
-                      isSelect={curVote && curVote.optionId === option.id}
-                      disabled={disabled}
-                      onClick={() => disabled ? null : selectOption(option.id)}
-                      text={showOption ? option.text : ''}>
-                    </Option>
-                  ))
-                }
-              </div>
-              <div className={styles.optionBlock}>
-                {
-                  options.slice(2, 4).map((option, i) => (
-                    <Option
-                      order={i + 2}
                       key={option.id}
                       showAnswer={showAnswer}
                       isAnswer={showAnswer && answers.indexOf(option.id) !== -1}
