@@ -36,9 +36,13 @@ function Option(props) {
       <h4 className="w-100 mb-0" style={{ zIndex: 1 }}>
         {!showAnswer && isSelect && <i className="fas fa-hand-point-right mr-1"></i>}
         {
-          showAnswer &&
+          showAnswer && total !== count &&
           <CountUp className="badge badge-pill"
             delay={0.9} duration={0.5} end={count} start={total} />
+        }
+        {
+          showAnswer && total === count &&
+          <span className="badge badge-pill">{count}</span>
         }
         {text}
       </h4>
