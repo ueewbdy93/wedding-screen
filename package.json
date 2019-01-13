@@ -53,6 +53,7 @@
     "lodash": "^4.17.10",
     "morgan": "^1.9.1",
     "react": "^16.7.0",
+    "react-countup": "4.0.0",
     "react-dom": "^16.7.0",
     "react-redux": "^6.0.0",
     "react-transition-group": "^2.5.2",
