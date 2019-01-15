@@ -5,8 +5,8 @@ import Slideshow from '../components/slideshow';
 
 const mapStateToProps = (state) => {
   return {
-    pictures: state.slide.pictures,
-    index: state.slide.index,
+    images: state.slide.images,
+    curImage: state.slide.curImage,
     newComment: state.slide.newComment
   };
 };

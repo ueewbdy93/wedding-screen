@@ -6,7 +6,7 @@ import configJson from './config/config.json';
 /**
  * The pictures location, we place pictures at public/images
  */
-const pics = fs.readdirSync(path.resolve(__dirname, 'public/images'))
+const images = fs.readdirSync(path.resolve(__dirname, 'public/images'))
   .filter((f) => f.indexOf('.jpg') !== -1 || f.indexOf('.png') !== -1)
   .map((f) => `/images/${f}`);
 
@@ -27,8 +27,8 @@ export const config = {
   admin: { password: configJson.admin.password },
   slide: {
     intervalMs: configJson.slide.intervalMs,
-    urls: pics,
-    oneRoundMs: configJson.slide.intervalMs * pics.length,
+    images,
+    oneRoundMs: configJson.slide.intervalMs * images.length,
   },
   game: {
     intervalMs: configJson.game.intervalMs,

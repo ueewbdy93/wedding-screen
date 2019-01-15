@@ -1,12 +1,9 @@
 import { emit } from '../socket';
 
-// action types
-const INIT_DONE = 'INIT_DONE';
-
 // reducer with initial state
 const initialState = {
-  pictures: [],
-  index: 0,
+  images: [],
+  curImage: null,
   newComment: null
 };
 
@@ -17,9 +14,20 @@ export const Actions = {
 }
 
 export default function reducer(state = initialState, action) {
+  if (action.type === 'SLIDE_CHANGE') {
+    const { images, curImage } = action.payload;
+    if (images !== undefined && curImage !== undefined) {
+      const index = images.findIndex(img => img === curImage)
+      // Shift images array to make curImage be the first image
+      // so that it would be downloaded first
+      action.payload.images = [
+        images[index],
+        ...images.slice(index + 1),
+        ...images.slice(0, index)
+      ]
+    }
+  }
   switch (action.type) {
-    case INIT_DONE:
-      return { ...state, initing: false, ...action.payload.slide };
     case 'SLIDE_CHANGE':
       return { ...state, ...action.payload };
     default:

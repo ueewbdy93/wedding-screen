@@ -5,21 +5,21 @@ import { nextSlide } from './actions';
 import { ActionTypes } from './types';
 
 export interface ISlideState {
-  readonly pictures: ReadonlyArray<string>;
-  readonly index: number;
+  readonly images: ReadonlyArray<string>;
+  readonly curImage: string;
 }
 
-const initPictures: ReadonlyArray<string> = config.slide.urls;
+const initImages: ReadonlyArray<string> = config.slide.images;
 
 export const slideReducer = combineReducers<ISlideState, ActionTypes>({
   // tslint:disable-next-line:variable-name
-  pictures: (state = initPictures, _action) => {
+  images: (state = initImages, _action) => {
     return state;
   },
-  index: (state = 0, action) => {
+  curImage: (state = initImages[0], action) => {
     switch (action.type) {
       case getType(nextSlide):
-        return (state + 1) % initPictures.length;
+        return action.payload.image;
       default:
         return state;
     }

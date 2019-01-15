@@ -3,7 +3,7 @@
     "password": "happy"
   },
   "slide": {
-    "intervalMs": 3000
+    "intervalMs": 5000
   },
   "game": {
     "intervalMs": 8000,

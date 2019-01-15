@@ -3,28 +3,24 @@ import CommentInput from './comment-input';
 import BulletCommentRiver from './bulletcomment-river';
 import styles from './slideshow.css';
 
-function PicSlider({ index, pictures }) {
+function PicSlider({ curImage, images }) {
   return (
     <div>
       {
-        pictures.map((url, i) => {
-          if ((i + 1) % pictures.length === index) {
-            return <div key={i} className={`${styles.blur} ${styles.hidden}`} style={{ backgroundImage: `url("${url}")` }}></div>
-          } else if (i === index) {
-            return (<div key={i} className={`${styles.blur} ${styles.visible}`} style={{ backgroundImage: `url("${url}")` }}></div>)
-          }
-          return <div key={i} className={`${styles.blur} ${styles.hidden}`} style={{ backgroundImage: `url("${url}")` }}></div>
-        })
+        images.map(image => (
+          <div key={image}
+            className={`${styles.blur} ${image === curImage ? styles.visible : styles.hidden}`}
+            style={{ backgroundImage: `url("${image}")` }}>
+          </div>
+        ))
       }
       {
-        pictures.map((url, i) => {
-          if ((i + 1) % pictures.length === index) {
-            return <div key={i} className={`${styles.slide} ${styles.hidden}`} style={{ backgroundImage: `url("${url}")` }}></div>
-          } else if (i === index) {
-            return (<div key={i} className={`${styles.slide} ${styles.visible}`} style={{ backgroundImage: `url("${url}")` }}></div>)
-          }
-          return <div key={i} className={`${styles.slide} ${styles.hidden}`} style={{ backgroundImage: `url("${url}")` }}></div>
-        })
+        images.map(image => (
+          <div key={image}
+            className={`${styles.slide} ${image === curImage ? styles.visible : styles.hidden}`}
+            style={{ backgroundImage: `url("${image}")` }}>
+          </div>
+        ))
       }
     </div>
   )
@@ -50,10 +46,10 @@ class Slideshow extends React.Component {
   }
   render() {
     const { silence } = this.state;
-    const { index, pictures, newComment } = this.props;
+    const { curImage, images, newComment } = this.props;
     return (
       <div>
-        <PicSlider index={index} pictures={pictures} />
+        <PicSlider curImage={curImage} images={images} />
         <BulletCommentRiver silence={silence} newComment={newComment} />
         <CommentInput silence={silence} toggleSilence={this.toggleSilence} addComment={this.addComment} />
       </div>

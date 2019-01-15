@@ -119,16 +119,15 @@ function* commentWorkerSaga(io: SocketIO.Server) {
  * Tell client to show next picture every <config.slide.intervalMS> milliseconds
  */
 function* slideWorkerSaga(io: SocketIO.Server) {
-  const total: number = yield select<IRootState>((s) => s.slide.pictures.length);
+  const images: string[] = yield select<IRootState>((s) => s.slide.images);
   while (true) {
     const curRoundStartTime = getProcessUptime();
     yield put(setCurrentRoundStartTime(curRoundStartTime));
     yield fork(commentWorkerSaga, io);
-    for (let i = 0; i < total; i += 1) {
+    for (const image of images) {
       yield delay(config.slide.intervalMs);
-      yield put(nextSlide());
-      const currentSlideIndex = yield select<IRootState>((s) => s.slide.index);
-      io.emit('SLIDE_CHANGE', { index: currentSlideIndex });
+      yield put(nextSlide(image));
+      io.emit('SLIDE_CHANGE', { curImage: image });
     }
   }
 }
