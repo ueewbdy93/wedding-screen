@@ -3,11 +3,11 @@ import React from 'react';
 function Profile(props) {
   const { player, short = false, questionIndex } = props;
   return (
-    <span className={`${short ? '' : 'small'}`}>
+    <span className={`text-dark ${short ? '' : 'small'}`}>
       {
         !short &&
         <span className="mr-2">
-          <small><i className="mr-1 fas fa-user"></i></small>
+          <small><i className="mr-1 far fa-user"></i></small>
           {player.name}
         </span>
       }
@@ -20,9 +20,9 @@ function Profile(props) {
       }
       <span className="mr-2">
         {player.results.map((result, i) => (
-          <span key={i} className={i === questionIndex ? '' : 'small'}>
-            {result === null && <i className="far fa-circle"></i>}
-            {result === false && <i className="fas fa-times-circle"></i>}
+          <span key={i} style={{ marginRight: '1px' }}>
+            {result === null && <i className="text-dark far fa-circle"></i>}
+            {result === false && <i className="text-dark far fa-times-circle"></i>}
             {result === true && <i className="text-warning fas fa-check-circle"></i>}
           </span>
         ))}

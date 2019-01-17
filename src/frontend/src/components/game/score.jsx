@@ -32,9 +32,15 @@ function ScoreItem(props) {
         </small>
       </h2>
       <div className="media-body" style={{ textAlign: 'left' }}>
-        <h4 className="mt-0 mb-0">{player.name}</h4>
-        <Profile short={true} player={player} questionIndex={questionIndex} />
-        {isCurrentPlayer && <i className="fas fa-user float-right"></i>}
+        <div className="d-flex flex-row justify-content-between">
+          <div>
+            <h4 className="mt-0 mb-0">{player.name}</h4>
+            <Profile short={true} player={player} questionIndex={questionIndex} />
+          </div>
+          <div className="d-flex align-items-end pb-1 pr-2">
+            {isCurrentPlayer && <i className="far fa-user"></i>}
+          </div>
+        </div>
       </div>
     </li>
   )

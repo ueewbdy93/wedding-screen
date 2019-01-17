@@ -172,7 +172,7 @@ function QA(props) {
         <ProgressBar stage={stage} intervalMs={intervalMs} />
       </Header>
       <Content>
-        <div className="row h-100 pl-1 pr-1">
+        <div className="row h-100 pl-3 pr-3">
           <div className="offset-md-2 col-md-8 offset-lg-3 col-lg-6 col-sm-12 d-flex flex-column h-100">
             <QuestionBlock question={question} />
             <div className="position-relative" style={{ flex: 7 }}>

@@ -34,7 +34,7 @@ function JoinUser({ player, me }) {
           ...transitionStyles[state]
         }}>
           <span className={`badge badge-pill ${COLORS[hash % COLORS.length]}`} >
-            {me && <small><i className="mr-1 fas fa-user"></i></small>}
+            {me && <small><i className="mr-1 far fa-user"></i></small>}
             {player.name}
           </span>
         </h3>

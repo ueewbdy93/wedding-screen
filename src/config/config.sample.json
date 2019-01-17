@@ -3,49 +3,175 @@
     "password": "happy"
   },
   "slide": {
-    "intervalMs": 3000
+    "intervalMs": 5000
   },
   "game": {
-    "intervalMs": 8000,
+    "intervalMs": 5000,
     "questions": [
       {
-        "text": "Something is small, red, round and sweet?",
+        "text": "Q1. 今天新娘的捧花顏色是？",
         "options": [
           {
-            "text": "Orange",
+            "text": "黃色",
             "isAnswer": false
           },
           {
-            "text": "Apple",
+            "text": "粉紅色",
             "isAnswer": true
           },
           {
-            "text": "Lemon",
+            "text": "綠色",
             "isAnswer": false
           },
           {
-            "text": "Grape",
+            "text": "藍色",
             "isAnswer": false
           }
         ]
       },
       {
-        "text": "Something starts with an H and ends with an oof?",
+        "text": "Q2. 新娘和新郎在哪裡認識的？",
         "options": [
           {
-            "text": "Bokoblin",
+            "text": "交大熱舞社",
             "isAnswer": false
           },
           {
-            "text": "Moblin",
+            "text": "交大建北會",
             "isAnswer": false
           },
           {
-            "text": "Lynel Hoof",
+            "text": "交大蛋糕社",
+            "isAnswer": false
+          },
+          {
+            "text": "交大武友會",
+            "isAnswer": true
+          }
+        ]
+      },
+      {
+        "text": "Q3. 新娘和新郎交往多久了呢？",
+        "options": [
+          {
+            "text": "6年又9個月",
+            "isAnswer": false
+          },
+          {
+            "text": "7年又9個月",
             "isAnswer": true
           },
           {
-            "text": "Lynel Hoof",
+            "text": "8年又9個月",
+            "isAnswer": false
+          },
+          {
+            "text": "9年又9個月",
+            "isAnswer": false
+          }
+        ]
+      },
+      {
+        "text": "Q4. 新娘和新郎身高差多少？",
+        "options": [
+          {
+            "text": "10公分",
+            "isAnswer": false
+          },
+          {
+            "text": "20公分",
+            "isAnswer": false
+          },
+          {
+            "text": "30公分",
+            "isAnswer": true
+          },
+          {
+            "text": "40公分",
+            "isAnswer": false
+          }
+        ]
+      },
+      {
+        "text": "Q5. 婚紗照中，新郎和新娘在沙灘上寫的字是？",
+        "options": [
+          {
+            "text": "I LOVE U",
+            "isAnswer": false
+          },
+          {
+            "text": "Marry Me",
+            "isAnswer": false
+          },
+          {
+            "text": "Hello World",
+            "isAnswer": false
+          },
+          {
+            "text": "dy93 ueewbd",
+            "isAnswer": true
+          }
+        ]
+      },
+      {
+        "text": "Q6. 哪些是新郎和新娘一起去過的地方？(有多個答案，選中其中一個即可)",
+        "options": [
+          {
+            "text": "日本",
+            "isAnswer": false
+          },
+          {
+            "text": "北京",
+            "isAnswer": true
+          },
+          {
+            "text": "峇里島",
+            "isAnswer": true
+          },
+          {
+            "text": "韓國",
+            "isAnswer": false
+          }
+        ]
+      },
+      {
+        "text": "Q7. 新郎新娘的對話記錄中，最常出現的單字是？",
+        "options": [
+          {
+            "text": "親親",
+            "isAnswer": false
+          },
+          {
+            "text": "呵呵",
+            "isAnswer": false
+          },
+          {
+            "text": "抱抱",
+            "isAnswer": true
+          },
+          {
+            "text": "想你",
+            "isAnswer": false
+          }
+        ]
+      },
+      {
+        "text": "Q8. 本網站的作者是？",
+        "options": [
+          {
+            "text": "DY93",
+            "isAnswer": true
+          },
+          {
+            "text": "帥氣ㄟ DY93",
+            "isAnswer": true
+          },
+          {
+            "text": "超級無敵帥氣ㄟ DY93",
+            "isAnswer": true
+          },
+          {
+            "text": "宇宙超級無敵帥氣ㄟ DY93",
             "isAnswer": true
           }
         ]
