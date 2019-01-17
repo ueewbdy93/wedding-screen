@@ -251,7 +251,9 @@ function* gameRound(io: SocketIO.Server) {
       }
       newPlayer.results[i] = playerVote.isAnswer;
       if (playerVote.isAnswer) {
-        const score = Math.max(Math.round((gameInterval - playerVote.time) / 10), 0);
+        const score = Math.min(Math.max(
+          Math.round((gameInterval - playerVote.time) * 1000 / gameInterval),
+          0), 1000);
         newPlayer.score += score;
         newPlayer.correctCount += 1;
       }
