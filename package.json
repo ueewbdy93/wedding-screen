@@ -11,7 +11,7 @@
     "prebuild": "tslint --project .",
     "build": "concurrently --kill-others-on-fail -p '[{name}]' -n 'Node,Web' -c 'cyan.bold,green.bold' 'bnr build:server' 'bnr build:web'",
     "dev": "concurrently --kill-others-on-fail -p '[{name}]' -n 'TypeScript,Build,Node,Web' -c 'cyan.bold,green.bold,white.bold' 'bnr build:server --watch' 'bnr dev:nodemon' 'bnr dev:web'",
-    "heroku-prebuild": "rm -f db/*",
+    "heroku-prebuild": "sh heroku-prebuild.sh && rm -f db/*",
     "heroku-postbuild": "cp src/config/config.sample.json src/config/config.json && npm run build",
     "docker-build": "docker build -t dy93/wedding-screen:latest .",
     "docker-publish": "docker push dy93/wedding-screen:latest"
