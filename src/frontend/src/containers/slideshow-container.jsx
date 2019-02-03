@@ -7,7 +7,7 @@ const mapStateToProps = (state) => {
   return {
     images: state.slide.images,
     curImage: state.slide.curImage,
-    newComment: state.slide.newComment
+    comments: state.slide.comments
   };
 };
 

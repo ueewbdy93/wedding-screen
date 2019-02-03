@@ -46,12 +46,15 @@ class Slideshow extends React.Component {
   }
   render() {
     const { silence } = this.state;
-    const { curImage, images, newComment } = this.props;
+    const { curImage, images, comments } = this.props;
     return (
       <div>
         <PicSlider curImage={curImage} images={images} />
-        <BulletCommentRiver silence={silence} newComment={newComment} />
-        <CommentInput silence={silence} toggleSilence={this.toggleSilence} addComment={this.addComment} />
+        <BulletCommentRiver silence={silence} comments={comments} />
+        <CommentInput
+          silence={silence}
+          toggleSilence={this.toggleSilence}
+          addComment={this.addComment} />
       </div>
     );
   }
