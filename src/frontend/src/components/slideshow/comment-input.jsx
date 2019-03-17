@@ -43,7 +43,7 @@ class CommentInput extends React.Component {
       <div style={STYLE}>
         <form onSubmit={this.onSubmit} className="d-flex justify-content-center">
           <div className="col-auto mr-2">
-            <button onClick={toggleSilence} className="close mt-1 text-white">
+            <button type="reset" onClick={toggleSilence} className="close mt-1 text-white">
               <i className={silence ? 'fas fa-comment-slash' : 'fas fa-comment-dots'}></i>
             </button>
           </div>
@@ -57,6 +57,7 @@ class CommentInput extends React.Component {
           </div>
           <div className="col-auto p-0">
             <button
+              type="submit"
               disabled={disabled}
               onClick={this.onSubmit}
               type="submit"
