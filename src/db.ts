@@ -6,7 +6,7 @@ import { config } from './config-helper';
 import { IComment } from './core/comments/types';
 import { IPlayer, PlayerVote } from './core/game/types';
 
-const FILENAME = path.resolve(__dirname, '..', 'db', `db-${Date.now()}.sqlite`);
+const FILENAME = path.resolve(__dirname, '..', 'db', `db-wedding-screen.sqlite`);
 
 const db = new sqlite3.Database(
   FILENAME,

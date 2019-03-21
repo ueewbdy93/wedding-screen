@@ -4,9 +4,12 @@ import express, {
   Request,
   Response,
 } from 'express';
+import basicAuth from 'express-basic-auth';
 import httpErrors from 'http-errors';
 import morgan from 'morgan';
 import { join } from 'path';
+import path from 'path';
+import { config } from './config-helper';
 
 const app = express();
 
@@ -21,6 +24,15 @@ app.use(cookieParser());
 app.use(express.static(join(__dirname, 'public'),  {
   maxAge: '2h',
 }));
+
+app.get('/download', basicAuth({
+  users: { admin: config.admin.password },
+  challenge: true,
+  realm: 'Imb4T3st4pp',
+}), (_req: Request, res: Response) => {
+  const dbFile = path.resolve(__dirname, '..', 'db', 'db-wedding-screen.sqlite');
+  return res.download(dbFile, 'db-wedding-screen.sqlite');
+});
 
 // catch 404 and forward to error handler
 app.use((_req, _res, next) => {

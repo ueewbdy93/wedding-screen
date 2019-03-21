@@ -1,6 +1,5 @@
 import React from 'react';
 import { GameStage } from '../../constants';
-import Rank from './rank';
 import './admin.css';
 
 const PROGRESS_BAR_CLASS = [
@@ -148,12 +147,8 @@ class GameMgr extends React.Component {
       startAnswer,
       revealAnswer,
       showScore,
-      selectedTab,
       intervalMs
     } = this.props;
-    if (selectedTab === 'rank') {
-      return <Rank players={players} />;
-    }
     return (
       <div>
         <GameButton
