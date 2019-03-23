@@ -4,21 +4,36 @@ import BulletCommentRiver from './bulletcomment-river';
 import styles from './slideshow.css';
 
 function PicSlider({ curImage, images }) {
+  // Set "display: none" to the images that didn't show on the page to prevent
+  // occupying memory, which would cause mobile safari crash.
+  const curImageIndex = images.indexOf(curImage);
+  const activeIndices = [
+    curImageIndex,
+    (curImageIndex + 1 + images.length) % images.length,
+    (curImageIndex - 1 + images.length) % images.length
+  ];
   return (
     <div>
       {
-        images.map(image => (
+        images.map((image, index) => (
           <div key={image}
             className={`${styles.blur} ${image === curImage ? styles.visible : styles.hidden}`}
-            style={{ backgroundImage: `url("${image}")` }}>
+            style={{
+              backgroundImage: `url("${image}")`,
+              display: activeIndices.includes(index) ? 'block' : 'none'
+            }}
+          >
           </div>
         ))
       }
       {
-        images.map(image => (
+        images.map((image, index) => (
           <div key={image}
             className={`${styles.slide} ${image === curImage ? styles.visible : styles.hidden}`}
-            style={{ backgroundImage: `url("${image}")` }}>
+            style={{
+              backgroundImage: `url("${image}")`,
+              display: activeIndices.includes(index) ? 'block' : 'none'
+            }}>
           </div>
         ))
       }
