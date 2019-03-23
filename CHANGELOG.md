@@ -3,6 +3,7 @@
 ## Added
 
 - Heroku deploy button
+- Admin: add endpoint to download sqlite
 
 ## Fixed
 
