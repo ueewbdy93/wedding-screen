@@ -53,7 +53,8 @@ class CommentInput extends React.Component {
               className="form-control"
               placeholder="我要留言…"
               value={comment}
-              onChange={this.onChange} />
+              onChange={this.onChange}
+              maxLength="128" />
           </div>
           <div className="col-auto p-0">
             <button

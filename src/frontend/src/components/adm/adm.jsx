@@ -3,6 +3,8 @@ import { Container, Content, Header } from '../game/common';
 import GameMgr from './game-mgr';
 import SlideMgr from './slide-mgr';
 import Nav from './nav';
+import Download from './download';
+import Rank from './rank';
 import './admin.css';
 
 class Adm extends React.Component {
@@ -41,8 +43,10 @@ class Adm extends React.Component {
         <Content>
           <div className="row p-3 h-100" style={{ overflowY: 'auto' }}>
             <div className="col-md-6 offset-md-3 col-sm-12">
-              {mode === 0 && <GameMgr {...this.props} selectedTab={selectedTab} />}
-              {mode === 1 && <SlideMgr comments={comments} onClearComment={onClearComment} onInsertComment={onInsertComment} />}
+              {selectedTab === 'game' && <GameMgr {...this.props} selectedTab={selectedTab} />}
+              {selectedTab === 'rank' && <Rank players={this.props.players} />}
+              {selectedTab === 'comment' && <SlideMgr comments={comments} onClearComment={onClearComment} onInsertComment={onInsertComment} />}
+              {selectedTab === 'download' && <Download />}
             </div>
           </div>
         </Content>

@@ -1,9 +1,10 @@
 import React from 'react';
 
 const TABS = [
-  { id: 'game', name: '遊戲', mode: 0 },
-  { id: 'rank', name: '排行', mode: 0 },
-  { id: 'comment', name: '留言', mode: 1 }
+  { id: 'comment', name: '留言' },
+  { id: 'game', name: '遊戲' },
+  { id: 'rank', name: '排行' },
+  { id: 'download', name: '下載' }
 ]
 
 class Nav extends React.Component {
@@ -12,13 +13,12 @@ class Nav extends React.Component {
     this.onSwitchMode = this.onSwitchMode.bind(this)
   }
   componentDidMount() {
-    const { mode, onSwitchTab } = this.props;
-    onSwitchTab(TABS.find(tab => tab.mode === mode).id);
+    const { onSwitchTab } = this.props;
+    onSwitchTab(TABS[0].id);
   }
   onSwitchMode(mode) {
-    const { onSwitchMode, onSwitchTab } = this.props;
+    const { onSwitchMode } = this.props;
     onSwitchMode(mode);
-    onSwitchTab(TABS.find(tab => tab.mode === mode).id);
   }
   render() {
     const {
@@ -31,7 +31,7 @@ class Nav extends React.Component {
         {
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             {
-              TABS.filter(tab => tab.mode === mode).map(tab => {
+              TABS.map(tab => {
                 const { id, name } = tab;
                 const isSelected = id === selectedTab;
                 return (
@@ -50,7 +50,7 @@ class Nav extends React.Component {
         <span
           style={{ cursor: 'pointer', width: 'unset', display: 'flex', alignItems: 'center' }}
           onClick={() => this.onSwitchMode(mode === 1 ? 0 : 1)}>
-          <small>遊戲/輪播</small>
+          <small>輪播/遊戲</small>
           <i className={mode === 0 ? "fas fa-toggle-on" : "fas fa-toggle-off"}></i>
         </span>
       </nav>

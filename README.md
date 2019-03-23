@@ -2,10 +2,13 @@
 
 ![](screenshots/game-demo.gif)
 
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
 # Table of contents
 
 - [TL;DR](#tldr)
 - [TL;DR with Docker](#tldr-with-docker)
+- [TL;DR with Heroku Deploy](#tldr-with-heroku-deploy)
 - [About](#about)
   - [Demo](#demo)
 - [Prerequisite](#prerequisite)
@@ -33,6 +36,12 @@
   - `db`: empty folder which the db files will created in
 3. `docker run -d -p 5566:5566 -v /PATH/TO/config:/usr/src/app/dist/config -v /PATH/TO/db:/usr/src/app/db -v /PATH/TO/images/:/usr/src/app/dist/public/images dy93/wedding-screen`
 4. Now you can browse the service with your favorite browser at http://localhost:5566 as user and, http://localhost:5566/admin-index.html as admin.
+
+# TL;DR with Heroku Deploy
+ 
+1. Packing your images and config.json into a folder and zip it.
+2. Upload it to a cloud storage services(ex: google drive, dropbox) and generate a share link.
+3. Click [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
 # About
 
