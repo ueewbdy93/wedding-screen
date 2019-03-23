@@ -1,3 +1,14 @@
+# 1.0.1 - 2019-03-24
+
+## Added
+
+- Heroku deploy button
+
+## Fixed
+
+- Mobile safari OOM
+- Restrict comment length to 128
+
 # 1.0.0 - 2019-02-09
 
 ## added
