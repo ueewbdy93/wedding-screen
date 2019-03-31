@@ -7,8 +7,8 @@ echo "| Heroku Pre Build  |"
 echo "+-------------------+"
 
 if [ "x${DOWNLOAD_URL}" = "x" ]; then
-  echo "Miss DOWNLOAD_URL"
-  exit -1
+  echo "Miss DOWNLOAD_URL. Skip pre build process."
+  exit 0
 fi
 
 echo "Read DOWNLOAD_URL: ${DOWNLOAD_URL}"
