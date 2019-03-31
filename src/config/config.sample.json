@@ -45,7 +45,7 @@
             "isAnswer": false
           },
           {
-            "text": "交大武友會",
+            "text": "交大武陵高中校友會",
             "isAnswer": true
           }
         ]
@@ -135,22 +135,22 @@
         ]
       },
       {
-        "text": "Q7. 新郎新娘的對話記錄中，最常出現的單字是？",
+        "text": "Q7. 新郎新娘的對話記錄中，最常出現的表情符號？",
         "options": [
           {
-            "text": "親親",
+            "text": "(╭￣3￣)╭♡ 啾~",
             "isAnswer": false
           },
           {
-            "text": "呵呵",
+            "text": "(╬☉д⊙) 怒",
             "isAnswer": false
           },
           {
-            "text": "抱抱",
+            "text": "ε٩(๑> ₃ <)۶з 抱抱~",
             "isAnswer": true
           },
           {
-            "text": "想你",
+            "text": "¯\\_(ツ)_/¯ 怪我囉",
             "isAnswer": false
           }
         ]
