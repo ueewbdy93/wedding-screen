@@ -189,3 +189,12 @@ If you encounter performance issues. The tips below could help.
 
 # Test
 To be completed
+
+# Useful script
+
+- Compress image
+```shell
+for i in `ls image`; do
+  gm convert -size 1280x1280 /PATH/TO/IMAGE/FOLDER/$i -resize 1280x1280 /DIST/FOLDER/$i
+done
+```

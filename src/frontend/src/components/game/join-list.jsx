@@ -76,10 +76,10 @@ class JoinList extends React.Component {
           <small>報名人數: {players.length}</small>
         </Header>
         <Content>
-          <div className="row">
+          <div className="row" style={{ overflowY: 'auto' }}>
             <div
               className="offset-md-2 col-md-8 col-sm-12 d-flex justify-content-center align-items-center"
-              style={{ flexWrap: 'wrap', overflowY: 'auto' }}>
+              style={{ flexWrap: 'wrap' }}>
               {players.map(p => <JoinUser key={p.id} player={p} me={p.id === player.id} />)}
             </div>
           </div>
