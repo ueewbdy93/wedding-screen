@@ -1,10 +1,17 @@
 #!/bin/bash
 
-echo "Download from: ${DOWNLOAD_URL}"
+set -e
+
+echo "+-------------------+"
+echo "| Heroku Pre Build  |"
+echo "+-------------------+"
 
 if [ "x${DOWNLOAD_URL}" = "x" ]; then
-  exit 0
+  echo "Miss DOWNLOAD_URL"
+  exit -1
 fi
+
+echo "Read DOWNLOAD_URL: ${DOWNLOAD_URL}"
 
 if [[ $DOWNLOAD_URL =~ https://drive.google.com ]]; then
   id=`node -e "console.log(querystring.parse(new URL(\"$DOWNLOAD_URL\").search.slice(1)).id)"`
@@ -12,7 +19,8 @@ if [[ $DOWNLOAD_URL =~ https://drive.google.com ]]; then
     DOWNLOAD_URL="https://drive.google.com/uc?export=download&id=$id"
   fi
 fi
-echo $DOWNLOAD_URL
+
+echo "Download from ${DOWNLOAD_URL}"
 
 mkdir /tmp/wedding
 curl -L -o /tmp/wedding/file.zip ${DOWNLOAD_URL}

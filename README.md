@@ -1,6 +1,6 @@
-![](screenshots/slideshow-demo.gif)
+![](doc/slideshow-demo.gif)
 
-![](screenshots/game-demo.gif)
+![](doc/game-demo.gif)
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
@@ -14,6 +14,7 @@
 - [Prerequisite](#prerequisite)
 - [Usage](#usage)
   - [Start](#start)
+  - [Images](#images)
   - [Configuration](#configuration)
   - [Database](#database)
   - [Optimize](#optimize)
@@ -40,8 +41,22 @@
 # TL;DR with Heroku Deploy
  
 1. Packing your images and config.json into a folder and zip it.
-2. Upload it to a cloud storage services(ex: google drive, dropbox) and generate a share link.
+    - folder structure:
+      ```
+      .
+      ├── config.json  # config must be named config.json
+      ├── image1.jpg   # image file names must suffix with .jpg
+      ├── image2.jpg
+      └── ...
+      ```
+    - See [Configuration](#configuration) for more information about `config.json`.
+2. Upload the zipped folder to a cloud storage services(ex: dropbox) and generate a share link.
 3. Click [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+    - You must create a Heroku account first.
+    - Fill `DOWNLOAD_URL` field with the shared link that created in step 2.
+    - Click `Deploy app` button. Then Heroku will automatically download configuration and images from the shared link and run deployment process.
+    - After finishing deployment, click `View` button to visit your own wedding web-app!
+    - ![](doc/heroku-example.png)
 
 # About
 
@@ -112,9 +127,19 @@ OK! Now you can visit http://localhost:5566 to watch slideshow or play game.
 
 Visit http://localhost:5566/admin-index.html and login(default password:happy) to control the state.
 
-## Configuration
+## Images
 
-Put your images into `src/public/images/`
+Put your images into `src/public/images/`.
+
+Compress image:
+```shell
+cd /PATH/TO/IMAGE_FOLDER
+for i in `ls`; do
+  gm convert -size 1280x1280 $i -resize 1280x1280 /DIST/FOLDER/$i
+done
+```
+
+## Configuration
 
 Edit *src/config/config.json*
 (If not exists, copy from *src/config/config.sample.json*)
@@ -132,41 +157,7 @@ Configuration options:
 | game.questions[].options[].text | Option text |
 | game.questions[].options[].isAnswer | (boolean) Indicate whether this option is correct. Allow multiple answers |
 
-Following is the example of `config.json`:
-
-```json
-{
-  "admin": {
-    "password": "happy"
-  },
-  "slide": {
-    "intervalMs": 3000
-  },
-  "game": {
-    "intervalMs": 8000,
-    "questions": [
-      {
-        "text": "Q1. Something is small, red, round and sweet?",
-        "options": [
-          { "text": "Orange", "isAnswer": false },
-          { "text": "Apple", "isAnswer": true },
-          { "text": "Lemon", "isAnswer": false },
-          { "text": "Grape", "isAnswer": false }
-        ]
-      },
-      {
-        "text": "Q2. Something starts with an H and ends with an oof?",
-        "options": [
-          { "text": "Bokoblin", "isAnswer": false },
-          { "text": "Moblin", "isAnswer": false },
-          { "text": "Lynel Hoof", "isAnswer": true },
-          { "text": "Lynel Hoof", "isAnswer": true }
-        ]
-      }
-    ]
-  }
-}
-```
+See [config.sample.json](src/config/config.sample.json) for example.
 
 ## Database
 
@@ -189,12 +180,3 @@ If you encounter performance issues. The tips below could help.
 
 # Test
 To be completed
-
-# Useful script
-
-- Compress image
-```shell
-for i in `ls image`; do
-  gm convert -size 1280x1280 /PATH/TO/IMAGE/FOLDER/$i -resize 1280x1280 /DIST/FOLDER/$i
-done
-```
