@@ -7,7 +7,7 @@ export function Container({ children }) {
       style={{ top: '0px', left: '0px', right: '0px', bottom: '0px' }}>
       {children}
       <footer className="position-fixed w-100" style={{ bottom: '0px' }}>
-        <small>Power by dy93 & ueewbd
+        <small>Powered by dy93 & ueewbd
           <a
             href="https://github.com/ueewbdy93/wedding-screen"
             rel="noopener noreferrer" target="_blank">
