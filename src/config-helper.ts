@@ -6,9 +6,9 @@ import configJson from './config/config.json';
 /**
  * The pictures location, we place pictures at public/images
  */
-const images = fs.readdirSync(path.resolve(__dirname, 'public/images'))
+const images = fs.readdirSync(path.resolve(__dirname, 'public/images/normal'))
   .filter((f) => f.indexOf('.jpg') !== -1 || f.indexOf('.png') !== -1)
-  .map((f) => `/images/${f}`);
+  .map((f) => `/images/normal/${f}`);
 
 /**
  * Parsed questions

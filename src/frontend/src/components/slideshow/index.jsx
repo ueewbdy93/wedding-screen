@@ -19,7 +19,7 @@ function PicSlider({ curImage, images }) {
           <div key={image}
             className={`${styles.blur} ${image === curImage ? styles.visible : styles.hidden}`}
             style={{
-              backgroundImage: `url("${image}")`,
+              backgroundImage: `url("${image.replace('normal', 'blur')}")`,
               display: activeIndices.includes(index) ? 'block' : 'none'
             }}
           >

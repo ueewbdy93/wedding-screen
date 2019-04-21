@@ -133,9 +133,11 @@ Put your images into `src/public/images/`.
 
 Compress image:
 ```shell
-cd /PATH/TO/IMAGE_FOLDER
-for i in `ls`; do
-  gm convert -size 1280x1280 $i -resize 1280x1280 /DIST/FOLDER/$i
+src=PATH/TO/INPUT/IMAGES
+dst=PATH/TO/OUTPUT/IMAGES
+for i in `ls $src`; do
+  gm convert -size 1280x1280 $src/$i -resize 1280x1280 $dst/normal/$i
+  gm convert $dst/normal/$i -blur 0x4 $dst/blur/$i
 done
 ```
 
