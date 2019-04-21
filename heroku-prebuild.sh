@@ -27,7 +27,9 @@ curl -L -o /tmp/wedding/file.zip ${DOWNLOAD_URL}
 unzip /tmp/wedding/file.zip -d /tmp/wedding
 rm -f /tmp/wedding/file.zip
 rm -f ./src/config/config.json
-rm -f ./src/public/images/*
+rm -rf ./src/public/images/*
 find /tmp/wedding -name 'config.*' | xargs -I '{}' mv '{}' ./src/config/config.json
-find /tmp/wedding -type f -not -path '*/\.*' | xargs -I '{}' mv '{}' ./src/public/images/
+# find /tmp/wedding -type f -not -path '*/\.*' | xargs -I '{}' mv '{}' ./src/public/images/
+find /tmp/wedding/ -type d -name normal | xargs -I '{}' mv '{}' ./src/public/images/normal
+find /tmp/wedding/ -type d -name blur | xargs -I '{}' mv '{}' ./src/public/images/blur
 rm -rf /tmp/wedding

@@ -45,9 +45,12 @@
       ```
       .
       ├── config.json  # config must be named config.json
-      ├── image1.jpg   # image file names must suffix with .jpg
-      ├── image2.jpg
-      └── ...
+      ├── normal           # folder to put normal images
+      |   ├── image1.jpg   # normal image
+      |   └── ...
+      └── blur             # folder to put blur images
+          ├── image1.jpg   # blur image
+          └── ...
       ```
     - See [Configuration](#configuration) for more information about `config.json`.
 2. Upload the zipped folder to a cloud storage services(ex: dropbox) and generate a share link.
@@ -129,15 +132,15 @@ Visit http://localhost:5566/admin-index.html and login(default password:happy) t
 
 ## Images
 
-Put your images into `src/public/images/`.
+Put your images into `src/public/images/normal`. 
+Put the blur images into `src/public/images/blur`.
 
 Compress image:
 ```shell
 src=PATH/TO/INPUT/IMAGES
-dst=PATH/TO/OUTPUT/IMAGES
 for i in `ls $src`; do
-  gm convert -size 1280x1280 $src/$i -resize 1280x1280 $dst/normal/$i
-  gm convert $dst/normal/$i -blur 0x4 $dst/blur/$i
+  gm convert -size 1280x1280 $src/$i -resize 1280x1280 images/normal/$i
+  gm convert images/normal/$i -blur 0x4 images/blur/$i
 done
 ```
 
