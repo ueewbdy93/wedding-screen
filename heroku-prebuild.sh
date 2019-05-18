@@ -30,6 +30,6 @@ rm -f ./src/config/config.json
 rm -rf ./src/public/images/*
 find /tmp/wedding -name 'config.*' | xargs -I '{}' mv '{}' ./src/config/config.json
 # find /tmp/wedding -type f -not -path '*/\.*' | xargs -I '{}' mv '{}' ./src/public/images/
-find /tmp/wedding/ -type d -name normal | xargs -I '{}' mv '{}' ./src/public/images/normal
-find /tmp/wedding/ -type d -name blur | xargs -I '{}' mv '{}' ./src/public/images/blur
+find /tmp/wedding/ -type d -name normal ! -path '*MACOS*' | xargs -I '{}' mv '{}' ./src/public/images
+find /tmp/wedding/ -type d -name blur ! -path '*MACOS*' | xargs -I '{}' mv '{}' ./src/public/images
 rm -rf /tmp/wedding
