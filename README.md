@@ -6,20 +6,21 @@
 
 # Table of contents
 
-- [TL;DR](#tldr)
-- [TL;DR with Docker](#tldr-with-docker)
-- [TL;DR with Heroku Deploy](#tldr-with-heroku-deploy)
-- [About](#about)
-  - [Demo](#demo)
-- [Prerequisite](#prerequisite)
-- [Usage](#usage)
-  - [Start](#start)
-  - [Images](#images)
-  - [Configuration](#configuration)
-  - [Database](#database)
-  - [Optimize](#optimize)
-- [How To Develop](#how-to-develop)
-- [Test](#test)
+* [TL;DR](#tldr)
+* [TL;DR with Docker](#tldr-with-docker)
+* [TL;DR with Heroku Deploy](#tldr-with-heroku-deploy)
+* [About](#about)
+    * [Demo](#demo)
+* [Prerequisite](#prerequisite)
+* [Usage](#usage)
+    * [Start](#start)
+    * [Images](#images)
+        * [Compress and Blur Images](#compress-and-blur-images)
+    * [Configuration](#configuration)
+    * [Database](#database)
+    * [Optimize](#optimize)
+* [How to develop](#how-to-develop)
+* [Test](#test)
 
 # TL;DR
 
@@ -49,10 +50,11 @@
       |   ├── image1.jpg   # normal image
       |   └── ...
       └── blur             # folder to put blur images
-          ├── image1.jpg   # blur image
+          ├── image1.jpg   # blurred image of normal/image1.jpg
           └── ...
       ```
     - See [Configuration](#configuration) for more information about `config.json`.
+    - See [Images](#images) for more information about images.
 2. Upload the zipped folder to a cloud storage services(ex: dropbox) and generate a share link.
 3. Click [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
     - You must create a Heroku account first.
@@ -60,6 +62,12 @@
     - Click `Deploy app` button. Then Heroku will automatically download configuration and images from the shared link and run deployment process.
     - After finishing deployment, click `View` button to visit your own wedding web-app!
     - ![](doc/heroku-example.png)
+
+**NOTE**: from [Heroku document](https://devcenter.heroku.com/articles/dynos#restarting)
+> Dynos are also restarted (cycled) at least once per day to help maintain the health of applications running on Heroku. Any changes to the local filesystem will be deleted.
+
+Since the sqlite file is stored in local filesystem, all data will be cleared when Dynos restarting.
+You can download the sqlite file in admin page to preserve data.
 
 # About
 
@@ -76,6 +84,7 @@ There are two modes and an admin page
 3. _admin_ page:
 
     Admin can switch between modes and control the game state.
+    Download sqlite file.
 
 ## Demo
 
@@ -132,10 +141,22 @@ Visit http://localhost:5566/admin-index.html and login(default password:happy) t
 
 ## Images
 
-Put your images into `src/public/images/normal`. 
-Put the blur images into `src/public/images/blur`.
+Each slide contains two images. One is the original image, the other is the blurred one. 
+The original one will be place in the center of the screen and scaled to match the screen height or width according to whether it's on mobile device or not.
+The blurred one is used as background to fill the blank that original image doesn't cover.
 
-Compress image:
+See our [demo site](http://wedding-screen.herokuapp.com/) for example.
+
+Basically, the original images should be put under `src/public/images/normal/`.
+Put the blurred images under `src/public/images/blur/`.
+
+Also, the blur image's name should be the same with its respect normal image's.
+
+### Compress and Blur Images
+
+We use [GraphicsMagick Utilities](http://www.graphicsmagick.org/utilities.html) to do that.  
+Here is the example script:
+
 ```shell
 src=PATH/TO/INPUT/IMAGES
 for i in `ls $src`; do
