@@ -36,11 +36,11 @@
   - `images`: put your images into it
   - `config`: put `config.json` into it. See [Configuration](#configuration) for detailed information.
   - `db`: empty folder which the db files will created in
-3. `docker run -d -p 5566:5566 -v /PATH/TO/config:/usr/src/app/dist/config -v /PATH/TO/db:/usr/src/app/db -v /PATH/TO/images/:/usr/src/app/dist/public/images dy93/wedding-screen`
+3. `docker run -d -p 5566:5566 -v /PATH/TO/config:/usr/src/app/dist/config -v /PATH/TO/db:/usr/src/app/db -v /PATH/TO/images/:/usr/src/app/src/public/images dy93/wedding-screen`
 4. Now you can browse the service with your favorite browser at http://localhost:5566 as user and, http://localhost:5566/admin-index.html as admin.
 
 # TL;DR with Heroku Deploy
- 
+
 1. Packing your images and config.json into a folder and zip it.
     - folder structure:
       ```
@@ -141,7 +141,7 @@ Visit http://localhost:5566/admin-index.html and login(default password:happy) t
 
 ## Images
 
-Each slide contains two images. One is the original image, the other is the blurred one. 
+Each slide contains two images. One is the original image, the other is the blurred one.
 The original one will be place in the center of the screen and scaled to match the screen height or width according to whether it's on mobile device or not.
 The blurred one is used as background to fill the blank that original image doesn't cover.
 
@@ -154,7 +154,7 @@ Also, the blur image's name should be the same with its respect normal image's.
 
 ### Compress and Blur Images
 
-We use [GraphicsMagick Utilities](http://www.graphicsmagick.org/utilities.html) to do that.  
+We use [GraphicsMagick Utilities](http://www.graphicsmagick.org/utilities.html) to do that.
 Here is the example script:
 
 ```shell
