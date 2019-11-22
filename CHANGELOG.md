@@ -1,3 +1,9 @@
+# 1.1.0
+
+## Added
+
+- Font: TaipeiSansTC
+
 # 1.0.1 - 2019-03-24
 
 ## Added
