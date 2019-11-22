@@ -13,6 +13,7 @@
     width: -webkit-max-content;
     width: -moz-max-content;
     width: max-content;
+    font-weight: bold;
 }
 
 @media (max-width: 480px) {

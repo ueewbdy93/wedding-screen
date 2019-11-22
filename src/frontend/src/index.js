@@ -5,6 +5,7 @@ import App from './containers/app-container';
 
 import { configure } from './configure-store';
 import { init } from './socket';
+import './index.css';
 
 const store = configure();
 init(store);
