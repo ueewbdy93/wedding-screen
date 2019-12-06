@@ -21,7 +21,7 @@
     * [Optimize](#optimize)
 * [How to develop](#how-to-develop)
 * [Test](#test)
-* [Test2](#test2)
+* [Test3](#test3)
 
 # TL;DR
 
@@ -208,5 +208,5 @@ If you encounter performance issues. The tips below could help.
 # Test
 To be completed
 
-# Test2
+# Test3
 To be completed
