@@ -21,6 +21,7 @@
     * [Optimize](#optimize)
 * [How to develop](#how-to-develop)
 * [Test](#test)
+* [Test3](#test3)
 
 # TL;DR
 
@@ -205,4 +206,7 @@ If you encounter performance issues. The tips below could help.
 3. Every time you modify the code, the server will auto hot-reload :)
 
 # Test
+To be completed
+
+# Test3
 To be completed
