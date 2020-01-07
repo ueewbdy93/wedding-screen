@@ -51,7 +51,7 @@
     "express-basic-auth": "1.1.6",
     "http-errors": "~1.6.2",
     "js-cookie": "^2.2.0",
-    "lodash": "4.17.11",
+    "lodash": "4.17.13",
     "morgan": "^1.9.1",
     "react": "^16.7.0",
     "react-countup": "4.0.0",
