@@ -31,13 +31,14 @@
 
 # TL;DR with Docker
 
-1. `docker pull dy93/wedding-screen:latest`
-2. Prepare 3 folders:
+1. `git clone https://github.com/ueewbdy93/wedding-screen.git && cd wedding-screen`
+2. Build docker image: `docker build . -t wedding-screen`
+3. Prepare 3 folders:
   - `images`: put your images into it
   - `config`: put `config.json` into it. See [Configuration](#configuration) for detailed information.
   - `db`: empty folder which the db files will created in
-3. `docker run -d -p 5566:5566 -v /PATH/TO/config:/usr/src/app/dist/config -v /PATH/TO/db:/usr/src/app/db -v /PATH/TO/images/:/usr/src/app/src/public/images dy93/wedding-screen`
-4. Now you can browse the service with your favorite browser at http://localhost:5566 as user and, http://localhost:5566/admin-index.html as admin.
+4. `docker run -d -p 5566:5566 -v /PATH/TO/config:/usr/src/app/dist/config -v /PATH/TO/db:/usr/src/app/db -v /PATH/TO/images/:/usr/src/app/src/public/images wedding-screen`
+5. Now you can browse the service with your favorite browser at http://localhost:5566 as user and, http://localhost:5566/admin-index.html as admin.
 
 # TL;DR with Heroku Deploy
 
