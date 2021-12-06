@@ -242,7 +242,7 @@ function* gameRound(io: SocketIO.Server) {
     // calculate score
     const newPlayers = players.map((player: Readonly<IPlayer>) => {
       const playerVote = playerVotes[player.id];
-      const newPlayer = { ...player };
+      const newPlayer = { ...player, timeBonus: 0 };
       if (playerVote === undefined) {
         newPlayer.incorrectCount = (i + 1) - newPlayer.correctCount;
         newPlayer.correctRate = newPlayer.correctCount / (i + 1);
@@ -251,10 +251,13 @@ function* gameRound(io: SocketIO.Server) {
       }
       newPlayer.results[i] = playerVote.isAnswer;
       if (playerVote.isAnswer) {
-        const score = Math.min(Math.max(
-          Math.round((gameInterval - playerVote.time) * 1000 / gameInterval),
-          0), 1000);
-        newPlayer.score += score;
+        // time bonus would be 0~1000 based on the answering time
+        const timeBonus = Math.min(
+          Math.max(
+            Math.round((gameInterval - playerVote.time) / gameInterval * 1000), 0
+          ), 1000);
+        newPlayer.score += (1000 + timeBonus);
+        newPlayer.timeBonus = timeBonus;
         newPlayer.correctCount += 1;
       }
       newPlayer.incorrectCount = (i + 1) - newPlayer.correctCount;
@@ -301,6 +304,7 @@ function* addPlayerSaga(io: SocketIO.Server) {
       name,
       id,
       score: 0,
+      timeBonus: 0,
       rank: 999,
       correctCount: 0,
       incorrectCount: 0,

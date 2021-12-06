@@ -2,6 +2,10 @@ import React from 'react';
 
 function Profile(props) {
   const { player, short = false, questionIndex } = props;
+  let scoreLine = player.score;
+  if (short) {
+    scoreLine += ` (+${player.timeBonus || 0})`
+  }
   return (
     <span className={`text-dark ${short ? '' : 'small'}`}>
       {
@@ -28,7 +32,7 @@ function Profile(props) {
         ))}
       </span>
       <span className="mr-2 font-weight-lighter font-italic">
-        {player.score}
+        {scoreLine}
       </span>
     </span>
   );

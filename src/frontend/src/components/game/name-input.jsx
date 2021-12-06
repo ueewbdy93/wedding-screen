@@ -55,6 +55,15 @@ class NameInput extends React.Component {
             </button>
             </form>
           </div>
+          <div className="row p-3">
+            <div className="col-md-6 offset-md-3">
+              <h5>遊戲規則</h5>
+              <span>每一題有四個選項，請從中選出正確的答案</span><br/>
+              <span>選定答案後不可修改</span><br/>
+              <span>每答對一題可得到 <b>1000</b> 分</span><br/>
+              <span>根據答題速度可額外獲得最多 <b>1000</b> 分</span><br/>
+            </div>
+          </div>
         </Content>
       </Container>
     )

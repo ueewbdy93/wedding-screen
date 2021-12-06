@@ -23,6 +23,7 @@ export interface IPlayer {
   id: string;
   name: string;
   score: number;
+  timeBonus: number;
   rank: number;
   correctCount: number;
   incorrectCount: number;
