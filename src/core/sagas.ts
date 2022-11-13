@@ -254,7 +254,7 @@ function* gameRound(io: SocketIO.Server) {
         // time bonus would be 0~1000 based on the answering time
         const timeBonus = Math.min(
           Math.max(
-            Math.round((gameInterval - playerVote.time) / gameInterval * 1000), 0
+            Math.round((gameInterval - playerVote.time) / gameInterval * 1000), 0,
           ), 1000);
         newPlayer.score += (1000 + timeBonus);
         newPlayer.timeBonus = timeBonus;
