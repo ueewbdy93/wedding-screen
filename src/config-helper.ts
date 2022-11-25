@@ -8,7 +8,7 @@ import configJson from './config/config.json';
  */
 const images = fs.readdirSync(path.resolve(__dirname, 'public/images/normal'))
   .filter((f) => ['.jpeg', '.jpg', '.png'].indexOf(path.extname(f.toLowerCase())) !== -1)
-  .map((f) => `/images/normal/${f}`);
+  .map((f) => `${process.env.PUBLIC_PATH || '/'}images/normal/${f}`);
 
 /**
  * Parsed questions
