@@ -89,7 +89,7 @@
     "@types/socket.io": "^1.4.33",
     "@types/sqlite3": "^3.1.7",
     "@types/uuid": "^3.4.3",
-    "ajv": "^6.6.2",
+    "ajv": "^6.12.3",
     "autoprefixer": "^9.4.3",
     "awesome-typescript-loader": "^5.2.1",
     "babel-loader": "^8.0.4",
