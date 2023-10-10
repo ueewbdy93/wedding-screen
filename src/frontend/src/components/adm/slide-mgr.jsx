@@ -61,7 +61,7 @@ class SlideMgr extends React.Component {
             <div className="col">
               <input
                 className="form-control"
-                maxLength="64"
+                maxLength={64}
                 type="text"
                 value={comment}
                 placeholder="我要留言..."

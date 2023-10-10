@@ -1,55 +1,24 @@
-import { createAction } from 'typesafe-actions';
-import { IPlayer, PlayerVote, Stage } from './types';
+import { createStandardAction } from "typesafe-actions";
+import { IPlayer, PlayerVote, Stage } from "./types";
 
-const SET_QUESTION_INDEX = 'SET_QUESTION_INDEX';
-export const setQuestionIndex = createAction(
-  SET_QUESTION_INDEX,
-  (index: number) => ({
-    type: SET_QUESTION_INDEX,
-    payload: {
-      index,
-    },
-  }),
-);
+const SET_QUESTION_INDEX = "SET_QUESTION_INDEX";
+export const setQuestionIndex = createStandardAction(SET_QUESTION_INDEX)<{
+  index: number;
+}>();
 
-const ADD_PLAYER = 'ADD_PLAYER';
-export const addPlayer = createAction(
-  ADD_PLAYER,
-  (player) => ({
-    type: ADD_PLAYER,
-    payload: player,
-  }),
-);
+const ADD_PLAYER = "ADD_PLAYER";
+export const addPlayer = createStandardAction(ADD_PLAYER)<IPlayer>();
 
-const SET_PLAYERS = 'SET_PLAYERS';
-export const setPlayers = createAction(
-  SET_PLAYERS,
-  (players: IPlayer[]) => ({
-    type: SET_PLAYERS,
-    payload: players,
-  }),
-);
+const SET_PLAYERS = "SET_PLAYERS";
+export const setPlayers =
+  createStandardAction(SET_PLAYERS)<readonly IPlayer[]>();
 
-const UPDATE_PLAYER_VOTE = 'UPDATE_PLAYER_VOTE';
-export const updatePlayerVote = createAction(
-  UPDATE_PLAYER_VOTE,
-  (playerVote: PlayerVote) => ({
-    type: UPDATE_PLAYER_VOTE,
-    payload: playerVote,
-  }),
-);
+const UPDATE_PLAYER_VOTE = "UPDATE_PLAYER_VOTE";
+export const updatePlayerVote =
+  createStandardAction(UPDATE_PLAYER_VOTE)<PlayerVote>();
 
-const RESET_PLAYER_VOTE = 'RESET_PLAYER_VOTE';
-export const resetPlayerVote = createAction(
-  RESET_PLAYER_VOTE,
-  () => ({ type: RESET_PLAYER_VOTE }),
-);
+const RESET_PLAYER_VOTE = "RESET_PLAYER_VOTE";
+export const resetPlayerVote = createStandardAction(RESET_PLAYER_VOTE)();
 
-const SET_STAGE = 'SET_STAGE';
-export const setStage = createAction(
-  SET_STAGE,
-  (stage: Stage) => ({
-    stage,
-    type: SET_STAGE,
-  }),
-);
+const SET_STAGE = "SET_STAGE";
+export const setStage = createStandardAction(SET_STAGE)<Stage>();

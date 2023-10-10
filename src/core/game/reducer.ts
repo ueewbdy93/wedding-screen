@@ -44,7 +44,7 @@ export const gameReducer = combineReducers<GameState, ActionTypes>({
   stage: (state = Stage.JOIN, action) => {
     switch (action.type) {
       case getType(setStage):
-        return action.stage;
+        return action.payload;
       default:
         return state;
     }

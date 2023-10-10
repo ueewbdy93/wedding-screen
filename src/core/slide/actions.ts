@@ -1,11 +1,5 @@
-import { createAction } from 'typesafe-actions';
+import { createStandardAction } from "typesafe-actions";
 
-const NEXT_SLIDE = 'NEXT_SLIDE';
+const NEXT_SLIDE = "NEXT_SLIDE";
 
-export const nextSlide = createAction(
-  NEXT_SLIDE,
-  (image: string) => ({
-    type: NEXT_SLIDE,
-    payload: { image },
-  }),
-);
+export const nextSlide = createStandardAction(NEXT_SLIDE)<{ image: string }>();

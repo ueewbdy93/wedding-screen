@@ -1,11 +1,16 @@
-import L from 'lodash';
-import path from 'path';
+const path = require("path");
 
-export default function createResolveAlias(modules) {
-  return L.reduce(
-    modules,
+/**
+ * @param {string[]} modules 
+ */
+module.exports = function createResolveAlias(modules) {
+  return modules.reduce(
+    /**
+     * @param {{[key:string]: string}} result 
+     * @param {string} module 
+     */
     (result, module) => {
-      result[module] = path.resolve(__dirname, './../../node_modules', module);
+      result[module] = path.resolve(__dirname, "./../../node_modules", module);
       return result;
     }, {});
-}
+};

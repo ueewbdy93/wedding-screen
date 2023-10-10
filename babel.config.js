@@ -1,4 +1,4 @@
-/** @param {import ("babel-core").TransformOptions} api */
+/** @param {import ("@babel/core").ConfigAPI} api */
 function babelConfig(api) {
   if (api.env(envName => envName.startsWith("web"))) {
     return {
@@ -8,23 +8,14 @@ function babelConfig(api) {
         [
           '@babel/preset-env',
           {
+            corejs: '3.30.2',
             useBuiltIns: 'usage',
-            targets: {
-              browsers: [
-                'last 2 versions',
-                'Explorer >= 10',
-              ]
-            }
+            targets: '>0.25%, not dead',
           },
         ],
       ],
       plugins: [
-        [
-          "@babel/plugin-proposal-class-properties",
-          {
-            loose: true
-          }
-        ],
+        '@babel/plugin-proposal-class-properties',
       ],
       sourceMaps: true,
     };
@@ -36,19 +27,13 @@ function babelConfig(api) {
           "@babel/env",
           {
             targets: {
-              node: "10",
+              node: "16",
             },
-            useBuiltIns: "usage",
           }
         ],
       ],
       plugins: [
-        [
-          "@babel/plugin-proposal-class-properties",
-          {
-            loose: true
-          }
-        ],
+        "@babel/plugin-proposal-class-properties",
       ],
       sourceMaps: true,
     };

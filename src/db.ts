@@ -24,7 +24,7 @@ const db = new sqlite3.Database(
 );
 
 function init() {
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     const sql = `
       BEGIN;
       CREATE TABLE IF NOT EXISTS comment (
@@ -50,7 +50,7 @@ function init() {
 }
 
 function insertPlayers(players: ReadonlyArray<IPlayer>) {
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     const stmt = db.prepare(
       `INSERT INTO player (
         id, name, score, rank, correctCount,
@@ -69,7 +69,7 @@ function insertPlayers(players: ReadonlyArray<IPlayer>) {
 }
 
 function clearPlayers() {
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     db.run(`DELETE FROM player`, (err) => {
       if (err) {
         reject(err);
@@ -86,7 +86,7 @@ async function updatePlayers(players: IPlayer[]) {
 }
 
 function insertComment(comment: IComment) {
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     const stmt = db.prepare(
       'INSERT INTO comment VALUES (?, ?, ?)',
       [comment.content, comment.offset, comment.createAt],
@@ -102,7 +102,7 @@ function insertComment(comment: IComment) {
 }
 
 function clearComment() {
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     db.run(`DELETE FROM comment`, (err) => {
       if (err) {
         reject(err);
@@ -114,14 +114,14 @@ function clearComment() {
 }
 
 function insertQuestions(questions: typeof config.game.questions) {
-  const insertQuestionsPromise = new Promise((resolve, reject) => {
+  const insertQuestionsPromise = new Promise<void>((resolve, reject) => {
     const stmt = db.prepare('INSERT INTO question VALUES (?, ?)');
     for (const question of questions) {
       stmt.run(question.id, question.text);
     }
     stmt.finalize((err) => err ? reject(err) : resolve());
   });
-  const insertOptions = new Promise((resolve, reject) => {
+  const insertOptions = new Promise<void>((resolve, reject) => {
     const stmt = db.prepare('INSERT INTO option VALUES (?, ?, ?, ?)');
     for (const question of questions) {
       for (const option of question.options) {
@@ -135,7 +135,7 @@ function insertQuestions(questions: typeof config.game.questions) {
 }
 
 function insertPlayerVotes(votes: ReadonlyArray<PlayerVote>) {
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     const stmt = db.prepare('INSERT INTO vote VALUES (?, ?, ?, ?, ?)');
     for (const vote of votes) {
       stmt.run(
@@ -148,7 +148,7 @@ function insertPlayerVotes(votes: ReadonlyArray<PlayerVote>) {
 }
 
 function clearPlayerVotes() {
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     db.run(`DELETE FROM vote`, (err) => {
       if (err) {
         reject(err);

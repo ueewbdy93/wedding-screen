@@ -1,36 +1,47 @@
-import io from 'socket.io-client';
+import { io, Socket } from "socket.io-client";
 import Cookies from 'js-cookie';
 
+/** @type {Socket|null} */
 let socket = null;
-let store = null;
 
+/**
+ * 
+ * @param {import('redux').Store} reduxStore 
+ */
 function init(reduxStore) {
-  store = reduxStore;
   socket = io('/');
-  [
-    'MODE_CHANGE',
+  for (const event of ['MODE_CHANGE',
     'SLIDE_CHANGE',
     'GAME_CHANGE',
-    'ADMIN_CHANGE'
-  ].forEach(event => {
-    socket.on(event, (payload) => store.dispatch({ type: event, payload }))
-  });
+    'ADMIN_CHANGE']) {
+    socket.on(event, (payload) => reduxStore.dispatch({ type: event, payload }))
+  }
 
-  [
+  for (const event of [
     'disconnect',
     'connect_failed',
-  ].forEach((event) => {
+  ]) {
     socket.on(event, () => console.log(`websocket ${event}`));
-  });
+  }
 
   socket.on('connect', () => {
-    const player = Cookies.getJSON('player');
-    if (player && player.id) {
-      emit({ type: '@@CLIENT_CHECK_PLAYER', payload: player });
+    try {
+      const player = JSON.parse(Cookies.get('player') ?? '{}');
+      if (player && player.id) {
+        emit({ type: '@@CLIENT_CHECK_PLAYER', payload: player });
+      }
+    } catch (e) {
+      console.error(e);
     }
   })
 }
 
+/**
+ * 
+ * @param {string} eventName 
+ * @param {any} payload 
+ * @param {(response: any) => void} [cb] 
+ */
 function _emit(eventName, payload, cb) {
   if (socket === null) {
     throw new Error('socket is null');
@@ -42,10 +53,20 @@ function _emit(eventName, payload, cb) {
   }
 }
 
+/**
+ * 
+ * @param {any} action 
+ * @param {(response: any)=>void} [cb] 
+ */
 function emit(action, cb) {
   _emit('action', action, cb);
 }
 
+/**
+ * 
+ * @param {string} action 
+ * @param {(response: any)=>void} [cb] 
+ */
 function adminEmit(action, cb) {
   _emit('admin', action, cb);
 }

@@ -1,3 +1,1 @@
-export default [
-  'react',
-];
+module.exports = ["react"];

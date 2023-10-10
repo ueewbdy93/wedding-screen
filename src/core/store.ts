@@ -3,12 +3,13 @@ import { applyMiddleware, compose, createStore, Middleware } from 'redux';
 import reduxSaga from 'redux-saga';
 import { IRootState, rootReducer } from './root-reducer';
 import { default as createRootSaga } from './sagas';
+import { Server } from 'socket.io'
 
 export function configureStore({
   initialState,
   io }: {
     initialState?: IRootState,
-    io?: SocketIO.Server,
+    io?: Server,
   } = {},
 ) {
   // configure middlewares

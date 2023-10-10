@@ -1,5 +1,4 @@
-import { nextSlide } from './actions';
+import { ActionType } from 'typesafe-actions'; 
+import * as actions from './actions';
 
-export type ActionTypes = $Call<
-  typeof nextSlide
->;
+export type ActionTypes = ActionType<typeof actions>;

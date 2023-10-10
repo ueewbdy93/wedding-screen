@@ -1,10 +1,11 @@
 import lodash from 'lodash';
-import { delay, eventChannel } from 'redux-saga';
+import { eventChannel } from 'redux-saga';
+import { Server, Socket } from 'socket.io';
 import {
-  call, fork, put, race, select, take, takeEvery, takeLatest,
+  call, fork, put, race, select, take, takeEvery, takeLatest,delay,
 } from 'redux-saga/effects';
-import { createAction, getType } from 'typesafe-actions';
-import uuid from 'uuid';
+import { createStandardAction, getType, ActionType } from 'typesafe-actions';
+import { v4 as uuidV4 } from 'uuid';
 import { config } from '../config-helper';
 import db from '../db';
 import { ICommentState } from './comments';
@@ -42,41 +43,25 @@ function getProcessUptime() {
  * A new comment from client
  */
 const CLIENT_ADD_COMMENT = '@@CLIENT_ADD_COMMENT';
-const clientAddComment = createAction(
-  CLIENT_ADD_COMMENT,
-  (content: string) => ({
-    type: CLIENT_ADD_COMMENT,
-    payload: {
-      content,
-    },
-  }),
-);
+const clientAddComment = createStandardAction(CLIENT_ADD_COMMENT)<{content: string}>();
 
 /**
  * A new comment from admin
  */
 const ADMIN_INSERT_COMMENT = '@@ADMIN_INSERT_COMMENT';
-const adminAddComment = createAction(
-  ADMIN_INSERT_COMMENT,
-  (content: string) => ({
-    type: ADMIN_INSERT_COMMENT,
-    payload: {
-      content,
-    },
-  }),
-);
+const adminAddComment = createStandardAction(ADMIN_INSERT_COMMENT)<{content: string}>();
 
-function* handleNewCommentSaga(io: SocketIO.Server, content: string) {
-  const curRoundStartTime = yield select<IRootState>(
-    (s) => s.comment.currentRoundStartTime);
+function* handleNewCommentSaga(io: Server, content: string) {
+  const curRoundStartTime:number = yield select(
+    (s: IRootState) => s.comment.currentRoundStartTime);
   const comment: IComment = {
     content,
     offset: getProcessUptime() - curRoundStartTime,
     createAt: Date.now(),
   };
   // broadcast to all client
-  io.emit('SLIDE_CHANGE', { newComment: { ...comment, id: uuid.v1() } });
-  io.to(ROOM_ADM).emit('ADMIN_CHANGE', { newComment: { ...comment, id: uuid.v1() } });
+  io.emit('SLIDE_CHANGE', { newComment: { ...comment, id: uuidV4() } });
+  io.to(ROOM_ADM).emit('ADMIN_CHANGE', { newComment: { ...comment, id: uuidV4() } });
   yield put(addComment(comment));
   // save into db
   yield fork(db.insertComment, comment);
@@ -86,14 +71,14 @@ function* handleNewCommentSaga(io: SocketIO.Server, content: string) {
  * Receive new comment from client
  * @param io
  */
-function* handleClientCommentSaga(io: SocketIO.Server) {
-  yield takeEvery<$Call<typeof clientAddComment>>(CLIENT_ADD_COMMENT, function*(clientAction) {
+function* handleClientCommentSaga(io: Server) {
+  yield takeEvery<ActionType<typeof clientAddComment>>(getType(clientAddComment), function*(clientAction) {
     yield call(handleNewCommentSaga, io, clientAction.payload.content);
   });
 }
 
-function* commentWorkerSaga(io: SocketIO.Server) {
-  const commentState: ICommentState = yield select<IRootState>((s) => s.comment);
+function* commentWorkerSaga(io: Server) {
+  const commentState: ICommentState = yield select((s: IRootState) => s.comment);
   const { currentRoundStartTime, comments } = commentState;
   if (comments.length === 0) {
     return;
@@ -109,7 +94,7 @@ function* commentWorkerSaga(io: SocketIO.Server) {
         const d = comment.offset - (now - currentRoundStartTime);
         yield delay(Math.max(0, d));
         // Broadcast comment to clients
-        io.emit('SLIDE_CHANGE', { newComment: { ...comment, id: uuid.v1() } });
+        io.emit('SLIDE_CHANGE', { newComment: { ...comment, id: uuidV4() } });
       }
     }),
   });
@@ -118,63 +103,46 @@ function* commentWorkerSaga(io: SocketIO.Server) {
 /**
  * Tell client to show next picture every <config.slide.intervalMS> milliseconds
  */
-function* slideWorkerSaga(io: SocketIO.Server) {
-  const images: string[] = yield select<IRootState>((s) => s.slide.images);
+function* slideWorkerSaga(io: Server) {
+  const images: string[] = yield select((s: IRootState) => s.slide.images);
   while (true) {
     const curRoundStartTime = getProcessUptime();
-    yield put(setCurrentRoundStartTime(curRoundStartTime));
+    yield put(setCurrentRoundStartTime({offset: curRoundStartTime}));
     yield fork(commentWorkerSaga, io);
     for (const image of images) {
       yield delay(config.slide.intervalMs);
-      yield put(nextSlide(image));
+      yield put(nextSlide({ image }));
       io.emit('SLIDE_CHANGE', { curImage: image });
     }
   }
 }
 
 const ADMIN_NEXT_QUESTION = '@@ADMIN_START_QUESTION';
-const adminNextQuestion = createAction(
-  ADMIN_NEXT_QUESTION,
-  () => ({
-    type: ADMIN_NEXT_QUESTION,
-  }),
-);
-const ADMIN_START_ANSWER = '@@ADMIN_START_ANSWER';
-const adminStartAnswer = createAction(
-  ADMIN_START_ANSWER,
-  () => ({
-    type: ADMIN_START_ANSWER,
-  }),
-);
-const ADMIN_REVEAL_ANSWER = '@@ADMIN_REVEAL_ANSWER';
-const adminRevealAnswer = createAction(
-  ADMIN_REVEAL_ANSWER,
-  () => ({
-    type: ADMIN_REVEAL_ANSWER,
-  }),
-);
-const ADMIN_SHOW_SCORE = '@@ADMIN_SHOW_SCORE';
-const adminShowScore = createAction(
-  ADMIN_SHOW_SCORE,
-  () => ({
-    type: ADMIN_SHOW_SCORE,
-  }),
-);
+const adminNextQuestion = createStandardAction(ADMIN_NEXT_QUESTION)();
 
-function* syncPlayerVotes(io: SocketIO.Server) {
+const ADMIN_START_ANSWER = '@@ADMIN_START_ANSWER';
+const adminStartAnswer = createStandardAction(ADMIN_START_ANSWER)();
+
+const ADMIN_REVEAL_ANSWER = '@@ADMIN_REVEAL_ANSWER';
+const adminRevealAnswer = createStandardAction(ADMIN_REVEAL_ANSWER)();
+
+const ADMIN_SHOW_SCORE = '@@ADMIN_SHOW_SCORE';
+const adminShowScore = createStandardAction(ADMIN_SHOW_SCORE)();
+
+function* syncPlayerVotes(io: Server) {
   while (true) {
     yield delay(800);
-    const playerVotes = yield select<IRootState>((s) => s.game.playerVotes);
+    const playerVotes = yield select((s: IRootState) => s.game.playerVotes);
     io.to(ROOM_ADM).emit('ADMIN_CHANGE', { playerVotes });
   }
 }
 
-function* gameRound(io: SocketIO.Server) {
+function* gameRound(io: Server) {
   const questionLength = config.game.questions.length;
   for (let i = 0; i < questionLength; i += 1) {
     const question = config.game.questions[i];
     yield take(getType(adminNextQuestion));
-    yield put(setQuestionIndex(i));
+    yield put(setQuestionIndex({index: i}));
     yield put(setStage(Stage.START_QUESTION));
     yield put(resetPlayerVote());
 
@@ -211,7 +179,7 @@ function* gameRound(io: SocketIO.Server) {
       syncPlayerVotes: call(syncPlayerVotes, io),
       playerAnswer: call(function*() {
         while (true) {
-          const action = yield take(getType(playerAnswer));
+          const action: ActionType<typeof playerAnswer> = yield take(getType(playerAnswer));
 
           const { playerID, answerID } = action.payload;
           const playerVote = {
@@ -235,7 +203,7 @@ function* gameRound(io: SocketIO.Server) {
     });
 
     const [playerVotes, players]: [{ [key: string]: PlayerVote }, ReadonlyArray<IPlayer>]
-      = yield select<IRootState>((s) => ([s.game.playerVotes, s.game.players]));
+      = yield select((s: IRootState) => ([s.game.playerVotes, s.game.players]));
     io.to(ROOM_ADM).emit('ADMIN_CHANGE', { playerVotes });
     io.emit('GAME_CHANGE', { playerVotes });
 
@@ -296,10 +264,10 @@ interface IAddPlayerAction {
   socket: any;
   payload: string;
 }
-function* addPlayerSaga(io: SocketIO.Server) {
+function* addPlayerSaga(io: Server) {
   yield takeEvery('@@CLIENT_ADD_PLAYER', function*(action: IAddPlayerAction) {
     const { payload: name, socket } = action;
-    const id: string = uuid.v4();
+    const id: string = uuidV4();
     const player: IPlayer = {
       name,
       id,
@@ -320,7 +288,7 @@ function* addPlayerSaga(io: SocketIO.Server) {
       stage,
       questionIndex,
       playerVotes,
-    } = yield select<IRootState>((s) => s.game);
+    } = yield select((s: IRootState) => s.game);
     const question = config.game.questions[questionIndex] || {};
     socket.emit('GAME_CHANGE', {
       stage,
@@ -341,7 +309,7 @@ function* addPlayerSaga(io: SocketIO.Server) {
 function* checkPlayerSaga() {
   yield takeEvery('@@CLIENT_CHECK_PLAYER', function*(action: any) {
     const { payload: { id }, socket } = action;
-    const players: ReadonlyArray<IPlayer> = yield select<IRootState>((s) => s.game.players);
+    const players: ReadonlyArray<IPlayer> = yield select((s: IRootState) => s.game.players);
     const player = players.find((p) => p.id === id);
     if (player !== undefined) {
       const {
@@ -350,7 +318,7 @@ function* checkPlayerSaga() {
         stage,
         questionIndex,
         playerVotes,
-      } = yield select<IRootState>((s) => s.game);
+      } = yield select((s: IRootState) => s.game);
       const question = config.game.questions[questionIndex] || {};
       socket.emit('GAME_CHANGE', {
         stage,
@@ -370,12 +338,12 @@ function* checkPlayerSaga() {
   });
 }
 
-function* resetGameSaga(io: SocketIO.Server) {
+function* resetGameSaga(io: Server) {
   yield put(setPlayers([]));
   yield put(resetPlayerVote());
   yield fork(db.clearPlayerVotes);
   yield fork(db.clearPlayers);
-  yield put(setQuestionIndex(0));
+  yield put(setQuestionIndex({index: 0}));
   yield put(setStage(Stage.JOIN));
 
   io.emit('GAME_CHANGE', {
@@ -393,9 +361,9 @@ function* resetGameSaga(io: SocketIO.Server) {
   io.to(ROOM_ADM).emit('ADMIN_CHANGE', { playerVotes: {} });
 }
 
-function* gameSaga(io: SocketIO.Server) {
+function* gameSaga(io: Server) {
   yield fork(addPlayerSaga, io);
-  yield fork(checkPlayerSaga, io);
+  yield fork(checkPlayerSaga);
   while (true) {
     yield call(resetGameSaga, io);
     const result = yield race({
@@ -409,18 +377,9 @@ function* gameSaga(io: SocketIO.Server) {
 }
 
 const PLAYER_ANSWER = '@@CLIENT_PLAYER_ANSWER';
-const playerAnswer = createAction(
-  PLAYER_ANSWER,
-  (playerID: string, answerID: string) => ({
-    type: PLAYER_ANSWER,
-    payload: {
-      playerID,
-      answerID,
-    },
-  }),
-);
+const playerAnswer = createStandardAction(PLAYER_ANSWER)<{playerID: string; answerID: string}>();
 
-function* handleAdminCommandSaga(io: SocketIO.Server) {
+function* handleAdminCommandSaga(io: Server) {
   yield fork(
     // tslint:disable-next-line:no-shadowed-variable
     function*(io) {
@@ -438,7 +397,8 @@ function* handleAdminCommandSaga(io: SocketIO.Server) {
     // tslint:disable-next-line:no-shadowed-variable
     function*(io) {
       // insert new comments
-      yield takeEvery<$Call<typeof adminAddComment>>(ADMIN_INSERT_COMMENT, function*(action) {
+      yield takeEvery<ActionType<typeof adminAddComment>>(getType(adminAddComment), function*(action) {
+        console.log('adminAddComment', action.payload.content);
         yield call(handleNewCommentSaga, io, action.payload.content);
       });
     },
@@ -467,7 +427,7 @@ function* handleAdminLogin() {
       stage,
       questionIndex,
       playerVotes,
-    } = yield select<IRootState>((s) => s.game);
+    } = yield select((s: IRootState) => s.game);
     const question = config.game.questions[questionIndex] || {};
     action.socket.emit('GAME_CHANGE', {
       stage,
@@ -480,7 +440,7 @@ function* handleAdminLogin() {
       answers: question.answers,
       playerVotes: {},
     });
-    const { comments } = yield select<IRootState>((s) => s.comment);
+    const { comments } = yield select((s: IRootState) => s.comment);
     action.socket.emit('ADMIN_CHANGE', {
       comments,
       playerVotes,
@@ -488,7 +448,7 @@ function* handleAdminLogin() {
   });
 }
 
-export default function createRootSaga(io: SocketIO.Server) {
+export default function createRootSaga(io: Server) {
   return function* rootSaga() {
     yield call(db.init);
     yield call(db.insertQuestions, config.game.questions);
@@ -500,12 +460,12 @@ export default function createRootSaga(io: SocketIO.Server) {
 
     const channel = createChannel(io);
     while (true) {
-      const { type, payload, socket }: { type: any, payload: any, socket: SocketIO.Socket }
+      const { type, payload, socket }: { type: any, payload: any, socket: Socket }
         = yield take(channel);
       if (type === 'NEW_PLAYER') {
         // 新的connection
         const subState: Pick<IRootState, 'mode' | 'slide' | 'game'> =
-          yield select<IRootState>((s) => {
+          yield select((s: IRootState) => {
             const ret = lodash.pick(s, ['mode', 'slide', 'game']);
             return ret;
           });
@@ -519,7 +479,7 @@ export default function createRootSaga(io: SocketIO.Server) {
   };
 }
 
-function createChannel(io: SocketIO.Server) {
+function createChannel(io: Server) {
   return eventChannel((emit) => {
     io.on('connection', (socket) => {
       emit({ socket, type: 'NEW_PLAYER' });

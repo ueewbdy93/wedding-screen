@@ -54,14 +54,13 @@ class CommentInput extends React.Component {
               placeholder="我要留言…"
               value={comment}
               onChange={this.onChange}
-              maxLength="128" />
+              maxLength={128} />
           </div>
           <div className="col-auto p-0">
             <button
               type="submit"
               disabled={disabled}
               onClick={this.onSubmit}
-              type="submit"
               className="btn">
               送出
               </button>

@@ -1,10 +1,7 @@
-import { addComment, removeComments, setCurrentRoundStartTime } from './actions';
+import * as actions from "./actions";
+import { ActionType } from "typesafe-actions";
 
-export type ActionTypes = $Call<
-  typeof addComment |
-  typeof removeComments |
-  typeof setCurrentRoundStartTime
->;
+export type ActionTypes = ActionType<typeof actions>;
 
 export interface IComment {
   content: string;

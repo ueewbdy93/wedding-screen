@@ -1,22 +1,7 @@
-import {
-  addPlayer,
-  resetPlayerVote,
-  setPlayers,
-  setQuestionIndex,
-  setStage,
-  updatePlayerVote,
-} from './actions';
+import { ActionType } from 'typesafe-actions';
+import * as actions from './actions';
 
-export type ActionTypes = $Call<
-  typeof setQuestionIndex |
-
-  typeof addPlayer |
-  typeof updatePlayerVote |
-  typeof resetPlayerVote |
-  typeof setPlayers |
-
-  typeof setStage
-  >;
+export type ActionTypes = ActionType<typeof actions>;
 
 export enum PlayerState { NEW, UP, DOWN, EQUAL }
 export interface IPlayer {

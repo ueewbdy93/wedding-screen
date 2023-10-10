@@ -38,7 +38,6 @@ class Nav extends React.Component {
                   <span
                     key={id}
                     className={isSelected ? 'nav-link active' : 'nav-link'}
-                    href="#"
                     onClick={() => onSwitchTab(id)}>
                     {name}
                   </span>
