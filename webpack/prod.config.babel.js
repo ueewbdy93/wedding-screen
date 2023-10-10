@@ -1,14 +1,14 @@
-import L from 'lodash';
 import autoprefixer from 'autoprefixer';
-import webpack from 'webpack';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
 import FaviconsWebpackPlugin from 'favicons-webpack-plugin';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import L from 'lodash';
 import path from 'path';
 import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
-import createResolveAlias  from './utils/create_resolve_alias';
-import config from './utils/config';
-import vendor from './utils/vendor';
+import webpack from 'webpack';
 import babelConfig from './../babel.config';
+import config from './utils/config';
+import createResolveAlias from './utils/create_resolve_alias';
+import vendor from './utils/vendor';
 
 const autoprefixerConfig = autoprefixer({
   browsers: [
@@ -92,7 +92,7 @@ export default {
     path: config.path,
     filename: 'javascripts/[name].[hash].js',
     chunkFilename: 'javascripts/[name].[hash].js',
-    publicPath: '/',
+    publicPath: process.env.PUBLIC_PATH || '/',
   },
   module: {
     rules: [

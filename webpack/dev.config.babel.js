@@ -1,15 +1,14 @@
-import L from 'lodash';
 import autoprefixer from 'autoprefixer';
-import fs from 'fs';
-import webpack from 'webpack';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
-import HtmlWebpackHarddiskPlugin from 'html-webpack-harddisk-plugin';
 import FaviconsWebpackPlugin from 'favicons-webpack-plugin';
+import HtmlWebpackHarddiskPlugin from 'html-webpack-harddisk-plugin';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import L from 'lodash';
 import path from 'path';
-import createResolveAlias from './utils/create_resolve_alias';
-import config from './utils/config';
-import vendor from './utils/vendor';
+import webpack from 'webpack';
 import babelConfig from './../babel.config';
+import config from './utils/config';
+import createResolveAlias from './utils/create_resolve_alias';
+import vendor from './utils/vendor';
 
 const autoprefixerConfig = autoprefixer({
   browsers: [
@@ -82,7 +81,7 @@ const webpackConfig = {
     path: config.path,
     filename: 'javascripts/[name].js',
     chunkFilename: 'javascripts/[name].js',
-    publicPath: '/',
+    publicPath: process.env.PUBLIC_PATH || '/',
   },
   module: {
     rules: [
