@@ -111,7 +111,7 @@
     "html-webpack-plugin": "^5.5.0",
     "mocha": "^5.0.5",
     "nodemon": "^3.0.1",
-    "postcss-loader": "^3.0.0",
+    "postcss-loader": "^7.3.3",
     "redux-devtools-extension": "2.13.8",
     "sass-loader": "^7.1.0",
     "sinon": "^4.5.0",
