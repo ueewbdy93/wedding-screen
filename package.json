@@ -68,7 +68,7 @@
     "socket.io": "^4.7.2",
     "socket.io-client": "^4.7.2",
     "source-map-support": "^0.5.21",
-    "sqlite3": "^5.0.2",
+    "sqlite3": "^5.1.6",
     "tslib": "^2.6.2",
     "tss-react": "^4.9.2",
     "typesafe-actions": "^4.4.2",
