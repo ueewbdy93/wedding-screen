@@ -4,7 +4,6 @@ import SlideshowContainer from './slideshow-container';
 import GameContainer from './game-container';
 
 function App(props) {
-  console.log(props.mode);
   const { mode } = props;
   switch (mode) {
     case 1:

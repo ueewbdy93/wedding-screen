@@ -15,7 +15,7 @@ function babelConfig(api) {
         ],
       ],
       plugins: [
-        '@babel/plugin-proposal-class-properties',
+        '@babel/plugin-transform-class-properties'
       ],
       sourceMaps: true,
     };
@@ -33,7 +33,7 @@ function babelConfig(api) {
         ],
       ],
       plugins: [
-        "@babel/plugin-proposal-class-properties",
+        "@babel/plugin-transform-class-properties"
       ],
       sourceMaps: true,
     };

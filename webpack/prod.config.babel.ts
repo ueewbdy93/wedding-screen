@@ -93,31 +93,21 @@ export default {
       },
       {
         test: /\.(png|jpg|jpeg|gif)$/,
-        loader: "file-loader",
+        type: "asset/resource",
+        generator: {
+          filename: "images/[name].[contenthash][ext]",
+        },
       },
       {
         test: /\.(otf|svg|woff|woff2|ttf|eot)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: "file-loader",
+        type: "asset/resource",
+        generator: {
+          filename: "images/[name].[contenthash][ext]",
+        },
       },
       {
-        test: /\.s?css$/,
-        use: [
-          {
-            loader: "style-loader",
-          },
-          {
-            loader: "css-loader",
-            options: { importLoaders: 1 },
-          },
-          {
-            loader: "postcss-loader",
-            options: {
-              postcssOptions: {
-                plugins: [["autoprefixer"]],
-              },
-            },
-          },
-        ],
+        test: /\.(css)$/,
+        use: ["style-loader", "css-loader"],
       },
     ],
   },
