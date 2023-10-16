@@ -160,13 +160,13 @@ function clearPlayerVotes() {
 }
 
 export default {
-  init,
-  clearPlayers,
-  insertPlayers,
-  updatePlayers,
-  insertComment,
-  clearComment,
-  insertQuestions,
-  insertPlayerVotes,
-  clearPlayerVotes,
+  // init,
+  // clearPlayers,
+  // insertPlayers,
+  // updatePlayers,
+  // insertComment,
+  // clearComment,
+  // insertQuestions,
+  // insertPlayerVotes,
+  // clearPlayerVotes,
 };

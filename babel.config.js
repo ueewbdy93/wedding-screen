@@ -8,7 +8,7 @@ function babelConfig(api) {
         [
           '@babel/preset-env',
           {
-            corejs: '3.30.2',
+            corejs: '3.33.0',
             useBuiltIns: 'usage',
             targets: '>0.25%, not dead',
           },

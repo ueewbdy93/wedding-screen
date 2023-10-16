@@ -64,7 +64,7 @@ function* handleNewCommentSaga(io: Server, content: string) {
   io.to(ROOM_ADM).emit('ADMIN_CHANGE', { newComment: { ...comment, id: uuidV4() } });
   yield put(addComment(comment));
   // save into db
-  yield fork(db.insertComment, comment);
+  // yield fork(db.insertComment, comment);
 }
 
 /**
@@ -132,7 +132,7 @@ const adminShowScore = createStandardAction(ADMIN_SHOW_SCORE)();
 function* syncPlayerVotes(io: Server) {
   while (true) {
     yield delay(800);
-    const playerVotes = yield select((s: IRootState) => s.game.playerVotes);
+    const playerVotes: IRootState['game']['playerVotes'] = yield select((s: IRootState) => s.game.playerVotes);
     io.to(ROOM_ADM).emit('ADMIN_CHANGE', { playerVotes });
   }
 }
@@ -245,10 +245,10 @@ function* gameRound(io: Server) {
       }
       player.rank = rank;
     });
-    yield fork(
-      db.insertPlayerVotes,
-      Object.keys(playerVotes).map((key) => playerVotes[key]));
-    yield fork(db.updatePlayers, newPlayers);
+    // yield fork(
+    //   db.insertPlayerVotes,
+    //   Object.keys(playerVotes).map((key) => playerVotes[key]));
+    // yield fork(db.updatePlayers, newPlayers);
     yield put(setPlayers(newPlayers));
     io.emit('GAME_CHANGE', { players: newPlayers });
 
@@ -261,7 +261,7 @@ function* gameRound(io: Server) {
 
 interface IAddPlayerAction {
   type: '@@CLIENT_ADD_PLAYER';
-  socket: any;
+  socket: Socket;
   payload: string;
 }
 function* addPlayerSaga(io: Server) {
@@ -288,7 +288,7 @@ function* addPlayerSaga(io: Server) {
       stage,
       questionIndex,
       playerVotes,
-    } = yield select((s: IRootState) => s.game);
+    }: IRootState['game'] = yield select((s: IRootState) => s.game);
     const question = config.game.questions[questionIndex] || {};
     socket.emit('GAME_CHANGE', {
       stage,
@@ -309,7 +309,7 @@ function* addPlayerSaga(io: Server) {
 function* checkPlayerSaga() {
   yield takeEvery('@@CLIENT_CHECK_PLAYER', function*(action: any) {
     const { payload: { id }, socket } = action;
-    const players: ReadonlyArray<IPlayer> = yield select((s: IRootState) => s.game.players);
+    const players: IRootState['game']['players'] = yield select((s: IRootState) => s.game.players);
     const player = players.find((p) => p.id === id);
     if (player !== undefined) {
       const {
@@ -341,8 +341,8 @@ function* checkPlayerSaga() {
 function* resetGameSaga(io: Server) {
   yield put(setPlayers([]));
   yield put(resetPlayerVote());
-  yield fork(db.clearPlayerVotes);
-  yield fork(db.clearPlayers);
+  // yield fork(db.clearPlayerVotes);
+  // yield fork(db.clearPlayers);
   yield put(setQuestionIndex({index: 0}));
   yield put(setStage(Stage.JOIN));
 
@@ -385,7 +385,7 @@ function* handleAdminCommandSaga(io: Server) {
     function*(io) {
       // clear comments
       yield takeLatest('@@ADMIN_CLEAR_COMMENT', function*() {
-        yield fork(db.clearComment);
+        // yield fork(db.clearComment);
         yield put(removeComments());
         io.to(ROOM_ADM).emit('ADMIN_CHANGE', { comments: [] });
       });
@@ -398,7 +398,6 @@ function* handleAdminCommandSaga(io: Server) {
     function*(io) {
       // insert new comments
       yield takeEvery<ActionType<typeof adminAddComment>>(getType(adminAddComment), function*(action) {
-        console.log('adminAddComment', action.payload.content);
         yield call(handleNewCommentSaga, io, action.payload.content);
       });
     },
@@ -448,35 +447,33 @@ function* handleAdminLogin() {
   });
 }
 
-export default function createRootSaga(io: Server) {
-  return function* rootSaga() {
-    yield call(db.init);
-    yield call(db.insertQuestions, config.game.questions);
-    yield fork(handleClientCommentSaga, io);
-    yield fork(slideWorkerSaga, io);
-    yield fork(gameSaga, io);
-    yield fork(handleAdminLogin);
-    yield fork(handleAdminCommandSaga, io);
+export default function* rootSaga(io: Server) {
+  // yield call(db.init);
+  // yield call(db.insertQuestions, config.game.questions);
+  yield fork(handleClientCommentSaga, io);
+  yield fork(slideWorkerSaga, io);
+  yield fork(gameSaga, io);
+  yield fork(handleAdminLogin);
+  yield fork(handleAdminCommandSaga, io);
 
-    const channel = createChannel(io);
-    while (true) {
-      const { type, payload, socket }: { type: any, payload: any, socket: Socket }
-        = yield take(channel);
-      if (type === 'NEW_PLAYER') {
-        // 新的connection
-        const subState: Pick<IRootState, 'mode' | 'slide' | 'game'> =
-          yield select((s: IRootState) => {
-            const ret = lodash.pick(s, ['mode', 'slide', 'game']);
-            return ret;
-          });
-        socket.emit('SLIDE_CHANGE', subState.slide);
-        socket.emit('GAME_CHANGE', { intervalMs: subState.game.intervalMs });
-        socket.emit('MODE_CHANGE', { mode: subState.mode });
-      } else {
-        yield put({ type, payload, socket });
-      }
+  const channel = createChannel(io);
+  while (true) {
+    const { type, payload, socket }: { type: any, payload: any, socket: Socket }
+      = yield take(channel);
+    if (type === 'NEW_PLAYER') {
+      // 新的connection
+      const subState: Pick<IRootState, 'mode' | 'slide' | 'game'> =
+        yield select((s: IRootState) => {
+          const ret = lodash.pick(s, ['mode', 'slide', 'game']);
+          return ret;
+        });
+      socket.emit('SLIDE_CHANGE', subState.slide);
+      socket.emit('GAME_CHANGE', { intervalMs: subState.game.intervalMs });
+      socket.emit('MODE_CHANGE', { mode: subState.mode });
+    } else {
+      yield put({ type, payload, socket });
     }
-  };
+  }
 }
 
 function createChannel(io: Server) {

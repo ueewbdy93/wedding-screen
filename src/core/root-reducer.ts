@@ -27,7 +27,7 @@ export const rootReducer = combineReducers({
   comment: commentsReducer,
   slide: slideReducer,
   game: gameReducer,
-  mode: (state = Mode.Slide, action: RootAction) => {
+  mode: (state: Mode = Mode.Slide, action: RootAction) => {
     switch (action.type) {
       case getType(setMode):
         return action.payload;

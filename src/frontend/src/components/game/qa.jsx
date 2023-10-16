@@ -29,7 +29,6 @@ function Option(props) {
           opacity: 0.7,
           left: 0, width: showAnswer ? `${percent || 0}%` : '100%',
           transition: `width ${showAnswer ? '500ms' : '0ms'} ease-in 900ms, background 200ms ease-in`,
-          transitionDelay: '200ms'
         }}>
 
       </div>

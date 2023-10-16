@@ -2,7 +2,8 @@ import "source-map-support/register";
 import errorhandler from "errorhandler";
 import { Server } from "socket.io";
 import app from "./app";
-import { configureStore } from "./core/store";
+import { store, sagaMiddleware } from "./core/store";
+import saga from './core/sagas';
 
 const PORT = process.env.PORT || "5566";
 
@@ -30,6 +31,6 @@ const server = app.listen(Number.parseInt(PORT, 10), () => {
 });
 
 const io = new Server(server);
-configureStore({ io });
+sagaMiddleware.run(saga, io);
 
 export default server;

@@ -1,4 +1,4 @@
-FROM node:10
+FROM node:16
 
 RUN apt update && \
 	apt install -y software-properties-common ca-certificates && \
