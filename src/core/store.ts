@@ -8,6 +8,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
+        ignoredActionPaths: ["socket"],
         ignoredActions: [
           "@@CLIENT_ADD_COMMENT",
           "@@CLIENT_CHECK_PLAYER",
@@ -25,3 +26,5 @@ export const store = configureStore({
       },
     }).concat(sagaMiddleware),
 });
+
+export type RootState = ReturnType<typeof store.getState>;

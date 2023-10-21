@@ -5,18 +5,18 @@ export type ActionTypes = ActionType<typeof actions>;
 
 export enum PlayerState { NEW, UP, DOWN, EQUAL }
 export interface IPlayer {
-  id: string;
-  name: string;
-  score: number;
-  timeBonus: number;
-  rank: number;
-  correctCount: number;
-  incorrectCount: number;
-  correctRate: number;
-  time: number;
-  state: PlayerState;
-  results: boolean[];
-  createAt: number;
+  readonly id: string;
+  readonly name: string;
+  readonly score: number;
+  readonly timeBonus: number;
+  readonly rank: number;
+  readonly correctCount: number;
+  readonly incorrectCount: number;
+  readonly correctRate: number;
+  readonly time: number;
+  readonly state: PlayerState;
+  readonly results: readonly boolean[];
+  readonly createAt: number;
 }
 export enum Stage { JOIN, START_QUESTION, START_ANSWER, REVEAL_ANSWER, SCORE, FINAL }
 export type Option = Readonly<{
