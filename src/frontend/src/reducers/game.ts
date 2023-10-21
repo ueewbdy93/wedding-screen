@@ -2,6 +2,7 @@ import { emit } from '../socket';
 import Cookies from 'js-cookie';
 import { GameStage } from '../constants';
 
+
 // action types
 const CLIENT_ADD_PLAYER = '@@CLIENT_ADD_PLAYER';
 const CLIENT_CHECK_PLAYER = '@@CLIENT_CHECK_PLAYER';
@@ -20,7 +21,7 @@ const initialState = {
   curVote: null,
   questionIndex: 0,
   playerVotes: {},
-};
+} as const;
 
 export const Actions = {
   init: () => () => {
@@ -52,7 +53,7 @@ export const Actions = {
 }
 
 export default function reducer(state = initialState, action) {
-  const { payload, type } = action;
+  const { payload, type } = action as { payload: typeof initialState, type: string };
   if (type === 'GAME_CHANGE' && payload.player) {
     Cookies.set('player', JSON.stringify(payload.player));
   }

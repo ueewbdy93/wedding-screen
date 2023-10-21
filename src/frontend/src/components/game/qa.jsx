@@ -125,7 +125,6 @@ function QA(props) {
   const {
     stage,
     question,
-    options,
     curVote,
     answers,
     player: { id },
@@ -136,14 +135,13 @@ function QA(props) {
     playerVotes,
   } = props;
   const player = players.find(p => p.id === id);
-  if (options.length === 0) {
-    options.push(
-      { id: 0, text: '' },
-      { id: 1, text: '' },
-      { id: 2, text: '' },
-      { id: 3, text: '' }
-    )
-  }
+  const options = props.options.length === 0 ? [
+    { id: 0, text: '' },
+    { id: 1, text: '' },
+    { id: 2, text: '' },
+    { id: 3, text: '' },
+  ] : props.options;
+
   const disabled =
     (stage === GameStage.START_QUESTION) ||
     (stage === GameStage.START_ANSWER && curVote) ||
